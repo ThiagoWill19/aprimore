@@ -15,17 +15,17 @@ public class RedirectController {
 	public String login() {
 		return "login"; // → login.html
 	}
-	
-	@GetMapping("/redirect")
-public String redirecionar(Authentication auth) {
-        
-		UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
-	    User user = userDetails.getUser(); // ✅ acesso correto
 
-        if (user.getRole() == Role.ADMIN) {
-            return "redirect:/admin";
-        } else {
-            return "redirect:/user";
-        }
-    }
+	@GetMapping("/redirect")
+	public String redirecionar(Authentication auth) {
+
+		UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+		User user = userDetails.getUser(); // ✅ acesso correto
+
+		if (user.getRole() == Role.ADMIN) {
+			return "redirect:/admin";
+		} else {
+			return "redirect:/user";
+		}
+	}
 }

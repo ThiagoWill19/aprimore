@@ -1,11 +1,16 @@
 package com.aprimore.models;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.aprimore.models.enuns.AccountStatus;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,6 +32,17 @@ public class Business {
 	private UUID id;
 	
 	private String name;
+	private String tradeName;
+	
+	private String cnpj;
+	private String businessEmail;
+	private String phone;
+	
+	@Enumerated(EnumType.STRING)
+	private AccountStatus accountStatus;
+	
+	private LocalDate createdAt;
+	
 	
 	@OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Client> clients = new ArrayList<>();

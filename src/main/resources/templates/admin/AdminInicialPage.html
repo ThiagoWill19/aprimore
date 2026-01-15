@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Aprimore | Admin Page</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+
+<body>
+	
+	<nav class="navbar navbar-expand-lg bg-body-tertiary">
+	  <div class="container-fluid">
+	    <a class="navbar-brand" href="#">Aprimore - ADM</a>
+	    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	      <span class="navbar-toggler-icon"></span>
+	    </button>
+	    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+	      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+	        <li class="nav-item">
+	          <a class="nav-link active" aria-current="page" href="#">Home</a>
+	        </li>
+	        <li class="nav-item">
+	          <a class="nav-link" href="#">Configurações</a>
+	        </li>
+	        <li class="nav-item dropdown">
+	          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+	            Clientes
+	          </a>
+	          <ul class="dropdown-menu">
+	            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#newBusinessModal">Cadastrar nova empresa</a></li>
+	            <li><a class="dropdown-item" href="#">Ver clientes</a></li>
+	            <li><hr class="dropdown-divider"></li>
+	            <li><a class="dropdown-item" href="#">Relatório detalhado</a></li>
+	          </ul>
+	        </li>
+	      </ul>
+	      <form class="d-flex" role="search">
+	        <input class="form-control me-2" type="search" placeholder="Procurar cliente" aria-label="Search"/>
+	        <button class="btn btn-outline-success" type="submit">Search</button>
+	      </form>
+	    </div>
+	  </div>
+	</nav>
+	
+	<main class="container">
+		<p class="mt-2">Olá, <span class="fw-bold" th:text="${username}"></span></p>
+		
+		
+	</main>
+	
+	
+	<!-- Modal de cadastro de empresa -->
+	<div class="modal fade" id="newBusinessModal" tabindex="-1" aria-labelledby="newBusinessModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h1 class="modal-title fs-5" id="newBusinessModalLabel">Cadastrar empresa</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body">
+			
+			<form method="post" th:action="@{/admin/create-new-business}">
+				<div class="bm-3">
+					<label for="inputBusinessName" class="form-label">Razão social</label>
+					<input type="text" class="form-control" id="inputBusinessName" th:name="businessName" required>
+				</div>
+				<div class="bm-3">
+					<label for="inputTradeName" class="form-label">Nome fantasia</label>
+					<input type="text" class="form-control" id="inputTradeName" th:name="tradeName" required>
+				</div>
+				<div class="bm-3">
+					<label for="inputCnpj" class="form-label">CNPJ</label>
+					<input type="text" class="form-control" id="inputCnpj" th:name="cnpj" required>
+				</div>
+				<div class="bm-3">
+					<label for="inputEmailBusiness" class="form-label">Email da empresa</label>
+					<input type="email" class="form-control" id="inputEmailBusiness" aria-describedby="emailHelp" th:name="businessEmail" required>
+				</div>
+				<div class="bm-3">
+					<label for="inputPhone" class="form-label">Telefone</label>
+					<input type="text" class="form-control" id="inputPhone" th:name="phone" required>
+				</div>
+					
+							
+				<div class="bm-3">
+					<label for="inputUserName" class="form-label">Nome do usuário</label>
+					<input type="text" class="form-control" id="inputUserName" th:name="username" required>
+				</div>								
+				<div class="bm-3">
+					<label for="inputEmail" class="form-label">Email do usuário</label>
+					<input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" th:name="email" required>
+				</div>
+				<button type="submit" class="btn btn-success mt-3">Cadastrar</button>
+			</form>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+		crossorigin="anonymous"></script>
+</body>
+
+</html>
