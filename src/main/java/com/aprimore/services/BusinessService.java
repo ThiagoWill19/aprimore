@@ -3,14 +3,19 @@ package com.aprimore.services;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.aprimore.models.Business;
 import com.aprimore.models.User;
+import com.aprimore.models.dtos.BusinessListDto;
 import com.aprimore.models.dtos.NewBusinessDto;
 import com.aprimore.models.enuns.AccountStatus;
 import com.aprimore.models.enuns.Role;
+import com.aprimore.models.mappers.BusinessMapper;
 import com.aprimore.repositories.BusinessRepository;
 import com.aprimore.utils.PasswordGenerator;
 
@@ -19,6 +24,9 @@ public class BusinessService {
 
 	@Autowired
 	private BusinessRepository businessRepository;
+	
+	@Autowired
+	BusinessMapper businessMaper;
 		
 	public void newBusiness(NewBusinessDto newBusinessDto) {
 		
@@ -52,5 +60,14 @@ public class BusinessService {
 		
 		businessRepository.save(newBusiness);
 		
+	}
+	
+	
+	public Page<BusinessListDto> findAllByOrderByName(int pageNum, int size){
+		
+		Pageable pageable = PageRequest.of(pageNum, size);
+		Page<Business> page = businessRepository.findAllByOrderByName(pageable);
+		
+		return page.map(businessMaper::mapToBusinessListDto);
 	}
 }

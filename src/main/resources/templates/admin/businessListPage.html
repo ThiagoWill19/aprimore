@@ -31,7 +31,7 @@
 	          </a>
 	          <ul class="dropdown-menu">
 	            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#newBusinessModal">Cadastrar nova empresa</a></li>
-	            <li><a class="dropdown-item" href="/admin/business-list">Ver clientes</a></li>
+	            <li><a class="dropdown-item disabled" href="#">Ver clientes</a></li>
 	            <li><hr class="dropdown-divider"></li>
 	            <li><a class="dropdown-item" href="#">Relatório detalhado</a></li>
 	          </ul>
@@ -46,8 +46,39 @@
 	</nav>
 	
 	<main class="container">
-		<p class="mt-2">Olá, <span class="fw-bold" th:text="${username}"></span></p>
 		
+		<h1 class="mt-5">Clientes cadastrados</h1>
+		
+		<table class="table table-striped mt-3">
+		  <thead>
+		    <tr>
+		      <th scope="col">Razão social</th>
+		      <th scope="col">Nome Fantasia</th>
+		      <th scope="col">CNPJ</th>
+		      <th scope="col">Data do cadastro</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    <tr th:each="business : ${businessPage}">
+		      <th th:text="${business.name}"></th>
+		      <td th:text="${business.tradeName}"></td>
+		      <td th:text="${business.cnpj}"></td>
+		      <td th:text="${#temporals.format(business.createdAt,'dd/MM/yyy')}"></td>
+		    </tr>
+		  </tbody>
+		</table>
+		
+		<nav class="mt-3">
+			<small th:if="${totalPages > 0}" th:text="'Página ' + ${atualPage + 1} + ' de ' + ${totalPages}"></small>
+			  <ul class="pagination">
+				<li class="page-item" th:classappend="${atualPage == 0} ? 'disabled'">
+					<a class="page-link" th:href="@{/admin/business-list(page=${atualPage - 1})}">Anterior</a>
+				</li>
+				<li class="page-item" th:classappend="${atualPage + 1 >= totalPages} ? 'disabled'">
+					<a class="page-link" th:href="@{/admin/business-list(page=${atualPage + 1})}">Próxima</a>
+				</li>
+			</ul>
+		</nav>		
 		
 	</main>
 	

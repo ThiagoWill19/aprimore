@@ -1,14 +1,17 @@
 package com.aprimore.controllers.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.aprimore.configurations.security.UserDetailsImpl;
+import com.aprimore.models.dtos.BusinessListDto;
 import com.aprimore.models.dtos.NewBusinessDto;
 import com.aprimore.services.BusinessService;
 
@@ -31,6 +34,18 @@ public class AdminController {
 	public String createNewBusiness(Model model, NewBusinessDto newBusinessDto) {
 		businessService.newBusiness(newBusinessDto);
 		return "redirect:/admin";
+	}
+	
+	
+	@GetMapping("/business-list")
+	public String findAllBusiness(Model model, @RequestParam(defaultValue = "0") int page,  @RequestParam(defaultValue = "15") int size ) {
+		
+		Page<BusinessListDto> businessPage = businessService.findAllByOrderByName(page, size);
+		model.addAttribute("businessPage", businessPage.getContent());
+		model.addAttribute("atualPage", businessPage.getNumber());
+		model.addAttribute("totalPages", businessPage.getTotalPages());
+		
+		return "/admin/businessListPage";
 	}
 	
 }
