@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.aprimore.configurations.security.UserDetailsImpl;
+import com.aprimore.exceptions.BusinessRuleException;
 import com.aprimore.models.dtos.BusinessListDto;
 import com.aprimore.models.dtos.NewBusinessDto;
 import com.aprimore.services.BusinessService;
@@ -31,9 +33,20 @@ public class AdminController {
 	}
 	
 	@PostMapping("/create-new-business")
-	public String createNewBusiness(Model model, NewBusinessDto newBusinessDto) {
-		businessService.newBusiness(newBusinessDto);
-		return "redirect:/admin";
+	public String createNewBusiness(Model model, NewBusinessDto newBusinessDto, RedirectAttributes redirectAttributes) {
+		
+		try {
+			
+			businessService.newBusiness(newBusinessDto);
+			return "redirect:/admin";
+			
+		} catch (BusinessRuleException e) {
+			
+			redirectAttributes.addFlashAttribute("erro",e.getMessage());
+			return "redirect:/admin/business-list";
+		}
+		
+		
 	}
 	
 	

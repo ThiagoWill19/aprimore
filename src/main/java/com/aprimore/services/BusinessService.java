@@ -3,12 +3,14 @@ package com.aprimore.services;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.aprimore.exceptions.BusinessRuleException;
 import com.aprimore.models.Business;
 import com.aprimore.models.User;
 import com.aprimore.models.dtos.BusinessListDto;
@@ -27,6 +29,9 @@ public class BusinessService {
 	
 	@Autowired
 	BusinessMapper businessMaper;
+	
+	@Autowired
+	private EmailService emailService;
 		
 	public void newBusiness(NewBusinessDto newBusinessDto) {
 		
@@ -40,8 +45,6 @@ public class BusinessService {
 		newUser.setEmail(newBusinessDto.getEmail());
 		newUser.setRole(Role.USER);
 		newUser.setPassword(new BCryptPasswordEncoder().encode(password));
-		
-		System.out.println(password);  //Criar método para enviar senha para o usuário
 		
 		newBusiness = new Business();
 		newBusiness.setName(newBusinessDto.getBusinessName());
@@ -58,7 +61,19 @@ public class BusinessService {
 		newUser.setBusiness(newBusiness);
 		newBusiness.getUsers().add(newUser);
 		
-		businessRepository.save(newBusiness);
+		try {
+			businessRepository.save(newBusiness);
+		} catch (DataIntegrityViolationException e) {
+			throw new BusinessRuleException(
+					"Ops, você informou dados de uma empresa já cadastrada! Verifique os dados informados."
+					);
+		}
+		
+		System.out.println(password);
+		emailService.sendMail(newUser.getEmail(),
+				"Conta Aprimore criada com sucesso!",
+				"Essa é sua senha para acessar a plataforma: "
+				+ password + "\nAltere sua senha em configurações.");	
 		
 	}
 	

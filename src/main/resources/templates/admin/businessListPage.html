@@ -46,6 +46,11 @@
 
 		<div class="mt-5 row">
 			
+			<div th:if="${erro}" class="alert alert-danger">
+			    <span th:text="${erro}"></span>
+			</div>
+
+			
 			<div class="col-12 col-md-6 mt-3">
 				<h1 class="">Clientes cadastrados</h1>
 			</div>

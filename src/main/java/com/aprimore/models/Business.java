@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.aprimore.models.enuns.AccountStatus;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -31,16 +32,25 @@ public class Business {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 	
+	@Column(nullable = false)
 	private String name;
+	
+	@Column(nullable = false)
 	private String tradeName;
 	
+	@Column(nullable = false, unique = true)
 	private String cnpj;
+	
+	@Column(nullable = false, unique = true)
 	private String businessEmail;
+	
+	@Column(nullable = false)
 	private String phone;
 	
 	@Enumerated(EnumType.STRING)
 	private AccountStatus accountStatus;
 	
+	@Column(nullable = false)
 	private LocalDate createdAt;
 	
 	
