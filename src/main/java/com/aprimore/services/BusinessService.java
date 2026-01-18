@@ -46,7 +46,7 @@ public class BusinessService {
 		newBusiness = new Business();
 		newBusiness.setName(newBusinessDto.getBusinessName());
 		newBusiness.setTradeName(newBusinessDto.getTradeName());
-		newBusiness.setCnpj(newBusinessDto.getCnpj());
+		newBusiness.setCnpj(newBusinessDto.getCnpj().replaceAll("\\D", "")); //Cadastrar sem mascara de cnpj
 		newBusiness.setBusinessEmail(newBusinessDto.getBusinessEmail());
 		newBusiness.setPhone(newBusinessDto.getPhone());
 		
@@ -63,11 +63,28 @@ public class BusinessService {
 	}
 	
 	
-	public Page<BusinessListDto> findAllByOrderByName(int pageNum, int size){
+	public Page<BusinessListDto> findAllByOrderByName(int pageNum, int size, String search){
 		
 		Pageable pageable = PageRequest.of(pageNum, size);
-		Page<Business> page = businessRepository.findAllByOrderByName(pageable);
+		Page<Business> page;
 		
-		return page.map(businessMaper::mapToBusinessListDto);
+		if (search == null || search.isBlank()) {
+			
+			page = businessRepository.findAllByOrderByName(pageable);
+			return page.map(businessMaper::mapToBusinessListDto);
+		}
+		
+		String term = search.trim();
+		
+		// Remove máscara se o usuário digitar CNPJ com ponto e traço
+	    String numericTerm = term.replaceAll("\\D", "");
+		
+	    if(numericTerm.length() == 14) {
+	    	page = businessRepository.findByCnpjContaining(numericTerm, pageable);
+	    	return page.map(businessMaper::mapToBusinessListDto);
+	    }
+		
+	    page = businessRepository.findByNameOrTradeName(term.toLowerCase(), pageable);
+	    return page.map(businessMaper::mapToBusinessListDto);
 	}
 }

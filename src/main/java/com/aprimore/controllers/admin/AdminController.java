@@ -38,12 +38,16 @@ public class AdminController {
 	
 	
 	@GetMapping("/business-list")
-	public String findAllBusiness(Model model, @RequestParam(defaultValue = "0") int page,  @RequestParam(defaultValue = "15") int size ) {
+	public String findAllBusiness(Model model,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "15") int size,
+			@RequestParam(defaultValue = "") String search) {
 		
-		Page<BusinessListDto> businessPage = businessService.findAllByOrderByName(page, size);
+		Page<BusinessListDto> businessPage = businessService.findAllByOrderByName(page, size, search);
 		model.addAttribute("businessPage", businessPage.getContent());
 		model.addAttribute("atualPage", businessPage.getNumber());
 		model.addAttribute("totalPages", businessPage.getTotalPages());
+		model.addAttribute("search",search);
 		
 		return "/admin/businessListPage";
 	}
