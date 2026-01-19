@@ -1,6 +1,7 @@
 package com.aprimore.services;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,8 +12,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.aprimore.exceptions.BusinessRuleException;
+import com.aprimore.exceptions.ResourceNotFoundException;
 import com.aprimore.models.Business;
 import com.aprimore.models.User;
+import com.aprimore.models.dtos.BusinessDetailsDto;
 import com.aprimore.models.dtos.BusinessListDto;
 import com.aprimore.models.dtos.NewBusinessDto;
 import com.aprimore.models.enuns.AccountStatus;
@@ -28,7 +31,7 @@ public class BusinessService {
 	private BusinessRepository businessRepository;
 	
 	@Autowired
-	BusinessMapper businessMaper;
+	BusinessMapper businessMapper;
 	
 	@Autowired
 	private EmailService emailService;
@@ -86,7 +89,7 @@ public class BusinessService {
 		if (search == null || search.isBlank()) {
 			
 			page = businessRepository.findAllByOrderByName(pageable);
-			return page.map(businessMaper::mapToBusinessListDto);
+			return page.map(businessMapper::mapToBusinessListDto);
 		}
 		
 		String term = search.trim();
@@ -96,10 +99,27 @@ public class BusinessService {
 		
 	    if(numericTerm.length() == 14) {
 	    	page = businessRepository.findByCnpjContaining(numericTerm, pageable);
-	    	return page.map(businessMaper::mapToBusinessListDto);
+	    	return page.map(businessMapper::mapToBusinessListDto);
 	    }
 		
 	    page = businessRepository.findByNameOrTradeName(term.toLowerCase(), pageable);
-	    return page.map(businessMaper::mapToBusinessListDto);
+	    return page.map(businessMapper::mapToBusinessListDto);
+	}
+	
+	public BusinessDetailsDto findById(UUID id) throws Exception {
+		
+		if(businessRepository.existsById(id)) {
+			
+			Business business = businessRepository.findById(id).get();
+			BusinessDetailsDto businessDetailsDto =  businessMapper.mapToBusinessDetailsDto(business);
+			businessDetailsDto.setQuantityUser(business.getUsers().size());
+			businessDetailsDto.setQuantityClients(business.getClients().size());
+			return businessDetailsDto;
+			
+		}else {
+			
+			throw new ResourceNotFoundException("Empresa não encontrada com ID informado!");
+		}
+		
 	}
 }

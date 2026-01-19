@@ -1,11 +1,14 @@
 package com.aprimore.controllers.admin;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,6 +35,7 @@ public class AdminController {
 		return "/admin/AdminInicialPage";
 	}
 	
+	
 	@PostMapping("/create-new-business")
 	public String createNewBusiness(Model model, NewBusinessDto newBusinessDto, RedirectAttributes redirectAttributes) {
 		
@@ -45,7 +49,6 @@ public class AdminController {
 			redirectAttributes.addFlashAttribute("erro",e.getMessage());
 			return "redirect:/admin/business-list";
 		}
-		
 		
 	}
 	
@@ -63,6 +66,19 @@ public class AdminController {
 		model.addAttribute("search",search);
 		
 		return "/admin/businessListPage";
+	}
+	
+	@GetMapping("/business/{id}")
+	public String findBusinessById(Model model,@PathVariable UUID id, RedirectAttributes redirectAttributes) {
+		
+		try {
+			model.addAttribute("business", businessService.findById(id));
+			return "/admin/businessDetailsPage";
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("erro",e.getMessage());
+			return "redirect:/admin/business-list";
+		}
+		
 	}
 	
 }
