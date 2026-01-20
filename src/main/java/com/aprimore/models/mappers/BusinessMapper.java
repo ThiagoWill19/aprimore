@@ -20,5 +20,16 @@ public class BusinessMapper {
 	public BusinessDetailsDto mapToBusinessDetailsDto(Business business) {
 		return modelMapper.map(business, BusinessDetailsDto.class);
 	}
+	
+	public Business mapToBusiness(BusinessDetailsDto dto, Business business) {
+		
+        business.setName(dto.getName());
+        business.setTradeName(dto.getTradeName());
+        business.setCnpj(dto.getCnpj());
+        business.setBusinessEmail(dto.getBusinessEmail());
+        business.setPhone(dto.getPhone());
+        
+        return business;
+	}
 
 }

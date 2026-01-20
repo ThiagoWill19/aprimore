@@ -122,4 +122,16 @@ public class BusinessService {
 		}
 		
 	}
+	
+	public BusinessDetailsDto updateBusiness(BusinessDetailsDto businessDetailsDto) {
+		
+		Business business = businessRepository.findById(businessDetailsDto.getId())
+				.orElseThrow(() -> new ResourceNotFoundException("Empresa com id informado não encontrada"));
+		
+		business = businessMapper.mapToBusiness(businessDetailsDto, business);
+		
+		Business savedBusiness = businessRepository.save(business);
+		
+		return businessMapper.mapToBusinessDetailsDto(savedBusiness);
+	}
 }
