@@ -24,6 +24,7 @@ import com.aprimore.services.BusinessService;
 
 import jakarta.validation.Valid;
 
+
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -106,7 +107,15 @@ public class AdminController {
 			return "redirect:/admin/business/" + businessDetailsDto.getId();
 		}
 		
-		
 	}
+	
+	@PostMapping("/business/accountStatus")
+	public String changeBusinesstStatus(@RequestParam UUID id) {
+		
+		businessService.changeBusinessStatus(id);
+		
+		return "redirect:/admin/business/" + id;
+	}
+	
 	
 }
