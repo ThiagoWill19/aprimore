@@ -110,7 +110,7 @@ Essas variáveis são utilizadas no arquivo `application.properties`.
 ### 🚀 Executando a Aplicação
 
 ```bash
-git clone https://github.com/seu-usuario/aprimore.git
+git clone https://github.com/ThiagoWill19/aprimore.git
 cd aprimore
 mvn spring-boot:run
 ```
@@ -138,7 +138,7 @@ A aplicação está disponível em **http://localhost:8080**
 - Uso de Bean Validation para garantir consistência dos dados  
 - Lombok para redução de boilerplate  
 - ModelMapper para conversão entre entidades e DTOs  
-- Spring Security preparado para controle de acesso futuro  
+- Spring Security preparado para controle de acesso futuro  git s
 
 ## 📬 Contato
 
