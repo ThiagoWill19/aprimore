@@ -102,7 +102,7 @@ public class BusinessService {
 	}
 	
 
-	public BusinessDetailsDto findById(UUID id) throws Exception {
+	public BusinessDetailsDto findById(UUID id) throws ResourceNotFoundException {
 
 		if (businessRepository.existsById(id)) {
 

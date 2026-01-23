@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.aprimore.configurations.security.UserDetailsImpl;
 import com.aprimore.exceptions.BusinessRuleException;
+import com.aprimore.exceptions.ResourceNotFoundException;
 import com.aprimore.models.dtos.BusinessDetailsDto;
 import com.aprimore.models.dtos.BusinessListDto;
 import com.aprimore.models.dtos.NewBusinessDto;
@@ -42,7 +43,15 @@ public class AdminController {
 	
 	
 	@PostMapping("/create-new-business")
-	public String createNewBusiness(Model model, NewBusinessDto newBusinessDto, RedirectAttributes redirectAttributes) {
+	public String createNewBusiness(
+			@Valid NewBusinessDto newBusinessDto,
+			BindingResult result,
+			RedirectAttributes redirectAttributes) {
+		
+		if(result.hasErrors()) {
+			redirectAttributes.addFlashAttribute("erro",result.getFieldError().getDefaultMessage());
+			return "redirect:/admin/business-list/";
+		}
 		
 		try {
 			
@@ -65,11 +74,11 @@ public class AdminController {
 			@RequestParam(defaultValue = "") String search) {
 		
 		Page<BusinessListDto> businessPage = businessService.findAllByOrderByName(page, size, search);
-		model.addAttribute("businessPage", businessPage.getContent());
+		model.addAttribute("businessList", businessPage.getContent());
 		model.addAttribute("atualPage", businessPage.getNumber());
 		model.addAttribute("totalPages", businessPage.getTotalPages());
 		model.addAttribute("search",search);
-		
+		 
 		return "/admin/businessListPage";
 	}
 	
@@ -80,7 +89,7 @@ public class AdminController {
 		try {
 			model.addAttribute("business", businessService.findById(id));
 			return "/admin/businessDetailsPage";
-		} catch (Exception e) {
+		} catch (ResourceNotFoundException e) {
 			redirectAttributes.addFlashAttribute("erro",e.getMessage());
 			return "redirect:/admin/business-list";
 		}
@@ -102,15 +111,14 @@ public class AdminController {
 		try {
 			businessService.updateBusiness(businessDetailsDto);
 			return "redirect:/admin/business/" + businessDetailsDto.getId();
-		} catch (Exception e) {
-			System.err.println(e.getMessage());
+		} catch (ResourceNotFoundException e) {
 			return "redirect:/admin/business/" + businessDetailsDto.getId();
 		}
 		
 	}
 	
 	@PostMapping("/business/accountStatus")
-	public String changeBusinesstStatus(@RequestParam UUID id) {
+	public String changeBusinessStatus(@RequestParam UUID id) {
 		
 		businessService.changeBusinessStatus(id);
 		

@@ -77,7 +77,7 @@
 		    </tr>
 		  </thead>
 		  <tbody>
-		    <tr th:each="business : ${businessPage}">
+		    <tr th:each="business : ${businessList}">
 		      <th><a class="text-decoration-none"th:href="@{/admin/business/{id}(id = ${business.id})}"><span th:text="${business.name}"></span></a></th>
 		      <td th:text="${business.tradeName}"></td>
 		      <td th:text="${business.cnpj}"></td>
