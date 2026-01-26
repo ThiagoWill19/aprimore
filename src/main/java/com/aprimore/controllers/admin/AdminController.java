@@ -22,6 +22,7 @@ import com.aprimore.models.dtos.BusinessDetailsDto;
 import com.aprimore.models.dtos.BusinessListDto;
 import com.aprimore.models.dtos.NewBusinessDto;
 import com.aprimore.services.BusinessService;
+import com.aprimore.services.UserService;
 
 import jakarta.validation.Valid;
 
@@ -32,6 +33,9 @@ public class AdminController {
 	
 	@Autowired
 	private BusinessService businessService;
+	
+	@Autowired
+	private UserService userService;
 
 	@GetMapping
 	public String inicialPage(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -123,6 +127,24 @@ public class AdminController {
 		businessService.changeBusinessStatus(id);
 		
 		return "redirect:/admin/business/" + id;
+	}
+	
+	
+	@GetMapping("/business/{id}/users")
+	public String findUsers(Model model, @PathVariable UUID id, RedirectAttributes redirectAttributes) {
+		
+		try {
+			BusinessDetailsDto business = businessService.findById(id);
+			model.addAttribute("businessName", business.getName());
+			model.addAttribute("users", userService.findAllByBusiness(id));
+			
+			return "/admin/usersPage";
+			
+		} catch (ResourceNotFoundException e) {
+			redirectAttributes.addFlashAttribute("erro",e.getMessage());
+			return "redirect:/admin/business-list";
+		}
+		
 	}
 	
 	

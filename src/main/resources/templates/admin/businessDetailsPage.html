@@ -101,7 +101,7 @@
 			<div class="mt-3 col-12 col-md-4">
 				<label for="quantityUser">Quantidade de contas de acesso cadastradas</label>
 				<input class="form-control" id="quantityUser" th:value="${business.quantityUser}" disabled></input>
-				<a href="#">Ver usuários cadastrados</a>
+				<a th:href="@{/admin/business/{id}/users(id = ${business.id})}">Ver usuários cadastrados</a>
 			</div>	
 			
 			<div class="mt-3 col-12 col-md-4">
