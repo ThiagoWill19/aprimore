@@ -4,13 +4,15 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.aprimore.events.BusinessCreatedEvent;
 import com.aprimore.exceptions.BusinessRuleException;
 import com.aprimore.exceptions.ResourceNotFoundException;
 import com.aprimore.models.Business;
@@ -24,6 +26,9 @@ import com.aprimore.models.mappers.BusinessMapper;
 import com.aprimore.repositories.BusinessRepository;
 import com.aprimore.utils.PasswordGenerator;
 
+import org.springframework.transaction.annotation.Transactional;
+
+
 @Service
 public class BusinessService {
 
@@ -34,8 +39,12 @@ public class BusinessService {
 	BusinessMapper businessMapper;
 
 	@Autowired
-	private EmailService emailService;
+	private ApplicationEventPublisher eventPublisher;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
+	@Transactional
 	public void newBusiness(NewBusinessDto newBusinessDto) {
 
 		Business newBusiness;
@@ -47,7 +56,7 @@ public class BusinessService {
 		newUser.setName(newBusinessDto.getUsername());
 		newUser.setEmail(newBusinessDto.getEmail());
 		newUser.setRole(Role.USER);
-		newUser.setPassword(new BCryptPasswordEncoder().encode(password));
+		newUser.setPassword(passwordEncoder.encode(password));
 
 		newBusiness = new Business();
 		newBusiness.setName(newBusinessDto.getBusinessName());
@@ -63,15 +72,16 @@ public class BusinessService {
 		newBusiness.getUsers().add(newUser);
 
 		try {
-			businessRepository.save(newBusiness);
+			businessRepository.saveAndFlush(newBusiness);
 		} catch (DataIntegrityViolationException e) {
 			throw new BusinessRuleException(
 					"Ops, você informou dados de uma empresa já cadastrada! Verifique os dados informados.");
 		}
 
-		System.out.println(password);
-		emailService.sendMail(newUser.getEmail(), "Conta Aprimore criada com sucesso!",
-				"Essa é sua senha para acessar a plataforma: " + password + "\nAltere sua senha em configurações.");
+		 
+	    eventPublisher.publishEvent(
+	        new BusinessCreatedEvent(newUser, password)
+	    );
 
 	}
 	
@@ -104,18 +114,14 @@ public class BusinessService {
 
 	public BusinessDetailsDto findById(UUID id) throws ResourceNotFoundException {
 
-		if (businessRepository.existsById(id)) {
-
-			Business business = businessRepository.findById(id).get();
-			BusinessDetailsDto businessDetailsDto = businessMapper.mapToBusinessDetailsDto(business);
-			businessDetailsDto.setQuantityUser(business.getUsers().size());
-			businessDetailsDto.setQuantityClients(business.getClients().size());
-			return businessDetailsDto;
-
-		} else {
-
-			throw new ResourceNotFoundException("Empresa não encontrada com ID informado!");
-		}
+		Business business = businessRepository.findById(id)
+			    .orElseThrow(() -> new ResourceNotFoundException("Empresa não encontrada com ID informado!"));
+		
+		BusinessDetailsDto businessDetailsDto = businessMapper.mapToBusinessDetailsDto(business);
+		businessDetailsDto.setQuantityUser(business.getUsers().size());
+		businessDetailsDto.setQuantityClients(business.getClients().size());
+		
+		return businessDetailsDto;
 
 	}
 	
