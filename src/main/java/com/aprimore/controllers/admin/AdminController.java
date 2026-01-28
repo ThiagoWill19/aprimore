@@ -115,7 +115,8 @@ public class AdminController {
 		try {
 			businessService.updateBusiness(businessDetailsDto);
 			return "redirect:/admin/business/" + businessDetailsDto.getId();
-		} catch (ResourceNotFoundException e) {
+		} catch (BusinessRuleException e) {
+			redirectAttributes.addFlashAttribute("erro",e.getMessage());
 			return "redirect:/admin/business/" + businessDetailsDto.getId();
 		}
 		

@@ -63,7 +63,7 @@ public class BusinessService {
 		newBusiness.setTradeName(newBusinessDto.getTradeName());
 		newBusiness.setCnpj(newBusinessDto.getCnpj().replaceAll("\\D", "")); // Cadastrar sem mascara de cnpj
 		newBusiness.setBusinessEmail(newBusinessDto.getBusinessEmail());
-		newBusiness.setPhone(newBusinessDto.getPhone());
+		newBusiness.setPhone(newBusinessDto.getPhone().replaceAll("\\D","")); // Cadastrar sem mascara de telefone
 
 		newBusiness.setAccountStatus(AccountStatus.ACTIVE);
 		newBusiness.setCreatedAt(LocalDate.now());
@@ -126,16 +126,22 @@ public class BusinessService {
 	}
 	
 
-	public BusinessDetailsDto updateBusiness(BusinessDetailsDto businessDetailsDto) {
+	public void updateBusiness(BusinessDetailsDto businessDetailsDto) {
 
 		Business business = businessRepository.findById(businessDetailsDto.getId())
 				.orElseThrow(() -> new ResourceNotFoundException("Empresa com id informado não encontrada"));
 
 		business = businessMapper.mapToBusiness(businessDetailsDto, business);
 
-		Business savedBusiness = businessRepository.save(business);
+		try {
+			
+			businessRepository.saveAndFlush(business);
+			
+		} catch (DataIntegrityViolationException e) {
+			throw new BusinessRuleException(
+					"Ops, você informou dados de uma empresa já cadastrada! Verifique os dados informados.");
+		}
 
-		return businessMapper.mapToBusinessDetailsDto(savedBusiness);
 	}
 
 	
