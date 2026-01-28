@@ -32,7 +32,7 @@
 	            Clientes
 	          </a>
 	          <ul class="dropdown-menu">
-	            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#newBusinessModal">Cadastrar novo cliente</a></li>
+	            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#newClientModal">Cadastrar novo cliente</a></li>
 	            <li><a class="dropdown-item" href="#">Ver clientes</a></li>
 	          </ul>
 	        </li>
@@ -41,7 +41,7 @@
 			    Serviços
 			  </a>
 			  <ul class="dropdown-menu">
-			    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#newBusinessModal">Nova Ordem de Serviço</a></li>
+			    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#newClientModal">Nova Ordem de Serviço</a></li>
 			    <li><a class="dropdown-item" href="#">Ver Serviços</a></li>
 			    <li><hr class="dropdown-divider"></li>
 			    <li><a class="dropdown-item" href="#">Relatório detalhado</a></li>
@@ -55,50 +55,35 @@
 	<main class="container">
 		<p class="mt-2">Olá, <span class="fw-bold" th:text="${username}"></span></p>
 		
+		<div th:if="${erro}" class="alert alert-danger">
+			<span th:text="${erro}"></span>
+		</div>
 		
 	</main>
 	
 	
-	<!-- Modal de cadastro de empresa -->
-	<div class="modal fade" id="newBusinessModal" tabindex="-1" aria-labelledby="newBusinessModalLabel" aria-hidden="true">
+	<!-- Modal de cadastro de cliente -->
+	<div class="modal fade" id="newClientModal" tabindex="-1" aria-labelledby="newClientModalLabel" aria-hidden="true">
 	  <div class="modal-dialog">
 	    <div class="modal-content">
 	      <div class="modal-header">
-	        <h1 class="modal-title fs-5" id="newBusinessModalLabel">Cadastrar Novo Cliente</h1>
+	        <h1 class="modal-title fs-5" id="newClientModalLabel">Cadastrar Novo Cliente</h1>
 	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	      </div>
 	      <div class="modal-body">
 			
-			<form method="post" th:action="@{/admin/create-new-business}">
+			<form method="post" th:action="@{/user/new-client}">
 				<div class="bm-3">
-					<label for="inputBusinessName" class="form-label">Razão social</label>
-					<input type="text" class="form-control" id="inputBusinessName" th:name="businessName" required>
+					<label for="inputClientName" class="form-label">Nome da empresa</label>
+					<input type="text" class="form-control" id="inputClientName" th:name="clientName" required>
 				</div>
 				<div class="bm-3">
-					<label for="inputTradeName" class="form-label">Nome fantasia</label>
-					<input type="text" class="form-control" id="inputTradeName" th:name="tradeName" required>
-				</div>
-				<div class="bm-3">
-					<label for="inputCnpj" class="form-label">CNPJ</label>
-					<input type="text" class="form-control" id="inputCnpj" th:name="cnpj" required>
-				</div>
-				<div class="bm-3">
-					<label for="inputEmailBusiness" class="form-label">Email da empresa</label>
-					<input type="email" class="form-control" id="inputEmailBusiness" aria-describedby="emailHelp" th:name="businessEmail" required>
+					<label for="inputClientEmail" class="form-label">Email</label>
+					<input type="text" class="form-control" id="inputClientEmail" th:name="clientEmail" required>
 				</div>
 				<div class="bm-3">
 					<label for="inputPhone" class="form-label">Telefone</label>
-					<input type="text" class="form-control" id="inputPhone" th:name="phone" required>
-				</div>
-					
-							
-				<div class="bm-3">
-					<label for="inputUserName" class="form-label">Nome do usuário</label>
-					<input type="text" class="form-control" id="inputUserName" th:name="username" required>
-				</div>								
-				<div class="bm-3">
-					<label for="inputEmail" class="form-label">Email do usuário</label>
-					<input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" th:name="email" required>
+					<input type="text" class="form-control" id="inputPhone" th:name="clientPhoneNumber" required>
 				</div>
 				<button type="submit" class="btn btn-success mt-3">Cadastrar</button>
 			</form>
