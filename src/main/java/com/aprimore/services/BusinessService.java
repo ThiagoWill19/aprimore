@@ -1,6 +1,5 @@
 package com.aprimore.services;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.aprimore.events.BusinessCreatedEvent;
 import com.aprimore.exceptions.BusinessRuleException;
@@ -25,8 +25,6 @@ import com.aprimore.models.enuns.Role;
 import com.aprimore.models.mappers.BusinessMapper;
 import com.aprimore.repositories.BusinessRepository;
 import com.aprimore.utils.PasswordGenerator;
-
-import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -66,9 +64,7 @@ public class BusinessService {
 		newBusiness.setBusinessEmail(newBusinessDto.getBusinessEmail());
 		newBusiness.setPhone(newBusinessDto.getPhone().replaceAll("\\D","")); // Cadastrar sem mascara de telefone
 
-		newBusiness.setAccountStatus(AccountStatus.ACTIVE);
-		newBusiness.setCreatedAt(LocalDate.now());
-
+		
 		newUser.setBusiness(newBusiness);
 		newBusiness.getUsers().add(newUser);
 

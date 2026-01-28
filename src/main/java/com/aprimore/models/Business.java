@@ -16,6 +16,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,7 +51,7 @@ public class Business {
 	@Enumerated(EnumType.STRING)
 	private AccountStatus accountStatus;
 	
-	@Column(nullable = false)
+	@Column(nullable = false, updatable = false)
 	private LocalDate createdAt;
 	
 	
@@ -59,4 +60,10 @@ public class Business {
 	
 	@OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<User> users = new ArrayList<>();
+	
+	@PrePersist
+	private void prePersist() {
+	    this.createdAt = LocalDate.now();
+	    this.accountStatus = AccountStatus.ACTIVE;
+	}
 }

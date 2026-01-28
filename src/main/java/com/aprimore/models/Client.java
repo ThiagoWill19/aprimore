@@ -1,5 +1,6 @@
 package com.aprimore.models;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +13,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,14 +31,25 @@ public class Client {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 	
-	@Column(name="name")
+	@Column(name="client_name", nullable = false)
 	private String clientName;
 	
-	@Column(name="email")
+
+	@Column(name="email", nullable = false)
 	private String clientEmail;
 	
 	@Column(name="phone_number")
 	private String clientPhoneNumber;
+	
+	@Column(nullable = false)
+	private boolean active;
+	
+	@Column(nullable = false, updatable = false)
+	private LocalDate createdAt;
+	
+	@Column(name="standard_order_instruction", length = 500)
+	@Size(max = 500)
+	private String standardOrderInstructions;
 	
 	@ManyToOne
 	private Business business;
@@ -43,7 +57,13 @@ public class Client {
 	@OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Machine> machines = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "client")
 	private List<ServiceOrder> serviceOrders = new ArrayList<>();
+	
+	@PrePersist
+	private void prePersist() {
+	    this.createdAt = LocalDate.now();
+	    this.active = true;
+	}
 	
 }
