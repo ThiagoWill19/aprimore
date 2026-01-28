@@ -2,6 +2,7 @@ package com.aprimore.models;
 
 import java.util.UUID;
 
+import com.aprimore.models.enuns.AccountStatus;
 import com.aprimore.models.enuns.Role;
 
 import jakarta.persistence.Entity;
@@ -32,6 +33,9 @@ public class User {
 	private String password;
 	
 	private String email;
+	
+	@Enumerated(EnumType.STRING)
+	private AccountStatus accountStatus;
 	
 	@Enumerated(EnumType.STRING)
 	private Role role;

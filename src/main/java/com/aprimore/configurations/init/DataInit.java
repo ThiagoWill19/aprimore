@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.aprimore.models.User;
+import com.aprimore.models.enuns.AccountStatus;
 import com.aprimore.models.enuns.Role;
 import com.aprimore.repositories.UserRepository;
 
@@ -22,6 +23,7 @@ public class DataInit {
 				user.setEmail("admin@email.com");
 				user.setPassword(new BCryptPasswordEncoder().encode("admin123"));
 				user.setRole(Role.ADMIN);
+				user.setAccountStatus(AccountStatus.ACTIVE);
 				userRepository.save(user);
 				System.out.println("✅ admin criado com sucesso.");
 			}else {

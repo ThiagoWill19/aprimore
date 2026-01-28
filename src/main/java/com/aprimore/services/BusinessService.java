@@ -56,6 +56,7 @@ public class BusinessService {
 		newUser.setName(newBusinessDto.getUsername());
 		newUser.setEmail(newBusinessDto.getEmail());
 		newUser.setRole(Role.USER);
+		newUser.setAccountStatus(AccountStatus.ACTIVE);
 		newUser.setPassword(passwordEncoder.encode(password));
 
 		newBusiness = new Business();
