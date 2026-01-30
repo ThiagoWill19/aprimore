@@ -1,17 +1,22 @@
 package com.aprimore.controllers.user;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.aprimore.configurations.security.UserDetailsImpl;
 import com.aprimore.exceptions.BusinessRuleException;
+import com.aprimore.models.Client;
+import com.aprimore.models.dtos.ClientDetailsDto;
 import com.aprimore.models.dtos.NewClientDto;
 import com.aprimore.services.ClientService;
 
@@ -48,13 +53,33 @@ public class UserController {
 		
 		try {
 			
-			clientService.newClient(newClientDto, userDetails.getUser().getBusiness().getId());
-			return "redirect:/user";
+			Client client = clientService.newClient(newClientDto, userDetails.getUser().getBusiness().getId());
+			
+			return "redirect:/user/client/" + client.getId();
 			
 		} catch (BusinessRuleException e) {
 			
 			redirectAttributes.addFlashAttribute("erro",e.getMessage());
 			return "redirect:/user";
 		}
+	}
+	
+	@GetMapping("/client/{id}")
+	public String findClientById(Model model,
+			@PathVariable UUID id,
+			RedirectAttributes redirectAttributes,
+			@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		
+		try {
+			
+			ClientDetailsDto clientDatailsDto = clientService.findById(id, userDetails.getUser());
+			model.addAttribute("client",clientDatailsDto);
+			return "/user/ClientDetailsPage";
+			
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("erro", e.getMessage());
+			return "redirect:/user";
+		}
+		
 	}
 }
