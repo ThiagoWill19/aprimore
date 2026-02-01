@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.aprimore.configurations.security.UserDetailsImpl;
-import com.aprimore.exceptions.BusinessRuleException;
+import com.aprimore.exceptions.DomainRuleException;
 import com.aprimore.exceptions.ResourceNotFoundException;
 import com.aprimore.models.dtos.BusinessDetailsDto;
 import com.aprimore.models.dtos.BusinessListDto;
@@ -62,7 +62,7 @@ public class AdminController {
 			businessService.newBusiness(newBusinessDto);
 			return "redirect:/admin";
 			
-		} catch (BusinessRuleException e) {
+		} catch (DomainRuleException e) {
 			
 			redirectAttributes.addFlashAttribute("erro",e.getMessage());
 			return "redirect:/admin/business-list";
@@ -115,7 +115,7 @@ public class AdminController {
 		try {
 			businessService.updateBusiness(businessDetailsDto);
 			return "redirect:/admin/business/" + businessDetailsDto.getId();
-		} catch (BusinessRuleException e) {
+		} catch (DomainRuleException e) {
 			redirectAttributes.addFlashAttribute("erro",e.getMessage());
 			return "redirect:/admin/business/" + businessDetailsDto.getId();
 		}

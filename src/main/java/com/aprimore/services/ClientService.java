@@ -3,9 +3,11 @@ package com.aprimore.services;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import com.aprimore.exceptions.DomainRuleException;
 import com.aprimore.exceptions.ResourceNotFoundException;
 import com.aprimore.models.Business;
 import com.aprimore.models.Client;

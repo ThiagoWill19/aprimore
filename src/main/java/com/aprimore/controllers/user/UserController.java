@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.aprimore.configurations.security.UserDetailsImpl;
-import com.aprimore.exceptions.BusinessRuleException;
+import com.aprimore.exceptions.DomainRuleException;
 import com.aprimore.models.Client;
 import com.aprimore.models.dtos.ClientDetailsDto;
 import com.aprimore.models.dtos.NewClientDto;
@@ -57,7 +57,7 @@ public class UserController {
 			
 			return "redirect:/user/client/" + client.getId();
 			
-		} catch (BusinessRuleException e) {
+		} catch (DomainRuleException e) {
 			
 			redirectAttributes.addFlashAttribute("erro",e.getMessage());
 			return "redirect:/user";

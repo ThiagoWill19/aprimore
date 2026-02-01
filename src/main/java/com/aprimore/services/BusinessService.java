@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.aprimore.events.BusinessCreatedEvent;
-import com.aprimore.exceptions.BusinessRuleException;
+import com.aprimore.exceptions.DomainRuleException;
 import com.aprimore.exceptions.ResourceNotFoundException;
 import com.aprimore.models.Business;
 import com.aprimore.models.User;
@@ -71,7 +71,7 @@ public class BusinessService {
 		try {
 			businessRepository.saveAndFlush(newBusiness);
 		} catch (DataIntegrityViolationException e) {
-			throw new BusinessRuleException(
+			throw new DomainRuleException(
 					"Ops, você informou dados de uma empresa já cadastrada! Verifique os dados informados.");
 		}
 
@@ -135,7 +135,7 @@ public class BusinessService {
 			businessRepository.saveAndFlush(business);
 			
 		} catch (DataIntegrityViolationException e) {
-			throw new BusinessRuleException(
+			throw new DomainRuleException(
 					"Ops, você informou dados de uma empresa já cadastrada! Verifique os dados informados.");
 		}
 
