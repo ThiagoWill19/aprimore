@@ -25,42 +25,67 @@ public class ClientService {
 
 	@Autowired
 	private ClientRepository clientRepository;
-	
+
 	@Autowired
 	private BusinessRepository businessRepository;
-	
+
 	@Autowired
 	private ClientMapper clientMapper;
 	
-	public Client newClient( NewClientDto newClientDto, UUID businessId) {
-		
+
+	public Client newClient(NewClientDto newClientDto, UUID businessId) {
+
 		Business business = businessRepository.findById(businessId)
-		        .orElseThrow(() -> new EntityNotFoundException(
-		            "Business not found"
-		        ));
-		
+				.orElseThrow(() -> new EntityNotFoundException("Business not found"));
+
 		Client newClient = clientMapper.mapToClient(newClientDto);
 		newClient.setBusiness(business);
-		return clientRepository.save(newClient);		
+		return clientRepository.save(newClient);
 	}
 	
+
 	public ClientDetailsDto findById(UUID clientId, User user) throws Exception {
 
 		Client client = clientRepository.findById(clientId)
-			    .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com ID informado!"));
-		
-		
-		if(!client.getBusiness().getId().equals(user.getBusiness().getId())) {
-			
+				.orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com ID informado!"));
+
+		if (!client.getBusiness().getId().equals(user.getBusiness().getId())) {
+
 			throw new AccessDeniedException("Você não tem permissão para acessar este recurso.");
 		}
-		
+
 		ClientDetailsDto clientDetailsDto = clientMapper.mapToClientDetailsDto(client);
-		
+
 		clientDetailsDto.setQntMachines(client.getMachines().size());
 		clientDetailsDto.setQntServiceOrder(client.getServiceOrders().size());
 
 		return clientDetailsDto;
+
+	}
+	
+
+	public void updateClient(ClientDetailsDto clientDetailsDto, User user) throws Exception{
+
+		Client client = clientRepository.findById(clientDetailsDto.getId())
+				.orElseThrow(() -> new ResourceNotFoundException("Client com id informado não encontrado"));
+		
+
+		if (!client.getBusiness().getId().equals(user.getBusiness().getId())) {
+
+			throw new AccessDeniedException("Você não tem permissão para alterar este recurso.");
+		}
+		
+
+		client = clientMapper.mapToClient(clientDetailsDto, client);
+
+		try {
+
+			clientRepository.saveAndFlush(client);
+
+		} catch (DataIntegrityViolationException e) {
+			throw new DomainRuleException(
+					"Ops, você informou dados de uma empresa já cadastrada! Verifique os dados informados.");
+		}
 
 	}
 }

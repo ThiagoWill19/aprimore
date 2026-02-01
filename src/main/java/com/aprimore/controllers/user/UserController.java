@@ -82,4 +82,30 @@ public class UserController {
 		}
 		
 	}
+	
+	@PostMapping("/client/clientUpdate")
+	public String updateClient(
+			
+			@Valid ClientDetailsDto clientDetailsDto,
+			BindingResult result,
+			RedirectAttributes redirectAttributes,
+			@AuthenticationPrincipal UserDetailsImpl userDetails,
+			Model model) {
+		
+		if(result.hasErrors()) {
+			model.addAttribute("client", clientDetailsDto);
+			return "/user/ClientDetailsPage";
+		}
+		
+		try {
+			
+			clientService.updateClient(clientDetailsDto, userDetails.getUser());
+			return "redirect:/user/client/" + clientDetailsDto.getId();
+			
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("erro", e.getMessage());
+			return "redirect:/user/client/" + clientDetailsDto.getId();
+		}
+		
+	}
 }

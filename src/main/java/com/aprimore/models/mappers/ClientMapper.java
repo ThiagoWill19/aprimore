@@ -9,15 +9,26 @@ import com.aprimore.models.dtos.NewClientDto;
 
 @Component
 public class ClientMapper {
-	
+
 	private ModelMapper modelMapper = new ModelMapper();
-	
+
 	public Client mapToClient(NewClientDto newClientDto) {
 		return modelMapper.map(newClientDto, Client.class);
 	}
-	
+
 	public ClientDetailsDto mapToClientDetailsDto(Client client) {
 		return modelMapper.map(client, ClientDetailsDto.class);
+	}
+
+	public Client mapToClient(ClientDetailsDto dto, Client client) {
+
+		client.setClientName(dto.getClientName());
+		client.setClientEmail(dto.getClientEmail());
+		client.setClientPhoneNumber(dto.getClientPhoneNumber());
+		client.setStandardOrderInstructions(dto.getStandardOrderInstructions());
+		client.setActive(dto.isActive());
+
+		return client;
 	}
 
 }
