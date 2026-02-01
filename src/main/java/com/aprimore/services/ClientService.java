@@ -37,6 +37,9 @@ public class ClientService {
 
 		Business business = businessRepository.findById(businessId)
 				.orElseThrow(() -> new EntityNotFoundException("Business not found"));
+		
+		newClientDto.setCnpj(newClientDto.getCnpj().replaceAll("\\D", ""));
+		newClientDto.setClientPhoneNumber(newClientDto.getClientPhoneNumber().replaceAll("\\D", ""));
 
 		Client newClient = clientMapper.mapToClient(newClientDto);
 		newClient.setBusiness(business);

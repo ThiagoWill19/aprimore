@@ -31,6 +31,9 @@ public class Client {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 	
+	@Column(nullable = false)
+	private String cnpj;
+	
 	@Column(name="client_name", nullable = false)
 	private String clientName;
 	

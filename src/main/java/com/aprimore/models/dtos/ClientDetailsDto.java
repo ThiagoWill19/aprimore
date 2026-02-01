@@ -10,6 +10,9 @@ import lombok.Data;
 public class ClientDetailsDto {
 
 	private UUID id;
+	
+	@NotBlank(message = "CNPJ é obrigatório")
+	private String cnpj;
 
 	@NotBlank(message = "Nome é obrigatório")
 	private String clientName;

@@ -5,6 +5,9 @@ import lombok.Data;
 
 @Data
 public class NewClientDto {
+	
+	@NotBlank(message = "O CNPJ da empresa é obrigatório")
+	private String cnpj;
 
 	@NotBlank(message = "O nome da empresa é obrigatório")
 	private String clientName;

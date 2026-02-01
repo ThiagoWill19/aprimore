@@ -22,9 +22,10 @@ public class ClientMapper {
 
 	public Client mapToClient(ClientDetailsDto dto, Client client) {
 
+		client.setCnpj(dto.getCnpj().replaceAll("\\D", ""));
 		client.setClientName(dto.getClientName());
 		client.setClientEmail(dto.getClientEmail());
-		client.setClientPhoneNumber(dto.getClientPhoneNumber());
+		client.setClientPhoneNumber(dto.getClientPhoneNumber().replaceAll("\\D", ""));
 		client.setStandardOrderInstructions(dto.getStandardOrderInstructions());
 		client.setActive(dto.isActive());
 
