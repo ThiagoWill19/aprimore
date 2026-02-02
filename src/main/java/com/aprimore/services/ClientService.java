@@ -31,21 +31,26 @@ public class ClientService {
 
 	@Autowired
 	private ClientMapper clientMapper;
-	
 
-	public Client newClient(NewClientDto newClientDto, UUID businessId) {
+	public Client newClient(NewClientDto newClientDto, UUID businessId){
 
 		Business business = businessRepository.findById(businessId)
 				.orElseThrow(() -> new EntityNotFoundException("Business not found"));
-		
+
 		newClientDto.setCnpj(newClientDto.getCnpj().replaceAll("\\D", ""));
 		newClientDto.setClientPhoneNumber(newClientDto.getClientPhoneNumber().replaceAll("\\D", ""));
 
 		Client newClient = clientMapper.mapToClient(newClientDto);
 		newClient.setBusiness(business);
-		return clientRepository.save(newClient);
+
+		try {
+			return clientRepository.save(newClient);
+		} catch (Exception e) {
+			throw new DomainRuleException(
+					"Ops, você informou dados de uma empresa já cadastrada! Verifique os dados informados.");
+		}
+
 	}
-	
 
 	public ClientDetailsDto findById(UUID clientId, User user) throws Exception {
 
@@ -65,19 +70,16 @@ public class ClientService {
 		return clientDetailsDto;
 
 	}
-	
 
-	public void updateClient(ClientDetailsDto clientDetailsDto, User user) throws Exception{
+	public void updateClient(ClientDetailsDto clientDetailsDto, User user) throws Exception {
 
 		Client client = clientRepository.findById(clientDetailsDto.getId())
 				.orElseThrow(() -> new ResourceNotFoundException("Client com id informado não encontrado"));
-		
 
 		if (!client.getBusiness().getId().equals(user.getBusiness().getId())) {
 
 			throw new AccessDeniedException("Você não tem permissão para alterar este recurso.");
 		}
-		
 
 		client = clientMapper.mapToClient(clientDetailsDto, client);
 

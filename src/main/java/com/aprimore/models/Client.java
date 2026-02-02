@@ -31,14 +31,14 @@ public class Client {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 	
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String cnpj;
 	
 	@Column(name="client_name", nullable = false)
 	private String clientName;
 	
 
-	@Column(name="email", nullable = false)
+	@Column(name="email", nullable = false, unique = true)
 	private String clientEmail;
 	
 	@Column(name="phone_number")
