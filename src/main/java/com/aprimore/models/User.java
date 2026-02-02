@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.aprimore.models.enuns.AccountStatus;
 import com.aprimore.models.enuns.Role;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -28,10 +29,12 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 	
+	@Column(nullable = false)
 	private String name;
 	
 	private String password;
 	
+	@Column(nullable = false, unique = true)
 	private String email;
 	
 	@Enumerated(EnumType.STRING)
