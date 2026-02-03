@@ -101,18 +101,38 @@ public class ClientService {
 	public Page<ClientListDto> findAllClientsByBusiness(
 			int pageNum,
 			int size,
+			String search,
 			User user
 	) {
 
-		Pageable pageable = PageRequest.of(pageNum, size);
+		pageNum = Math.max(pageNum, 0);
+		size = Math.min(Math.max(size, 1), 50);
 
-		Page<Client> page = clientRepository
-				.findByBusinessIdOrderByClientName(
+		Pageable pageable = PageRequest.of(pageNum, size);
+		Page<Client> page;
+
+		if (search == null || search.isBlank()) {
+
+			page = clientRepository
+					.findByBusinessIdOrderByClientName(
+							user.getBusiness().getId(),
+							pageable
+					);
+
+			return page.map(clientMapper::mapToClientListDto);
+		}
+
+		String term = search.trim();
+
+		page = clientRepository
+				.findByBusinessIdAndClientNameContainingIgnoreCaseOrderByClientName(
 						user.getBusiness().getId(),
+						term,
 						pageable
 				);
 
 		return page.map(clientMapper::mapToClientListDto);
 	}
+
 
 }

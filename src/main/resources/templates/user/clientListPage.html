@@ -49,8 +49,23 @@
 
 		</div>
 		
-		<a class="btn btn-success mt-5" href="#" data-bs-toggle="modal"
-			data-bs-target="#newClientModal">Novo cliente +</a>
+		<div class="d-flex mt-5 gap-5">
+			<a class="btn btn-success" href="#" data-bs-toggle="modal"
+						data-bs-target="#newClientModal">Novo cliente +</a>
+						
+			<form class="d-flex" th:action="@{/user/client}" method="get">
+				<input class="form-control me-2"
+				       type="search"
+				       name="search"
+				       th:value="${search}"
+				       placeholder="Buscar por nome">
+
+				<button class="btn btn-outline-primary" type="submit">
+					Buscar
+				</button>
+			</form>
+		</div>
+
 
 		<table class="table table-striped mt-4">
 			<thead>
@@ -88,7 +103,7 @@
 				<li class="page-item"
 				    th:classappend="${clients.first} ? 'disabled'">
 					<a class="page-link"
-					   th:href="@{/user/clients(page=${clients.number - 1})}">
+					   th:href="@{/user/client(page=${clients.number - 1}, search=${search})}">
 						Anterior
 					</a>
 				</li>
@@ -96,7 +111,7 @@
 				<li class="page-item"
 				    th:classappend="${clients.last} ? 'disabled'">
 					<a class="page-link"
-					   th:href="@{/user/clients(page=${clients.number + 1})}">
+					   th:href="@{/user/client(page=${clients.number + 1}, search=${search})}">
 						Próxima
 					</a>
 				</li>

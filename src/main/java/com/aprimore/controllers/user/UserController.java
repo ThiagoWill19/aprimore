@@ -117,6 +117,7 @@ public class UserController {
 			Model model,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(required = false) String search,
 			@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 
@@ -124,10 +125,13 @@ public class UserController {
 				.findAllClientsByBusiness(
 						page,
 						size,
+						search,
 						userDetails.getUser()
 				);
 
 		model.addAttribute("clients", clients);
+		model.addAttribute("search", search);
+
 		return "/user/ClientListPage";
 	}
 
