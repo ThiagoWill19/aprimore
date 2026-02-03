@@ -4,6 +4,9 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +16,7 @@ import com.aprimore.models.Business;
 import com.aprimore.models.Client;
 import com.aprimore.models.User;
 import com.aprimore.models.dtos.ClientDetailsDto;
+import com.aprimore.models.dtos.ClientListDto;
 import com.aprimore.models.dtos.NewClientDto;
 import com.aprimore.models.mappers.ClientMapper;
 import com.aprimore.repositories.BusinessRepository;
@@ -93,4 +97,22 @@ public class ClientService {
 		}
 
 	}
+	
+	public Page<ClientListDto> findAllClientsByBusiness(
+			int pageNum,
+			int size,
+			User user
+	) {
+
+		Pageable pageable = PageRequest.of(pageNum, size);
+
+		Page<Client> page = clientRepository
+				.findByBusinessIdOrderByClientName(
+						user.getBusiness().getId(),
+						pageable
+				);
+
+		return page.map(clientMapper::mapToClientListDto);
+	}
+
 }

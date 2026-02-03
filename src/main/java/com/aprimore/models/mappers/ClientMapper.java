@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.aprimore.models.Client;
 import com.aprimore.models.dtos.ClientDetailsDto;
+import com.aprimore.models.dtos.ClientListDto;
 import com.aprimore.models.dtos.NewClientDto;
 
 @Component
@@ -30,6 +31,10 @@ public class ClientMapper {
 		client.setActive(dto.isActive());
 
 		return client;
+	}
+	
+	public ClientListDto mapToClientListDto(Client client) {
+		return modelMapper.map(client, ClientListDto.class);
 	}
 
 }
