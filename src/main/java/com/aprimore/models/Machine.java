@@ -2,6 +2,7 @@ package com.aprimore.models;
 
 import java.util.UUID;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,7 +27,14 @@ public abstract class Machine {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 	
+	@Column(nullable = false)
 	private String name;
+	
+	private String description;
+	
+	private String observations;
+	
+	private String wave;
 	
 	@ManyToOne
 	private Client client;

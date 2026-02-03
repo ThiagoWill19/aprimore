@@ -167,8 +167,15 @@
 						<div>
 							<p>Máquinas Cadastradas: <span th:text="${client.qntMachines}"></span></p>
 							<div class="d-flex gap-5">
-								<a class="btn btn-outline-primary fw-bold" href="#">Ver máquinas</a>
-								<a class="btn btn-outline-success fw-bold" href="#">Cadastrar Nova Máquina</a>
+								<a class="btn btn-outline-primary fw-bold"
+								   th:href="@{/user/client/{id}/machines(id=${client.id})}">
+									Ver Máquinas
+								</a>
+								<button class="btn btn-success fw-bold"
+								        data-bs-toggle="modal"
+								        data-bs-target="#newMachineModal">
+									Cadastrar Máquina
+								</button>
 							</div>
 						</div>
 					</div>
@@ -192,6 +199,98 @@
 		</div>
 
 	</main>
+	
+	<div class="modal fade" id="newMachineModal" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+
+				<form th:action="@{/user/client/{id}/machines(id=${client.id})}"
+				      method="post">
+
+					<div class="modal-header">
+						<h5 class="modal-title">Cadastrar Máquina</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+
+					<div class="modal-body">
+
+						<div class="mb-3">
+							<label class="form-label">Nome / Modelo</label>
+							<input type="text" name="name" class="form-control" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Descrição</label>
+							<input type="text" name="description" class="form-control">
+						</div>
+						
+						<div class="mb-3">
+							<label class="form-label">Onda</label>
+							<input type="text" name="wave" class="form-control" required>
+					
+						</div>
+						
+
+						<div class="mb-3">
+							<label class="form-label">Tipo</label>
+							<select name="type" class="form-select" id="machineType" required>
+								<option value="">Selecione</option>
+								<option value="ROTARY">Rotativa</option>
+								<option value="FLAT">Plana</option>
+							</select>
+						</div>
+
+						<!-- ROTARY -->
+						<div id="rotaryFields" class="d-none">
+							<div class="row">
+								<div class="col">
+									<input type="number" min="0" name="diameter" class="form-control" placeholder="Diâmetro">
+								</div>
+								<div class="col">
+									<input name="centerLine" class="form-control" placeholder="Linha de centro">
+								</div>
+							</div>
+
+							<div class="row mt-3">
+								<div class="col">
+									<input type="number" min="0" name="totalLengthCylinder" class="form-control" placeholder="Comprimento do cilindro">
+								</div>
+								<div class="col">
+									<input type="number" min="0" name="reduction" class="form-control" placeholder="Redução">
+								</div>
+								<div class="col">
+									<input name="drillingInformation" class="form-control" placeholder="Furação">
+								</div>
+													
+							</div>
+						</div>
+
+						<!-- FLAT -->
+						<div id="flatFields" class="d-none mt-3">
+							<div>
+								<input name="maxSheetDimension" class="form-control" placeholder="Dimensão máxima da chapa. Ex: 1400 x 1600">
+							</div>
+							
+						</div>
+						
+						<div class="mt-3">
+							<label class="form-label">Observações</label>
+							<textarea maxlength="300"  type="text" name="observations" class="form-control" placeholder="Observações sobre essa máquina que podem ser importantes para o desenvolvimento"></textarea>
+						</div>
+
+					</div>
+
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+						        data-bs-dismiss="modal">Cancelar</button>
+						<button type="submit" class="btn btn-success">Salvar</button>
+					</div>
+
+				</form>
+
+			</div>
+		</div>
+	</div>
+
 
 
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
@@ -223,6 +322,8 @@
 		}
 	</script>
 
+	
+	
 	<script>
 		const telefone = document.getElementById('inputPhone');
 
@@ -239,6 +340,8 @@
 
 	</script>
 
+	
+	
 	<script>
 		const cnpj = document.getElementById('inputCnpj');
 
@@ -246,6 +349,28 @@
 			e.target.value = e.target.value.replace(/\D/g, '');
 		});
 	</script>
+	
+	
+	
+	<script>
+		const typeSelect = document.getElementById('machineType');
+		const rotary = document.getElementById('rotaryFields');
+		const flat = document.getElementById('flatFields');
+
+		typeSelect.addEventListener('change', () => {
+			rotary.classList.add('d-none');
+			flat.classList.add('d-none');
+
+			if (typeSelect.value === 'ROTARY') {
+				rotary.classList.remove('d-none');
+			}
+
+			if (typeSelect.value === 'FLAT') {
+				flat.classList.remove('d-none');
+			}
+		});
+	</script>
+
 
 
 </body>
