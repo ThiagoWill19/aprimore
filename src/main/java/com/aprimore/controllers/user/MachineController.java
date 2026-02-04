@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.aprimore.configurations.security.UserDetailsImpl;
 import com.aprimore.models.dtos.MachineListDto;
@@ -26,16 +27,24 @@ public class MachineController {
 			@PathVariable UUID clientId,
 			@RequestParam(defaultValue = "0") int page,
 			Model model,
+			RedirectAttributes redirectAttributes,
 			@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 
-		Page<MachineListDto> machines =
-				machineService.listByClient(clientId, page, 10, userDetails.getUser());
+		try {
+			Page<MachineListDto> machines =
+					machineService.listByClient(clientId, page, 10, userDetails.getUser());
+			model.addAttribute("machines", machines);
+			
+			model.addAttribute("clientId", clientId);
 
-		model.addAttribute("machines", machines);
-		model.addAttribute("clientId", clientId);
+			return "/user/machineListPage";
+			
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("erro",e.getMessage());
+			return "redirect:/user/client/" + clientId;
+		}
 
-		return "/user/machineListPage";
 	}
 
 	@GetMapping("/new")
@@ -54,11 +63,18 @@ public class MachineController {
 	public String createMachine(
 			@PathVariable UUID clientId,
 			NewMachineDto dto,
+			RedirectAttributes redirectAttributes,
 			@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 
-		machineService.createMachine(clientId, dto, userDetails.getUser());
+		try {
+			machineService.createMachine(clientId, dto, userDetails.getUser());
+			return "redirect:/user/client/" + clientId + "/machines";
+			
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("erro",e.getMessage());
+			return "redirect:/user/client/" + clientId;
+		}
 
-		return "redirect:/user/client/" + clientId + "/machines";
 	}
 }
