@@ -58,7 +58,7 @@ public class Client {
 	@ManyToOne
 	private Business business;
 	
-	@OneToOne(orphanRemoval = true)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private Address address;
 	
 	@OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)

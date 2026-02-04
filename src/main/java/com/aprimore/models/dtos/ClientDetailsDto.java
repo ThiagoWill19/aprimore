@@ -32,5 +32,7 @@ public class ClientDetailsDto {
 	private int qntMachines;
 	
 	private int qntServiceOrder;
+	
+	private String address;
 
 }

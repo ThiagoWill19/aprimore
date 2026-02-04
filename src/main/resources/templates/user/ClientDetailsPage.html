@@ -146,7 +146,7 @@
 						<div id="flush-collapseOne" class="accordion-collapse collapse"
 							data-bs-parent="#accordionFlushExample">
 							<div class="accordion-body">
-								<p>Rua Antonio Frederico Ozanan, 141, Santa Cruz - Valinhos SP</p>
+								<p th:text="${client.address} ? ${client.address} : 'Sem endereço cadastrado'"></p>
 								<a class="btn btn-outline-warning btn-sm fw-bold">Alterar Dados de Endereço</a>
 							</div>
 						</div>

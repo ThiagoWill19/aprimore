@@ -50,6 +50,7 @@ public class ClientService {
 		try {
 			return clientRepository.save(newClient);
 		} catch (Exception e) {
+			System.err.println(e.getClass());
 			throw new DomainRuleException(
 					"Ops, você informou dados de uma empresa já cadastrada! Verifique os dados informados.");
 		}

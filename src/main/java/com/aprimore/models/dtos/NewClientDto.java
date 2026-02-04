@@ -16,4 +16,18 @@ public class NewClientDto {
 	private String clientEmail;
 	
 	private String clientPhoneNumber;
+	
+	// Address
+	
+	private String street;
+	
+	private String number;
+
+	private String neighborhood;
+	
+	private String city;
+	
+	private String state;
+	
+	private String zipCode;
 }
