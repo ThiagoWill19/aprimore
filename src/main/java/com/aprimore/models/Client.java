@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -56,6 +57,9 @@ public class Client {
 	
 	@ManyToOne
 	private Business business;
+	
+	@OneToOne(orphanRemoval = true)
+	private Address address;
 	
 	@OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Machine> machines = new ArrayList<>();
