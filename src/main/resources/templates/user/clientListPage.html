@@ -162,6 +162,30 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
 	        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
 	        crossorigin="anonymous"></script>
+			
+			<script>
+					  const telefone = document.getElementById('inputPhone');
+
+					  telefone.addEventListener('input', function (e) {
+					    let valor = e.target.value.replace(/\D/g, '');
+
+					    if (valor.length > 11) valor = valor.slice(0, 11);
+
+					    valor = valor.replace(/^(\d{2})(\d)/, '($1) $2');
+					    valor = valor.replace(/(\d{5})(\d)/, '$1-$2');
+
+					    e.target.value = valor;
+					  });
+					  
+					</script>
+					
+					<script>
+					  const cnpj = document.getElementById('inputCNPJ');
+
+					  cnpj.addEventListener('input', function (e) {
+					    e.target.value = e.target.value.replace(/\D/g, '');
+					  });
+					</script>
 
 </body>
 </html>
