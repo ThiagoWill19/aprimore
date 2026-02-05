@@ -23,6 +23,7 @@ import com.aprimore.repositories.BusinessRepository;
 import com.aprimore.repositories.ClientRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class ClientService {
@@ -36,6 +37,7 @@ public class ClientService {
 	@Autowired
 	private ClientMapper clientMapper;
 
+	@Transactional
 	public Client newClient(NewClientDto newClientDto, UUID businessId){
 
 		Business business = businessRepository.findById(businessId)
@@ -43,14 +45,22 @@ public class ClientService {
 
 		newClientDto.setCnpj(newClientDto.getCnpj().replaceAll("\\D", ""));
 		newClientDto.setClientPhoneNumber(newClientDto.getClientPhoneNumber().replaceAll("\\D", ""));
+		
+		if (clientRepository.existsByBusinessIdAndClientEmail(businessId, newClientDto.getClientEmail())) {
+		    throw new DomainRuleException("Já existe um cliente com esse e-mail.");
+		}
+
+		if (clientRepository.existsByBusinessIdAndCnpj(businessId, newClientDto.getCnpj())) {
+		    throw new DomainRuleException("Já existe um cliente com esse CNPJ.");
+		}
+
 
 		Client newClient = clientMapper.mapToClient(newClientDto);
 		newClient.setBusiness(business);
 
 		try {
 			return clientRepository.save(newClient);
-		} catch (Exception e) {
-			System.err.println(e.getClass());
+		} catch (DataIntegrityViolationException e) {
 			throw new DomainRuleException(
 					"Ops, você informou dados de uma empresa já cadastrada! Verifique os dados informados.");
 		}

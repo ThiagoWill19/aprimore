@@ -15,6 +15,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,20 +28,27 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(
+		name = "client",
+		uniqueConstraints = 
+		{
+			@UniqueConstraint(columnNames = {"business_id", "email"}),
+			@UniqueConstraint(columnNames = {"business_id", "cnpj"})
+		})
 public class Client {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 	
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false)
 	private String cnpj;
 	
 	@Column(name="client_name", nullable = false)
 	private String clientName;
 	
 
-	@Column(name="email", nullable = false, unique = true)
+	@Column(name="email", nullable = false)
 	private String clientEmail;
 	
 	@Column(name="phone_number")
