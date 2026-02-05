@@ -84,9 +84,9 @@
 									required disabled>
 							</div>
 							<div class="d-flex gap-3">
-								<a class="btn btn-outline-success" href="#" target="_blank"><i
+								<a class="btn btn-outline-success" th:href="'https://wa.me/' + ${client.clientPhoneNumber}" target="_blank"><i
 										class="bi bi-whatsapp"></i></a>
-								<a class="btn btn-outline-primary" href="#" target="_blank"><i
+								<a class="btn btn-outline-primary" th:href="'mailto:' + ${client.clientEmail}" target="_blank"><i
 										class="bi bi-envelope-fill"></i></a>
 							</div>
 						</div>
