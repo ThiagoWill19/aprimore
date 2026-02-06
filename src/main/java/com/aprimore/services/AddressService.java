@@ -10,6 +10,8 @@ import com.aprimore.exceptions.ResourceNotFoundException;
 import com.aprimore.models.Address;
 import com.aprimore.models.Client;
 import com.aprimore.models.User;
+import com.aprimore.models.dtos.UpdateAddressDto;
+import com.aprimore.models.mappers.AddressMapper;
 import com.aprimore.repositories.AddressRepository;
 import com.aprimore.repositories.ClientRepository;
 
@@ -22,6 +24,10 @@ public class AddressService {
 	@Autowired
 	ClientRepository clientRepository;
 	
+	@Autowired
+	private AddressMapper addressMapper;
+
+	
 	public void createAddress(UUID clientId, Address address, User user) {
 		
 		Client client = clientRepository.findById(clientId)
@@ -33,5 +39,28 @@ public class AddressService {
 		
 			addressRepository.save(address);
 	}
+	
+	
+	public void updateAddress(UpdateAddressDto dto, User user) {
+
+	    Client client = clientRepository.findById(dto.getClientId())
+	            .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+
+	    if (!client.getBusiness().getId().equals(user.getBusiness().getId())) {
+	        throw new AccessDeniedException("Acesso negado");
+	    }
+
+	    Address address = client.getAddress();
+
+	    if (address == null) {
+	        throw new ResourceNotFoundException("Cliente não possui endereço cadastrado");
+	    }
+
+	    addressMapper.updateAddressFromDto(dto, address);
+
+	    addressRepository.save(address);
+	}
+
+
 
 }

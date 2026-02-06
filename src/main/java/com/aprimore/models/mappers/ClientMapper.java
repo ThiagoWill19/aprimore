@@ -36,7 +36,6 @@ public class ClientMapper {
 	public ClientDetailsDto mapToClientDetailsDto(Client client) {
 		
 		ClientDetailsDto clientDetailsDto = modelMapper.map(client, ClientDetailsDto.class);
-		clientDetailsDto.setAddress(client.getAddress().toString()); // Somente a String de Address para o DTO
 		return clientDetailsDto;
 	}
 

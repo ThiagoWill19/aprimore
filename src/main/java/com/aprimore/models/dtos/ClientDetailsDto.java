@@ -3,6 +3,8 @@ package com.aprimore.models.dtos;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import com.aprimore.models.Address;
+
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -33,6 +35,7 @@ public class ClientDetailsDto {
 	
 	private int qntServiceOrder;
 	
-	private String address;
+	private Address address;
+
 
 }

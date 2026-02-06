@@ -21,6 +21,8 @@ import com.aprimore.models.Client;
 import com.aprimore.models.dtos.ClientDetailsDto;
 import com.aprimore.models.dtos.ClientListDto;
 import com.aprimore.models.dtos.NewClientDto;
+import com.aprimore.models.dtos.UpdateAddressDto;
+import com.aprimore.services.AddressService;
 import com.aprimore.services.ClientService;
 
 import jakarta.validation.Valid;
@@ -31,6 +33,9 @@ public class UserController {
 	
 	@Autowired
 	private ClientService clientService;
+	
+	@Autowired
+	private AddressService addressService;
 
 	@GetMapping
 	public String inicialPage(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -134,5 +139,16 @@ public class UserController {
 
 		return "/user/ClientListPage";
 	}
+	
+	@PostMapping("/client/address/update")
+	public String updateAddress(
+	        UpdateAddressDto addressDto,
+	        @AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+	    addressService.updateAddress(addressDto, userDetails.getUser());
+	    return "redirect:/user/client/" + addressDto.getClientId();
+	}
+
+
 
 }

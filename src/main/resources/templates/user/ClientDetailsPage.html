@@ -146,8 +146,12 @@
 						<div id="flush-collapseOne" class="accordion-collapse collapse"
 							data-bs-parent="#accordionFlushExample">
 							<div class="accordion-body">
-								<p th:text="${client.address} ? ${client.address} : 'Sem endereço cadastrado'"></p>
-								<a class="btn btn-outline-warning btn-sm fw-bold">Alterar Dados de Endereço</a>
+								<p th:text="${client.address != null ? client.address : 'Sem endereço cadastrado'}"></p>
+								<a class="btn btn-outline-warning btn-sm fw-bold"
+								   data-bs-toggle="modal"
+								   data-bs-target="#editAddressModal">
+								   Alterar Dados de Endereço
+								</a>
 							</div>
 						</div>
 					</div>
@@ -200,6 +204,7 @@
 
 	</main>
 	
+	<!--Modal cadastro de máquina-->
 	<div class="modal fade" id="newMachineModal" tabindex="-1">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
@@ -290,6 +295,108 @@
 			</div>
 		</div>
 	</div>
+
+	
+	<!-- Modal Edit Address -->
+	<div class="modal fade" id="editAddressModal" tabindex="-1" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+
+	            <form th:action="@{/user/client/address/update}" method="post" th:object="${updateAddress}">
+
+	                <div class="modal-header">
+	                    <h5 class="modal-title">Editar endereço</h5>
+	                    <button type="button"
+	                            class="btn-close"
+	                            data-bs-dismiss="modal"
+	                            aria-label="Close">
+	                    </button>
+	                </div>
+
+	                <div class="modal-body">
+
+	                    <!-- clientId -->
+	                    <input type="hidden"
+	                           name="clientId"
+	                           th:value="${client.id}"/>
+
+	                    <!-- street -->
+	                    <div class="mb-3">
+	                        <label class="form-label">Rua</label>
+	                        <input type="text"
+	                               class="form-control"
+	                               name="street"
+	                               th:value="${client.address.street}">
+	                    </div>
+
+	                    <!-- number -->
+	                    <div class="mb-3">
+	                        <label class="form-label">Número</label>
+	                        <input type="number"
+							       min="1"
+	                               class="form-control"
+	                               name="number"
+	                               th:value="${client.address.number}">
+	                    </div>
+						
+						<!-- neighborhood -->
+						<div class="mb-3">
+						    <label class="form-label">Bairro</label>
+						    <input type="text"
+						           class="form-control"
+						           name="neighborhood"
+						           th:value="${client.address.neighborhood}" required>
+						</div>
+
+	                    <!-- city -->
+	                    <div class="mb-3">
+	                        <label class="form-label">Cidade</label>
+	                        <input type="text"
+	                               class="form-control"
+	                               name="city"
+	                               th:value="${client.address.city}" required>
+	                    </div>
+
+	                    <!-- state -->
+	                    <div class="mb-3">
+	                        <label class="form-label">Estado</label>
+	                        <input type="text"
+	                               class="form-control"
+	                               name="state"
+	                               th:value="${client.address.state}" required>
+	                    </div>
+
+	                    <!-- zipCode -->
+	                    <div class="mb-3">
+	                        <label class="form-label">CEP</label>
+	                        <input type="number"
+								   
+	                               class="form-control"
+	                               name="zipCode"
+	                               th:value="${client.address.zipCode}">
+	                    </div>
+
+	                </div>
+
+	                <div class="modal-footer">
+	                    <button type="button"
+	                            class="btn btn-secondary"
+	                            data-bs-dismiss="modal">
+	                        Cancelar
+	                    </button>
+
+	                    <button type="submit"
+	                            class="btn btn-primary">
+	                        Salvar endereço
+	                    </button>
+	                </div>
+
+	            </form>
+
+	        </div>
+	    </div>
+	</div>
+
 
 
 
