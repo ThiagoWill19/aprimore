@@ -66,7 +66,6 @@ public class UserController {
 			return "redirect:/user/client/" + client.getId();
 			
 		} catch (DomainRuleException e) {
-			
 			redirectAttributes.addFlashAttribute("erro",e.getMessage());
 			return "redirect:/user";
 		}
