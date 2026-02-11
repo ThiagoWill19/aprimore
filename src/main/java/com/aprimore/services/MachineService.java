@@ -48,7 +48,7 @@ public class MachineService {
 		Pageable pageable = PageRequest.of(page, size);
 
 		return machineRepository
-				.findByClientIdOrderByName(clientId, pageable)
+				.findByClientIdOrderByActiveDescNameAsc(clientId, pageable)
 				.map(machineMapper::mapToListDto);
 	}
 
@@ -65,5 +65,20 @@ public class MachineService {
 		machine.setClient(client);
 
 		machineRepository.save(machine);
+	}
+	
+	public void updateMachineStatus(UUID machineId, User user) {
+		
+		Machine machine = machineRepository.findById(machineId)
+				.orElseThrow(() -> new ResourceNotFoundException("Máquina nao encontrada"));
+		
+		if(!machine.getClient().getBusiness().getId().equals(user.getBusiness().getId())) {
+			throw new AccessDeniedException("Acesso negado");
+		}
+		
+		machine.setActive(!machine.isActive());
+		
+		machineRepository.save(machine);
+		
 	}
 }

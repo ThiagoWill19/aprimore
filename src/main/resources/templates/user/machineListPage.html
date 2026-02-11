@@ -49,18 +49,38 @@
 					<th>Nome</th>
 					<th>Tipo</th>
 					<th>Tipo de Onda</th>
+					<th>Status</th>
+					<th></th>
 					<th class="text-end">Ações</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="machine : ${machines.content}">
+				<tr th:each="machine : ${machines.content}" th:class="${machine.active} ? 'opacity-100' : 'opacity-50'">
 					<td th:text="${machine.name}"></td>
-					<td th:text="${machine.type}"></td>
+					<td th:text="${machine.type == 'ROTARY'} ? 'Rotativa' : 'Plana'"></td>
 					<td th:text="${machine.wave}"></td>
+					<td th:class="${machine.active} ? 'text-success' : 'text-danger'" th:text="${machine.active} ? 'Ativa' : 'Desativada'"></td>
+					<td>
+						<form th:action="@{/user/client/{clientId}/machines/machine/{id}/updateStatus(clientId =${clientId},id=${machine.id})}"
+							      method="post"
+							      class="d-inline">
+
+								<input type="hidden" name="clientId" th:value="${clientId}">
+
+								<button type="submit"
+								        class="btn btn-sm"
+										th:classAppend="${machine.active} ? 'btn-outline-danger' : 'btn-outline-success'"
+								        onclick="return confirm('Deseja alterar o status dessa máquina?')">
+									<i  th:class="${machine.active} ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"></i>
+								</button>
+							</form>
+					</td>
 					<td class="text-end">
+
 						<a class="btn btn-sm btn-outline-primary disabled">
 							Detalhes
 						</a>
+						
 					</td>
 				</tr>
 			</tbody>

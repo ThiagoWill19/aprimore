@@ -10,6 +10,6 @@ import com.aprimore.models.Machine;
 
 public interface MachineRepository extends JpaRepository<Machine, UUID> {
 	
-	Page<Machine> findByClientIdOrderByName(UUID clientId, Pageable pageable);
+	Page<Machine> findByClientIdOrderByActiveDescNameAsc(UUID clientId, Pageable pageable);
 
 }

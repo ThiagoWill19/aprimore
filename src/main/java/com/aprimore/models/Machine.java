@@ -36,6 +36,8 @@ public abstract class Machine {
 	
 	private String wave;
 	
+	private boolean active;
+	
 	@ManyToOne
 	private Client client;
 	

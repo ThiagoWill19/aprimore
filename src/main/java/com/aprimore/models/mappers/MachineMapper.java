@@ -17,6 +17,7 @@ public class MachineMapper {
 		dto.setId(machine.getId());
 		dto.setName(machine.getName());
 		dto.setWave(machine.getWave());
+		dto.setActive(machine.isActive());
 		dto.setType(machine instanceof RotaryMachine ? "ROTARY" : "FLAT");
 
 		return dto;
@@ -35,6 +36,7 @@ public class MachineMapper {
 			machine.setTotalLengthCylinder(dto.getTotalLengthCylinder());
 			machine.setReduction(dto.getReduction());
 			machine.setDrillingInformation(dto.getDrillingInformation());
+			machine.setActive(true);
 			return machine;
 		}
 
@@ -44,6 +46,7 @@ public class MachineMapper {
 		machine.setWave(dto.getWave());;
 		machine.setDescription(dto.getDescription());
 		machine.setObservations(dto.getObservations());
+		machine.setActive(true);
 		return machine;
 	}
 }

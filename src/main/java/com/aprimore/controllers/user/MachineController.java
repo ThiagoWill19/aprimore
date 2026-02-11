@@ -77,4 +77,32 @@ public class MachineController {
 		}
 
 	}
+	
+	@PostMapping("/machine/{machineId}/updateStatus")
+	public String updateMachine(
+			@PathVariable UUID machineId,
+			@RequestParam UUID clientId,
+			@AuthenticationPrincipal UserDetailsImpl userDetails,
+			RedirectAttributes redirectAttributes
+	) {
+
+		try {
+
+			machineService.updateMachineStatus(machineId, userDetails.getUser());
+			redirectAttributes.addFlashAttribute(
+					"success",
+					"Máquina removida com sucesso!"
+			);
+
+		} catch (Exception e) {
+
+			redirectAttributes.addFlashAttribute(
+					"erro",
+					e.getMessage()
+			);
+		}
+
+		return "redirect:/user/client/" + clientId + "/machines";
+	}
+
 }
