@@ -41,6 +41,9 @@ public class MachineMapper {
 		FlatMachine machine = new FlatMachine();
 		machine.setName(dto.getName());
 		machine.setMaxSheetDimension(dto.getMaxSheetDimension());
+		machine.setWave(dto.getWave());;
+		machine.setDescription(dto.getDescription());
+		machine.setObservations(dto.getObservations());
 		return machine;
 	}
 }
