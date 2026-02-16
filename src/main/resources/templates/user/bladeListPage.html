@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Aprimore | Lâminas</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+
+<body>
+
+	<nav class="navbar navbar-expand-lg bg-body-tertiary">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="/user">Aprimore</a>
+		</div>
+	</nav>
+
+	<div class="container mt-4">
+
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item"><a th:href="@{/user}">Home</a></li>
+				<li class="breadcrumb-item active">Lâminas</li>
+			</ol>
+		</nav>
+
+		<h3>Cadastro de Lâminas</h3>
+
+		<div th:if="${success}" class="alert alert-success mt-3" th:text="${success}"></div>
+		<div th:if="${erro}" class="alert alert-danger mt-3" th:text="${erro}"></div>
+
+		<form th:action="@{/user/blades}" method="post" th:object="${newBlade}" class="row g-3 mt-1">
+			<div class="col-md-4">
+				<label class="form-label" for="name">Nome</label>
+				<input id="name" type="text" class="form-control" th:field="*{name}" required>
+			</div>
+
+			<div class="col-md-4">
+				<label class="form-label" for="bladeType">Tipo</label>
+				<select id="bladeType" class="form-select" th:field="*{bladeType}" required>
+					<option value="">Selecione...</option>
+					<option value="STRAIGHT_CUT">Corte reto</option>
+					<option value="CURVED_CUT">Corte curvo</option>
+					<option value="STRAIGHT_CREASE">Vinco reto</option>
+					<option value="CURVED_CREASE">Vinco curvo</option>
+					<option value="STRAIGHT_PERFORATION">Perfuração reta</option>
+					<option value="CUVED_PERFORATION">Perfuração curva</option>
+				</select>
+			</div>
+
+			<div class="col-md-4">
+				<label class="form-label" for="manufacturer">Fabricante</label>
+				<input id="manufacturer" type="text" class="form-control" th:field="*{manufacturer}">
+			</div>
+
+			<div class="col-md-4">
+				<label class="form-label" for="supplier">Fornecedor</label>
+				<input id="supplier" type="text" class="form-control" th:field="*{supplier}">
+			</div>
+
+			<div class="col-md-8">
+				<label class="form-label" for="description">Descrição</label>
+				<input id="description" type="text" class="form-control" th:field="*{description}">
+			</div>
+
+			<div class="col-12">
+				<button class="btn btn-success" type="submit">Cadastrar lâmina</button>
+			</div>
+		</form>
+
+		<hr class="my-4">
+
+		<h4>Lâminas cadastradas</h4>
+		<table class="table table-hover mt-3">
+			<thead>
+				<tr>
+					<th>Nome</th>
+					<th>Tipo</th>
+					<th>Fabricante</th>
+					<th>Fornecedor</th>
+					<th class="text-end">Ações</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:if="${#lists.isEmpty(blades)}">
+					<td colspan="5" class="text-center text-muted">Nenhuma lâmina cadastrada.</td>
+				</tr>
+				<tr th:each="blade : ${blades}">
+					<td th:text="${blade.name}"></td>
+					<td th:text="${blade.bladeType}"></td>
+					<td th:text="${blade.manufacturer}"></td>
+					<td th:text="${blade.supplier}"></td>
+					<td class="text-end">
+						<form th:action="@{/user/blades/{id}/delete(id=${blade.id})}" method="post" class="d-inline">
+							<button type="submit" class="btn btn-sm btn-outline-danger"
+								onclick="return confirm('Deseja remover essa lâmina?')">Remover</button>
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
+
+</body>
+
+</html>

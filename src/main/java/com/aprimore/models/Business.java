@@ -60,6 +60,9 @@ public class Business {
 	
 	@OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<User> users = new ArrayList<>();
+
+	@OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Blade> blades = new ArrayList<>();
 	
 	@PrePersist
 	private void prePersist() {
