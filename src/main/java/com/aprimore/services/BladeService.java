@@ -50,7 +50,7 @@ public class BladeService {
         String normalizedName = newBladeDto.getName().trim();
 
         if (itemRepository.existsBladeByBusinessIdAndName(businessId, normalizedName)) {
-            throw new DomainRuleException("Já existe uma lâmina com esse nome para essa empresa.");
+            throw new DomainRuleException("Já existe uma lâmina com esse nome.");
         }
 
         Blade blade = bladeMapper.mapToBlade(newBladeDto, business);
