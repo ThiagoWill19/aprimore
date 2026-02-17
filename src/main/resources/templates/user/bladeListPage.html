@@ -89,17 +89,7 @@
 				</tr>
 				<tr th:each="blade : ${blades}">
 					<td th:text="${blade.name}"></td>
-					<td>
-							<span th:switch="${blade.bladeType}">
-								<span th:case="'STRAIGHT_CUT'">Corte reto</span>
-								<span th:case="'CURVED_CUT'">Corte curvo</span>
-								<span th:case="'STRAIGHT_CREASE'">Vinco reto</span>
-								<span th:case="'CURVED_CREASE'">Vinco curvo</span>
-								<span th:case="'STRAIGHT_PERFORATION'">Perfuração reta</span>
-								<span th:case="'CUVED_PERFORATION'">Perfuração curva</span>
-								<span th:case="*">-</span>
-							</span>
-						</td>
+					<td th:text="${blade.bladeType}"></td>
 					<td th:text="${blade.manufacturer}"></td>
 					<td th:text="${blade.supplier}"></td>
 					<td class="text-end">
