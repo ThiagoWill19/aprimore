@@ -44,7 +44,16 @@ public class UserDetailsImpl implements UserDetails {
 	
 	@Override
 	public boolean isEnabled() {
-	    return user.getAccountStatus() == AccountStatus.ACTIVE;
+	    if (user.getAccountStatus() != AccountStatus.ACTIVE) {
+	        return false;
+	    }
+
+	    // Admins seeded for local/test may not be linked to a business.
+	    if (user.getBusiness() == null) {
+	        return true;
+	    }
+
+	    return user.getBusiness().getAccountStatus() == AccountStatus.ACTIVE;
 	}
 
 	@Override

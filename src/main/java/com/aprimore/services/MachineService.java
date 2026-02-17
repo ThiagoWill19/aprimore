@@ -15,6 +15,7 @@ import com.aprimore.models.Machine;
 import com.aprimore.models.User;
 import com.aprimore.models.dtos.MachineListDto;
 import com.aprimore.models.dtos.NewMachineDto;
+import com.aprimore.models.enuns.AccountStatus;
 import com.aprimore.models.mappers.MachineMapper;
 import com.aprimore.repositories.ClientRepository;
 import com.aprimore.repositories.MachineRepository;
@@ -44,6 +45,10 @@ public class MachineService {
 		if (!client.getBusiness().getId().equals(user.getBusiness().getId())) {
 			throw new AccessDeniedException("Acesso negado");
 		}
+		
+		if (client.getBusiness().getAccountStatus() != AccountStatus.ACTIVE) {
+			throw new AccessDeniedException("Empresa inativa. Operacoes nao permitidas.");
+		}
 
 		Pageable pageable = PageRequest.of(page, size);
 
@@ -60,6 +65,10 @@ public class MachineService {
 		if (!client.getBusiness().getId().equals(user.getBusiness().getId())) {
 			throw new AccessDeniedException("Acesso negado");
 		}
+		
+		if (client.getBusiness().getAccountStatus() != AccountStatus.ACTIVE) {
+			throw new AccessDeniedException("Empresa inativa. Operacoes nao permitidas.");
+		}
 
 		Machine machine = machineMapper.mapToMachine(dto);
 		machine.setClient(client);
@@ -74,6 +83,10 @@ public class MachineService {
 		
 		if(!machine.getClient().getBusiness().getId().equals(user.getBusiness().getId())) {
 			throw new AccessDeniedException("Acesso negado");
+		}
+		
+		if (machine.getClient().getBusiness().getAccountStatus() != AccountStatus.ACTIVE) {
+			throw new AccessDeniedException("Empresa inativa. Operacoes nao permitidas.");
 		}
 		
 		machine.setActive(!machine.isActive());

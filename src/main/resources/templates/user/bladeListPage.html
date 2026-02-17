@@ -102,10 +102,6 @@
 					</td>
 					<td th:text="${blade.manufacturer}"></td>
 					<td th:text="${blade.supplier}"></td>
-					
-					<p th:text="'bladeType=' + ${blade.bladeType}"></p>
-					<p th:text="'name=' + ${blade.bladeType != null ? blade.bladeType.name() : 'null'}"></p>
-					<p th:text="'class=' + ${blade.bladeType != null ? blade.bladeType.getClass().getName() : 'null'}"></p>
 
 					<td class="text-end">
 						<form th:action="@{/user/blades/{id}/delete(id=${blade.id})}" method="post" class="d-inline">

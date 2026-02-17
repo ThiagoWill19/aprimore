@@ -15,6 +15,7 @@ import com.aprimore.models.Business;
 import com.aprimore.models.User;
 import com.aprimore.models.dtos.BladeListDto;
 import com.aprimore.models.dtos.NewBladeDto;
+import com.aprimore.models.enuns.AccountStatus;
 import com.aprimore.models.mappers.BladeMapper;
 import com.aprimore.repositories.BusinessRepository;
 import com.aprimore.repositories.ItemRepository;
@@ -47,6 +48,10 @@ public class BladeService {
         Business business = businessRepository.findById(businessId)
                 .orElseThrow(() -> new ResourceNotFoundException("Empresa não encontrada"));
 
+        if (business.getAccountStatus() != AccountStatus.ACTIVE) {
+            throw new AccessDeniedException("Empresa inativa. Operacoes nao permitidas.");
+        }
+
         String normalizedName = newBladeDto.getName().trim();
 
         if (itemRepository.existsBladeByBusinessIdAndName(businessId, normalizedName)) {
@@ -68,6 +73,10 @@ public class BladeService {
 
         if (!blade.getBusiness().getId().equals(user.getBusiness().getId())) {
             throw new AccessDeniedException("Você não tem permissão para remover esta lâmina.");
+        }
+
+        if (blade.getBusiness().getAccountStatus() != AccountStatus.ACTIVE) {
+            throw new AccessDeniedException("Empresa inativa. Operacoes nao permitidas.");
         }
 
         itemRepository.delete(blade);

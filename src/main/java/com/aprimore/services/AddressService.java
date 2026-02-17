@@ -11,6 +11,7 @@ import com.aprimore.models.Address;
 import com.aprimore.models.Client;
 import com.aprimore.models.User;
 import com.aprimore.models.dtos.UpdateAddressDto;
+import com.aprimore.models.enuns.AccountStatus;
 import com.aprimore.models.mappers.AddressMapper;
 import com.aprimore.repositories.AddressRepository;
 import com.aprimore.repositories.ClientRepository;
@@ -37,6 +38,10 @@ public class AddressService {
 			throw new AccessDeniedException("Acesso negado");
 		}
 		
+		if (client.getBusiness().getAccountStatus() != AccountStatus.ACTIVE) {
+			throw new AccessDeniedException("Empresa inativa. Operacoes nao permitidas.");
+		}
+		
 			addressRepository.save(address);
 	}
 	
@@ -48,6 +53,10 @@ public class AddressService {
 
 	    if (!client.getBusiness().getId().equals(user.getBusiness().getId())) {
 	        throw new AccessDeniedException("Acesso negado");
+	    }
+	    
+	    if (client.getBusiness().getAccountStatus() != AccountStatus.ACTIVE) {
+	        throw new AccessDeniedException("Empresa inativa. Operacoes nao permitidas.");
 	    }
 
 	    Address address = client.getAddress();

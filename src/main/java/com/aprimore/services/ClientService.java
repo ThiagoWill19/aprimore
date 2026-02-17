@@ -18,6 +18,7 @@ import com.aprimore.models.User;
 import com.aprimore.models.dtos.ClientDetailsDto;
 import com.aprimore.models.dtos.ClientListDto;
 import com.aprimore.models.dtos.NewClientDto;
+import com.aprimore.models.enuns.AccountStatus;
 import com.aprimore.models.mappers.ClientMapper;
 import com.aprimore.repositories.BusinessRepository;
 import com.aprimore.repositories.ClientRepository;
@@ -42,6 +43,10 @@ public class ClientService {
 
 		Business business = businessRepository.findById(businessId)
 				.orElseThrow(() -> new EntityNotFoundException("Business not found"));
+
+		if (business.getAccountStatus() != AccountStatus.ACTIVE) {
+			throw new AccessDeniedException("Empresa inativa. Operacoes nao permitidas.");
+		}
 
 		newClientDto.setCnpj(newClientDto.getCnpj().replaceAll("\\D", ""));
 		newClientDto.setClientPhoneNumber(newClientDto.getClientPhoneNumber().replaceAll("\\D", ""));
@@ -94,6 +99,10 @@ public class ClientService {
 		if (!client.getBusiness().getId().equals(user.getBusiness().getId())) {
 
 			throw new AccessDeniedException("Você não tem permissão para alterar este recurso.");
+		}
+
+		if (client.getBusiness().getAccountStatus() != AccountStatus.ACTIVE) {
+			throw new AccessDeniedException("Empresa inativa. Operacoes nao permitidas.");
 		}
 
 		client = clientMapper.mapToClient(clientDetailsDto, client);
