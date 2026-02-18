@@ -13,6 +13,7 @@ import com.aprimore.exceptions.ResourceNotFoundException;
 import com.aprimore.models.Client;
 import com.aprimore.models.Machine;
 import com.aprimore.models.User;
+import com.aprimore.models.dtos.MachineDetailsDto;
 import com.aprimore.models.dtos.MachineListDto;
 import com.aprimore.models.dtos.NewMachineDto;
 import com.aprimore.models.enuns.AccountStatus;
@@ -32,66 +33,79 @@ public class MachineService {
 	@Autowired
 	private MachineMapper machineMapper;
 
-	public Page<MachineListDto> listByClient(
-			UUID clientId,
-			int page,
-			int size,
-			User user
-	) {
+	public Page<MachineListDto> listByClient(UUID clientId, int page, int size, User user) {
 
 		Client client = clientRepository.findById(clientId)
-				.orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+				.orElseThrow(() -> new ResourceNotFoundException("Cliente nao encontrado"));
 
-		if (!client.getBusiness().getId().equals(user.getBusiness().getId())) {
-			throw new AccessDeniedException("Acesso negado");
-		}
-		
-		if (client.getBusiness().getAccountStatus() != AccountStatus.ACTIVE) {
-			throw new AccessDeniedException("Empresa inativa. Operacoes nao permitidas.");
-		}
+		validateClientAccess(client, user);
 
 		Pageable pageable = PageRequest.of(page, size);
 
-		return machineRepository
-				.findByClientIdOrderByActiveDescNameAsc(clientId, pageable)
+		return machineRepository.findByClientIdOrderByActiveDescNameAsc(clientId, pageable)
 				.map(machineMapper::mapToListDto);
 	}
 
 	public void createMachine(UUID clientId, NewMachineDto dto, User user) {
 
 		Client client = clientRepository.findById(clientId)
-				.orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+				.orElseThrow(() -> new ResourceNotFoundException("Cliente nao encontrado"));
 
-		if (!client.getBusiness().getId().equals(user.getBusiness().getId())) {
-			throw new AccessDeniedException("Acesso negado");
-		}
-		
-		if (client.getBusiness().getAccountStatus() != AccountStatus.ACTIVE) {
-			throw new AccessDeniedException("Empresa inativa. Operacoes nao permitidas.");
-		}
+		validateClientAccess(client, user);
 
 		Machine machine = machineMapper.mapToMachine(dto);
 		machine.setClient(client);
 
 		machineRepository.save(machine);
 	}
-	
-	public void updateMachineStatus(UUID machineId, User user) {
-		
+
+	public void updateMachineStatus(UUID clientId, UUID machineId, User user) {
+
 		Machine machine = machineRepository.findById(machineId)
-				.orElseThrow(() -> new ResourceNotFoundException("Máquina nao encontrada"));
-		
-		if(!machine.getClient().getBusiness().getId().equals(user.getBusiness().getId())) {
+				.orElseThrow(() -> new ResourceNotFoundException("Maquina nao encontrada"));
+
+		validateMachineOwnership(machine, clientId, user);
+
+		machine.setActive(!machine.isActive());
+
+		machineRepository.save(machine);
+	}
+
+	public MachineDetailsDto findById(UUID clientId, UUID machineId, User user) {
+		Machine machine = machineRepository.findById(machineId)
+				.orElseThrow(() -> new ResourceNotFoundException("Maquina nao encontrada"));
+
+		validateMachineOwnership(machine, clientId, user);
+
+		return machineMapper.mapToDetailsDto(machine);
+	}
+
+	public void updateMachine(UUID clientId, UUID machineId, MachineDetailsDto dto, User user) {
+
+		Machine machine = machineRepository.findById(machineId)
+				.orElseThrow(() -> new ResourceNotFoundException("Maquina nao encontrada"));
+
+		validateMachineOwnership(machine, clientId, user);
+
+		machineMapper.updateMachineFromDetailsDto(dto, machine);
+		machineRepository.save(machine);
+	}
+
+	private void validateMachineOwnership(Machine machine, UUID clientId, User user) {
+		validateClientAccess(machine.getClient(), user);
+
+		if (!machine.getClient().getId().equals(clientId)) {
 			throw new AccessDeniedException("Acesso negado");
 		}
-		
-		if (machine.getClient().getBusiness().getAccountStatus() != AccountStatus.ACTIVE) {
+	}
+
+	private void validateClientAccess(Client client, User user) {
+		if (!client.getBusiness().getId().equals(user.getBusiness().getId())) {
+			throw new AccessDeniedException("Acesso negado");
+		}
+
+		if (client.getBusiness().getAccountStatus() != AccountStatus.ACTIVE) {
 			throw new AccessDeniedException("Empresa inativa. Operacoes nao permitidas.");
 		}
-		
-		machine.setActive(!machine.isActive());
-		
-		machineRepository.save(machine);
-		
 	}
 }

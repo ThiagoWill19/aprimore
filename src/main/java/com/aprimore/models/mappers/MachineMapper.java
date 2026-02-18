@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import com.aprimore.models.FlatMachine;
 import com.aprimore.models.Machine;
 import com.aprimore.models.RotaryMachine;
+import com.aprimore.models.dtos.MachineDetailsDto;
 import com.aprimore.models.dtos.MachineListDto;
 import com.aprimore.models.dtos.NewMachineDto;
 
@@ -48,5 +49,53 @@ public class MachineMapper {
 		machine.setObservations(dto.getObservations());
 		machine.setActive(true);
 		return machine;
+	}
+
+	public MachineDetailsDto mapToDetailsDto(Machine machine) {
+
+		MachineDetailsDto dto = new MachineDetailsDto();
+		dto.setId(machine.getId());
+		dto.setClientId(machine.getClient().getId());
+		dto.setClientName(machine.getClient().getClientName());
+		dto.setName(machine.getName());
+		dto.setWave(machine.getWave());
+		dto.setDescription(machine.getDescription());
+		dto.setObservations(machine.getObservations());
+		dto.setActive(machine.isActive());
+
+		if (machine instanceof RotaryMachine rotaryMachine) {
+			dto.setType("ROTARY");
+			dto.setDiameter(rotaryMachine.getDiameter());
+			dto.setCenterLine(rotaryMachine.getCenterLine());
+			dto.setTotalLengthCylinder(rotaryMachine.getTotalLengthCylinder());
+			dto.setReduction(rotaryMachine.getReduction());
+			dto.setDrillingInformation(rotaryMachine.getDrillingInformation());
+			return dto;
+		}
+
+		FlatMachine flatMachine = (FlatMachine) machine;
+		dto.setType("FLAT");
+		dto.setMaxSheetDimension(flatMachine.getMaxSheetDimension());
+		return dto;
+	}
+
+	public void updateMachineFromDetailsDto(MachineDetailsDto dto, Machine machine) {
+		machine.setName(dto.getName());
+		machine.setWave(dto.getWave());
+		machine.setDescription(dto.getDescription());
+		machine.setObservations(dto.getObservations());
+		machine.setActive(dto.isActive());
+
+		if (machine instanceof RotaryMachine rotaryMachine) {
+			rotaryMachine.setDiameter(dto.getDiameter());
+			rotaryMachine.setCenterLine(dto.getCenterLine());
+			rotaryMachine.setTotalLengthCylinder(dto.getTotalLengthCylinder());
+			rotaryMachine.setReduction(dto.getReduction());
+			rotaryMachine.setDrillingInformation(dto.getDrillingInformation());
+			return;
+		}
+
+		FlatMachine flatMachine = (FlatMachine) machine;
+		flatMachine.setMaxSheetDimension(dto.getMaxSheetDimension());
 	}
 }
