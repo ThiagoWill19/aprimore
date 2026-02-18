@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Aprimore | Ordem de Servico</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-lg bg-body-tertiary">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="/user">Aprimore</a>
+		</div>
+	</nav>
+
+	<main class="container">
+		<nav aria-label="breadcrumb" class="mt-4">
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item"><a th:href="@{/user}">Home</a></li>
+				<li class="breadcrumb-item"><a th:href="@{/user/client}">Clientes</a></li>
+				<li class="breadcrumb-item"><a th:href="@{/user/client/{id}(id=${clientId})}">Cliente</a></li>
+				<li class="breadcrumb-item"><a th:href="@{/user/client/{id}/service-orders(id=${clientId})}">Ordens de Servico</a></li>
+				<li class="breadcrumb-item active" aria-current="page">OS</li>
+			</ol>
+		</nav>
+
+		<div th:if="${erro}" class="alert alert-danger">
+			<span th:text="${erro}"></span>
+		</div>
+
+		<div th:if="${success}" class="alert alert-success">
+			<span th:text="${success}"></span>
+		</div>
+
+		<h2 class="mt-3">Ordem de Servico #<span th:text="${serviceOrder.id}"></span></h2>
+
+		<div class="row">
+			<div class="col-12 col-md-9 card p-3 mb-5">
+				<form method="post"
+					  id="serviceOrderForm"
+					  th:action="@{/user/client/{clientId}/service-orders/{serviceOrderId}/update(clientId=${clientId},serviceOrderId=${serviceOrder.id})}"
+					  th:object="${serviceOrder}">
+
+					<input type="hidden" th:field="*{id}">
+					<input type="hidden" th:field="*{clientId}">
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">Nome do Trabalho</label>
+						<input type="text" class="form-control" th:field="*{workName}" required disabled>
+						<div class="text-danger" th:if="${#fields.hasErrors('workName')}" th:errors="*{workName}"></div>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">Referencia</label>
+						<input type="text" class="form-control" th:field="*{reference}" disabled>
+					</div>
+
+					<div class="row">
+						<div class="col-12 col-md-6 mb-3">
+							<label class="form-label fw-bold">Data de Entrada</label>
+							<input type="date" class="form-control" th:field="*{entryDate}" disabled>
+						</div>
+						<div class="col-12 col-md-6 mb-3">
+							<label class="form-label fw-bold">Data de Entrega</label>
+							<input type="date" class="form-control" th:field="*{deliveryDate}" disabled>
+						</div>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">Maquina</label>
+						<select class="form-select" th:field="*{machineId}" required disabled>
+							<option value="">Selecione uma maquina</option>
+							<option th:each="machine : ${machines}"
+							        th:value="${machine.id}"
+							        th:text="${machine.name + ' | Onda: ' + machine.wave + (machine.active ? '' : ' (inativa)')}">
+							</option>
+						</select>
+						<div class="text-danger" th:if="${#fields.hasErrors('machineId')}" th:errors="*{machineId}"></div>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">Medida Interna</label>
+						<input type="text" class="form-control" th:field="*{internalMeasure}" disabled>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">Arranjo</label>
+						<input type="text" class="form-control" th:field="*{arrangement}" disabled>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">Servicos a serem executados</label>
+						<textarea class="form-control" th:field="*{servicesToBePerformed}" style="height: 100px;" disabled></textarea>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">Observacoes</label>
+						<textarea class="form-control" th:field="*{obs}" style="height: 100px;" disabled></textarea>
+					</div>
+
+					<div class="mb-4">
+						<p class="fw-bold mb-2">Laminas da OS</p>
+						<div class="border rounded p-3" style="max-height: 240px; overflow-y: auto;">
+							<div th:if="${#lists.isEmpty(blades)}" class="text-muted">
+								Nao ha laminas cadastradas para sua empresa.
+							</div>
+							<div class="form-check mb-2" th:each="blade : ${blades}">
+								<input class="form-check-input"
+								       type="checkbox"
+								       th:field="*{bladeIds}"
+								       th:value="${blade.id}"
+								       th:id="${'blade_' + blade.id}"
+								       disabled>
+								<label class="form-check-label" th:for="${'blade_' + blade.id}"
+								       th:text="${blade.name + ' (' + blade.bladeType + ')'}">
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="d-flex gap-3">
+						<button id="btnEditar" type="button" class="btn btn-primary" onclick="toggleEdicao()">Editar</button>
+						<button id="btnSalvar" type="submit" class="btn btn-warning fw-bold" disabled>Salvar alteracoes</button>
+						<a class="btn btn-outline-secondary" th:href="@{/user/client/{id}/service-orders(id=${clientId})}">Voltar</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</main>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
+		integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
+		crossorigin="anonymous"></script>
+	<script>
+		let emEdicao = false;
+
+		function toggleEdicao() {
+			emEdicao = !emEdicao;
+
+			const camposEditaveis = document.querySelectorAll(
+				'#serviceOrderForm input:not([type=\"hidden\"]), #serviceOrderForm textarea, #serviceOrderForm select'
+			);
+
+			camposEditaveis.forEach(el => {
+				el.readOnly = !emEdicao;
+				el.disabled = !emEdicao;
+			});
+
+			document.getElementById('btnSalvar').disabled = !emEdicao;
+			document.getElementById('btnEditar').textContent = emEdicao ? 'Cancelar' : 'Editar';
+
+			if (!emEdicao) {
+				location.reload();
+			}
+		}
+	</script>
+</body>
+
+</html>
