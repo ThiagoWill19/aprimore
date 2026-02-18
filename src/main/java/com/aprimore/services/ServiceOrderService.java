@@ -113,7 +113,7 @@ public class ServiceOrderService {
 		serviceOrder.setArrangement(dto.getArrangement());
 		serviceOrder.setTypeOfWave(machine.getWave());
 		serviceOrder.setServicesToBePerformed(dto.getServicesToBePerformed());
-		serviceOrder.setObs(dto.getObs());
+		serviceOrder.setObs(buildServiceOrderObservations(dto.getObs(), client, machine));
 		serviceOrder.setBlades(blades);
 
 		if (serviceOrder.getEntryDate() == null) {
@@ -121,6 +121,29 @@ public class ServiceOrderService {
 		}
 
 		return serviceOrderRepository.save(serviceOrder);
+	}
+
+	private String buildServiceOrderObservations(String userObs, Client client, Machine machine) {
+
+		List<String> sections = new ArrayList<>();
+
+		if (userObs != null && !userObs.isBlank()) {
+			sections.add(userObs.trim());
+		}
+
+		if (client.getStandardOrderInstructions() != null && !client.getStandardOrderInstructions().isBlank()) {
+			sections.add("Padroes do cliente:\n" + client.getStandardOrderInstructions().trim());
+		}
+
+		if (machine.getObservations() != null && !machine.getObservations().isBlank()) {
+			sections.add("Observacoes da maquina:\n" + machine.getObservations().trim());
+		}
+
+		if (sections.isEmpty()) {
+			return null;
+		}
+
+		return String.join("\n\n", sections);
 	}
 
 	@Transactional
