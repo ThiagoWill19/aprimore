@@ -2,11 +2,16 @@ package com.aprimore.models;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -51,5 +56,13 @@ public class ServiceOrder {
 	private String servicesToBePerformed;
 	
 	private String obs;
+	
+	@ManyToMany
+	@JoinTable(
+			name = "service_order_blade",
+			joinColumns = @JoinColumn(name = "service_order_id"),
+			inverseJoinColumns = @JoinColumn(name = "blade_id")
+	)
+	private List<Blade> blades = new ArrayList<>();
 
 }
