@@ -49,29 +49,29 @@
 
 					<div class="mb-3">
 						<label class="form-label fw-bold">Nome do Trabalho</label>
-						<input type="text" class="form-control" th:field="*{workName}" required disabled>
+						<input type="text" class="form-control os-editable" th:field="*{workName}" required disabled>
 						<div class="text-danger" th:if="${#fields.hasErrors('workName')}" th:errors="*{workName}"></div>
 					</div>
 
 					<div class="mb-3">
 						<label class="form-label fw-bold">Referencia</label>
-						<input type="text" class="form-control" th:field="*{reference}" disabled>
+						<input type="text" class="form-control os-editable" th:field="*{reference}" disabled>
 					</div>
 
 					<div class="row">
 						<div class="col-12 col-md-6 mb-3">
 							<label class="form-label fw-bold">Data de Entrada</label>
-							<input type="date" class="form-control" th:field="*{entryDate}" disabled>
+							<input type="date" class="form-control os-editable" th:field="*{entryDate}" disabled>
 						</div>
 						<div class="col-12 col-md-6 mb-3">
 							<label class="form-label fw-bold">Data de Entrega</label>
-							<input type="date" class="form-control" th:field="*{deliveryDate}" disabled>
+							<input type="date" class="form-control os-editable" th:field="*{deliveryDate}" disabled>
 						</div>
 					</div>
 
 					<div class="mb-3">
 						<label class="form-label fw-bold">Maquina</label>
-						<select class="form-select" th:field="*{machineId}" required disabled>
+						<select class="form-select os-editable" th:field="*{machineId}" required disabled>
 							<option value="">Selecione uma maquina</option>
 							<option th:each="machine : ${machines}"
 							        th:value="${machine.id}"
@@ -83,40 +83,128 @@
 
 					<div class="mb-3">
 						<label class="form-label fw-bold">Medida Interna</label>
-						<input type="text" class="form-control" th:field="*{internalMeasure}" disabled>
+						<input type="text" class="form-control os-editable" th:field="*{internalMeasure}" disabled>
 					</div>
 
 					<div class="mb-3">
 						<label class="form-label fw-bold">Arranjo</label>
-						<input type="text" class="form-control" th:field="*{arrangement}" disabled>
+						<input type="text" class="form-control os-editable" th:field="*{arrangement}" disabled>
 					</div>
 
 					<div class="mb-3">
 						<label class="form-label fw-bold">Servicos a serem executados</label>
-						<textarea class="form-control" th:field="*{servicesToBePerformed}" style="height: 100px;" disabled></textarea>
+						<textarea class="form-control os-editable" th:field="*{servicesToBePerformed}" style="height: 100px;" disabled></textarea>
 					</div>
 
 					<div class="mb-3">
 						<label class="form-label fw-bold">Observacoes</label>
-						<textarea class="form-control" th:field="*{obs}" style="height: 100px;" disabled></textarea>
+						<textarea class="form-control os-editable" th:field="*{obs}" style="height: 100px;" disabled></textarea>
 					</div>
 
 					<div class="mb-4">
 						<p class="fw-bold mb-2">Laminas da OS</p>
-						<div class="border rounded p-3" style="max-height: 240px; overflow-y: auto;">
+						<div class="border rounded p-3">
 							<div th:if="${#lists.isEmpty(blades)}" class="text-muted">
 								Nao ha laminas cadastradas para sua empresa.
 							</div>
-							<div class="form-check mb-2" th:each="blade : ${blades}">
-								<input class="form-check-input"
-								       type="checkbox"
-								       th:field="*{bladeIds}"
-								       th:value="${blade.id}"
-								       th:id="${'blade_' + blade.id}"
-								       disabled>
-								<label class="form-check-label" th:for="${'blade_' + blade.id}"
-								       th:text="${blade.name + ' (' + blade.bladeType + ')'}">
-								</label>
+
+							<div th:if="${!#lists.isEmpty(blades)}">
+								<div class="mb-3">
+									<label for="bladeSearch" class="form-label fw-bold">Buscar lamina</label>
+									<input id="bladeSearch" type="text" class="form-control" placeholder="Digite nome, tipo, fabricante ou fornecedor">
+								</div>
+
+								<div class="bg-light rounded p-2 mb-3">
+									<span class="fw-bold">Selecionadas: </span>
+									<span id="selectedBladesCount" class="badge text-bg-primary">0</span>
+									<div id="selectedBladesList" class="small mt-2 text-muted">Nenhuma lamina selecionada.</div>
+								</div>
+
+								<div class="accordion" id="bladesAccordion">
+									<div class="accordion-item">
+										<h2 class="accordion-header">
+											<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#cutBlades">
+												Corte
+											</button>
+										</h2>
+										<div id="cutBlades" class="accordion-collapse collapse show" data-bs-parent="#bladesAccordion">
+											<div class="accordion-body" style="max-height: 220px; overflow-y: auto;">
+												<div class="form-check mb-2 blade-option" th:each="blade : ${blades}"
+													 th:with="typeLabel=${blade.bladeType.name() == 'STRAIGHT_CUT' ? 'Corte Reto' : blade.bladeType.name() == 'CURVED_CUT' ? 'Corte Curvo' : blade.bladeType.name()}"
+													 th:if="${blade.bladeType.name() == 'STRAIGHT_CUT' || blade.bladeType.name() == 'CURVED_CUT'}"
+													 th:attr="data-search=${#strings.toLowerCase(blade.name + ' ' + typeLabel + ' ' + (blade.manufacturer == null ? '' : blade.manufacturer) + ' ' + (blade.supplier == null ? '' : blade.supplier))}">
+													<input class="form-check-input blade-checkbox os-editable"
+													       type="checkbox"
+													       th:field="*{bladeIds}"
+													       th:value="${blade.id}"
+													       th:id="${'blade_' + blade.id}"
+													       th:attr="data-display=${blade.name + ' - ' + typeLabel},data-manufacturer=${(blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado'},data-supplier=${(blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado'}"
+													       disabled>
+													<label class="form-check-label" th:for="${'blade_' + blade.id}"
+													       th:text="${blade.name + ' - ' + typeLabel}"
+													       th:title="${'Fabricante: ' + ((blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado') + ' | Fornecedor: ' + ((blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado')}">
+													</label>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="accordion-item">
+										<h2 class="accordion-header">
+											<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#creaseBlades">
+												Vinco
+											</button>
+										</h2>
+										<div id="creaseBlades" class="accordion-collapse collapse" data-bs-parent="#bladesAccordion">
+											<div class="accordion-body" style="max-height: 220px; overflow-y: auto;">
+												<div class="form-check mb-2 blade-option" th:each="blade : ${blades}"
+													 th:with="typeLabel=${blade.bladeType.name() == 'STRAIGHT_CREASE' ? 'Vinco Reto' : blade.bladeType.name() == 'CURVED_CREASE' ? 'Vinco Curvo' : blade.bladeType.name()}"
+													 th:if="${blade.bladeType.name() == 'STRAIGHT_CREASE' || blade.bladeType.name() == 'CURVED_CREASE'}"
+													 th:attr="data-search=${#strings.toLowerCase(blade.name + ' ' + typeLabel + ' ' + (blade.manufacturer == null ? '' : blade.manufacturer) + ' ' + (blade.supplier == null ? '' : blade.supplier))}">
+													<input class="form-check-input blade-checkbox os-editable"
+													       type="checkbox"
+													       th:field="*{bladeIds}"
+													       th:value="${blade.id}"
+													       th:id="${'blade_' + blade.id}"
+													       th:attr="data-display=${blade.name + ' - ' + typeLabel},data-manufacturer=${(blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado'},data-supplier=${(blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado'}"
+													       disabled>
+													<label class="form-check-label" th:for="${'blade_' + blade.id}"
+													       th:text="${blade.name + ' - ' + typeLabel}"
+													       th:title="${'Fabricante: ' + ((blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado') + ' | Fornecedor: ' + ((blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado')}">
+													</label>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="accordion-item">
+										<h2 class="accordion-header">
+											<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#perforationBlades">
+												Picote
+											</button>
+										</h2>
+										<div id="perforationBlades" class="accordion-collapse collapse" data-bs-parent="#bladesAccordion">
+											<div class="accordion-body" style="max-height: 220px; overflow-y: auto;">
+												<div class="form-check mb-2 blade-option" th:each="blade : ${blades}"
+													 th:with="typeLabel=${blade.bladeType.name() == 'STRAIGHT_PERFORATION' ? 'Picote Reto' : blade.bladeType.name() == 'CUVED_PERFORATION' ? 'Picote Curvo' : blade.bladeType.name()}"
+													 th:if="${blade.bladeType.name() == 'STRAIGHT_PERFORATION' || blade.bladeType.name() == 'CUVED_PERFORATION'}"
+													 th:attr="data-search=${#strings.toLowerCase(blade.name + ' ' + typeLabel + ' ' + (blade.manufacturer == null ? '' : blade.manufacturer) + ' ' + (blade.supplier == null ? '' : blade.supplier))}">
+													<input class="form-check-input blade-checkbox os-editable"
+													       type="checkbox"
+													       th:field="*{bladeIds}"
+													       th:value="${blade.id}"
+													       th:id="${'blade_' + blade.id}"
+													       th:attr="data-display=${blade.name + ' - ' + typeLabel},data-manufacturer=${(blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado'},data-supplier=${(blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado'}"
+													       disabled>
+													<label class="form-check-label" th:for="${'blade_' + blade.id}"
+													       th:text="${blade.name + ' - ' + typeLabel}"
+													       th:title="${'Fabricante: ' + ((blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado') + ' | Fornecedor: ' + ((blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado')}">
+													</label>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -140,11 +228,13 @@
 		function toggleEdicao() {
 			emEdicao = !emEdicao;
 
-			const camposEditaveis = document.querySelectorAll(
-				'#serviceOrderForm input:not([type=\"hidden\"]), #serviceOrderForm textarea, #serviceOrderForm select'
-			);
+			const camposEditaveis = document.querySelectorAll('#serviceOrderForm .os-editable');
 
 			camposEditaveis.forEach(el => {
+				if (el.tagName === 'SELECT' || el.type === 'checkbox' || el.type === 'radio') {
+					el.disabled = !emEdicao;
+					return;
+				}
 				el.readOnly = !emEdicao;
 				el.disabled = !emEdicao;
 			});
@@ -156,6 +246,53 @@
 				location.reload();
 			}
 		}
+	</script>
+	<script>
+		function initBladeUi() {
+			const searchInput = document.getElementById('bladeSearch');
+			const options = Array.from(document.querySelectorAll('.blade-option'));
+			const checkboxes = Array.from(document.querySelectorAll('.blade-checkbox'));
+			const selectedCount = document.getElementById('selectedBladesCount');
+			const selectedList = document.getElementById('selectedBladesList');
+
+			function updateSelectedPanel() {
+				const selected = checkboxes
+					.filter(cb => cb.checked)
+					.map(cb => ({
+						display: cb.dataset.display || '',
+						manufacturer: cb.dataset.manufacturer || 'Nao informado',
+						supplier: cb.dataset.supplier || 'Nao informado'
+					}));
+				selectedCount.textContent = selected.length.toString();
+
+				if (selected.length === 0) {
+					selectedList.textContent = 'Nenhuma lamina selecionada.';
+					return;
+				}
+
+				selectedList.innerHTML = '';
+				selected.forEach(item => {
+					const row = document.createElement('div');
+					row.textContent = `${item.display} | Fabricante: ${item.manufacturer} | Fornecedor: ${item.supplier}`;
+					selectedList.appendChild(row);
+				});
+			}
+
+			if (searchInput) {
+				searchInput.addEventListener('input', () => {
+					const term = searchInput.value.trim().toLowerCase();
+					options.forEach(option => {
+						const haystack = option.dataset.search || '';
+						option.style.display = haystack.includes(term) ? '' : 'none';
+					});
+				});
+			}
+
+			checkboxes.forEach(cb => cb.addEventListener('change', updateSelectedPanel));
+			updateSelectedPanel();
+		}
+
+		document.addEventListener('DOMContentLoaded', initBladeUi);
 	</script>
 </body>
 
