@@ -57,6 +57,12 @@ public class ServiceOrderService {
 		return machineRepository.findByClientIdOrderByActiveDescNameAsc(client.getId());
 	}
 
+	public List<Client> findClientsByBusiness(User user) {
+
+		validateBusinessIsActive(user);
+		return clientRepository.findByBusinessIdOrderByClientName(user.getBusiness().getId());
+	}
+
 	public List<Blade> findBladesByBusiness(User user) {
 
 		validateBusinessIsActive(user);
