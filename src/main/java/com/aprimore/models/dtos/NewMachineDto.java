@@ -18,7 +18,9 @@ public class NewMachineDto {
 	private String centerLine;
 	private String totalLengthCylinder;
 	private String reduction;
-	private String drillingInformation;
+	private String distanceBetweenHolesInStraightLine;
+	private String distanceBetweenHolesInCurvedDirection;
+	private boolean hasMeshPattern;
 
 	// Flat
 	private String maxSheetDimension;

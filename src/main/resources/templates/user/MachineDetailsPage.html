@@ -80,8 +80,15 @@
 					</div>
 
 					<div class="mb-3">
-						<label class="form-label fw-bold">Tipo de Onda</label>
-						<input type="text" class="form-control" th:field="*{wave}" required disabled>
+							<label class="form-label">Onda</label>
+							<input list="waves" type="text" name="wave" class="form-control" th:field="*{wave}" disabled>
+							<datalist id="waves">
+								<option value="E">
+								<option value="B">
+								<option value="C">
+								<option value="BC">
+								<option value="B/C"></option>
+							</datalist>
 						<div class="text-danger" th:if="${#fields.hasErrors('wave')}" th:errors="*{wave}"></div>
 					</div>
 
@@ -100,7 +107,11 @@
 							</div>
 							<div class="col-12 col-md-6 mb-3">
 								<label class="form-label fw-bold">Linha de Centro</label>
-								<input type="text" class="form-control" th:field="*{centerLine}" disabled>
+								<select name="centerLine" class="form-select" th:field="*{centerLine}" disabled>
+									<option th:value="*{centerLine}" th:text="*{centerLine}" selected></option>
+									<option value="Com Furo">Com furo</option>
+									<option value="Furação deslocada">Furação deslocada</option>
+								</select>
 							</div>
 						</div>
 						<div class="row">
@@ -112,10 +123,18 @@
 								<label class="form-label fw-bold">Redução</label>
 								<input type="text" class="form-control" th:field="*{reduction}" disabled>
 							</div>
-							<div class="col-12 col-md-4 mb-3">
-								<label class="form-label fw-bold">Furação</label>
-								<input type="text" class="form-control" th:field="*{drillingInformation}" disabled>
-							</div>
+						</div>
+						<div class="row">
+							<div class="col">
+									<input type="number" min="0" name="distanceBetweenHolesInStraightLine" class="form-control" placeholder="Distância entre furos retos" th:field="*{distanceBetweenHolesInStraightLine}" disabled>
+								</div>
+								<div class="col">
+									<input type="number" min="0" name="distanceBetweenHolesInCurvedDirection" class="form-control" placeholder="Distância entre furos curvos" th:field="*{distanceBetweenHolesInCurvedDirection}" disabled>
+								</div>
+								<div class="col">
+									<input type="checkbox" name="hasMeshPattern" class="form-check-input" id="hasMeshPattern" disabled th:field="*{hasMeshPattern}">
+									<label for="hasMeshPattern" class="form-check-label">Possui malha?</label>
+								</div>
 						</div>
 					</div>
 
@@ -164,7 +183,7 @@
 			emEdicao = !emEdicao;
 
 			const camposEditaveis = document.querySelectorAll(
-				'#machineForm input:not([type="hidden"]):not([name="clientName"]), #machineForm textarea'
+				'#machineForm input:not([type="hidden"]):not([name="clientName"]), #machineForm textarea, select'
 			);
 
 			camposEditaveis.forEach(el => {

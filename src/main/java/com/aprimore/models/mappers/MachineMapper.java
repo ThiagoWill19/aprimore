@@ -36,8 +36,10 @@ public class MachineMapper {
 			machine.setCenterLine(dto.getCenterLine());
 			machine.setTotalLengthCylinder(dto.getTotalLengthCylinder());
 			machine.setReduction(dto.getReduction());
-			machine.setDrillingInformation(dto.getDrillingInformation());
 			machine.setActive(true);
+			machine.setDistanceBetweenHolesInStraightLine(dto.getDistanceBetweenHolesInStraightLine());
+			machine.setDistanceBetweenHolesInCurvedDirection(dto.getDistanceBetweenHolesInCurvedDirection());
+			machine.setHasMeshPattern(dto.isHasMeshPattern());
 			return machine;
 		}
 
@@ -69,7 +71,10 @@ public class MachineMapper {
 			dto.setCenterLine(rotaryMachine.getCenterLine());
 			dto.setTotalLengthCylinder(rotaryMachine.getTotalLengthCylinder());
 			dto.setReduction(rotaryMachine.getReduction());
-			dto.setDrillingInformation(rotaryMachine.getDrillingInformation());
+			dto.setDistanceBetweenHolesInStraightLine(rotaryMachine.getDistanceBetweenHolesInStraightLine());
+			dto.setDistanceBetweenHolesInCurvedDirection(rotaryMachine.getDistanceBetweenHolesInCurvedDirection());
+			dto.setHasMeshPattern(rotaryMachine.isHasMeshPattern());
+
 			return dto;
 		}
 
@@ -91,7 +96,9 @@ public class MachineMapper {
 			rotaryMachine.setCenterLine(dto.getCenterLine());
 			rotaryMachine.setTotalLengthCylinder(dto.getTotalLengthCylinder());
 			rotaryMachine.setReduction(dto.getReduction());
-			rotaryMachine.setDrillingInformation(dto.getDrillingInformation());
+			rotaryMachine.setDistanceBetweenHolesInStraightLine(dto.getDistanceBetweenHolesInStraightLine());
+			rotaryMachine.setDistanceBetweenHolesInCurvedDirection(dto.getDistanceBetweenHolesInCurvedDirection());
+			rotaryMachine.setHasMeshPattern(dto.isHasMeshPattern());
 			return;
 		}
 

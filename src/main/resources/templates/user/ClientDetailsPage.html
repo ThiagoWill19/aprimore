@@ -236,7 +236,14 @@
 						
 						<div class="mb-3">
 							<label class="form-label">Onda</label>
-							<input type="text" name="wave" class="form-control" required>
+							<input list="waves" type="text" name="wave" class="form-control" required>
+							<datalist id="waves">
+								<option value="E">
+								<option value="B">
+								<option value="C">
+								<option value="BC">
+								<option value="B/C"></option>
+							</datalist>
 					
 						</div>
 						
@@ -254,24 +261,38 @@
 						<div id="rotaryFields" class="d-none">
 							<div class="row">
 								<div class="col">
+									<label for="diameter" class="form-label">Diâmetro (mm)</label>
 									<input type="number" min="0" name="diameter" class="form-control" placeholder="Diâmetro">
 								</div>
 								<div class="col">
-									<input name="centerLine" class="form-control" placeholder="Linha de centro">
+									<label class="form-label">Linha de centro</label>
+									<select name="centerLine" class="form-select">
+										<option value="">Selecione a linha de centro</option>
+										<option value="Com Furo">Com furo</option>
+										<option value="Furação deslocada">Furação deslocada</option>
+									</select>
 								</div>
 							</div>
 
 							<div class="row mt-3">
 								<div class="col">
-									<input type="number" min="0" name="totalLengthCylinder" class="form-control" placeholder="Comprimento do cilindro">
+									<input type="number" min="0" name="totalLengthCylinder" class="form-control" placeholder="Comprimento do cilindro (mm)">
 								</div>
 								<div class="col">
 									<input type="number" min="0" name="reduction" class="form-control" placeholder="Redução">
+								</div>													
+							</div>
+							<div class="row mt-3">
+								<div class="col">
+									<input type="number" min="0" name="distanceBetweenHolesInStraightLine" class="form-control" placeholder="Distância entre furos retos">
 								</div>
 								<div class="col">
-									<input name="drillingInformation" class="form-control" placeholder="Furação">
+									<input type="number" min="0" name="distanceBetweenHolesInCurvedDirection" class="form-control" placeholder="Distância entre furos curvos">
 								</div>
-													
+								<div class="col">
+									<input type="checkbox" name="hasMeshPattern" class="form-check-input" id="hasMeshPattern">
+									<label for="hasMeshPattern" class="form-check-label">Possui malha?</label>
+								</div>
 							</div>
 						</div>
 

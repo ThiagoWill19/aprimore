@@ -20,7 +20,11 @@ public class RotaryMachine extends Machine {
 	private String totalLengthCylinder;
 	
 	private String reduction;
-	
-	private String drillingInformation;
+
+	private String distanceBetweenHolesInStraightLine;
+
+	private String distanceBetweenHolesInCurvedDirection;
+
+	private boolean hasMeshPattern;
 	
 }
