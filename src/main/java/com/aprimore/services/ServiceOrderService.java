@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,7 +118,7 @@ public class ServiceOrderService {
 		serviceOrder.setMachine(machine);
 		serviceOrder.setClient(client);
 		serviceOrder.setArrangement(dto.getArrangement());
-		serviceOrder.setTypeOfWave(machine.getWave());
+		serviceOrder.setTypeOfWave(normalizeAndValidateWave(dto.getTypeOfWave(), machine));
 		serviceOrder.setServicesToBePerformed(dto.getServicesToBePerformed());
 		serviceOrder.setObs(buildServiceOrderObservations(dto.getObs(), client, machine));
 		serviceOrder.setBlades(blades);
@@ -182,7 +183,7 @@ public class ServiceOrderService {
 		serviceOrder.setObs(dto.getObs());
 		serviceOrder.setBlades(blades);
 		serviceOrder.setType(machine.getClass().getSimpleName().replace("Machine", "").toUpperCase());
-		serviceOrder.setTypeOfWave(machine.getWave());
+		serviceOrder.setTypeOfWave(normalizeAndValidateWave(dto.getTypeOfWave(), machine));
 
 		if (serviceOrder.getEntryDate() == null) {
 			serviceOrder.setEntryDate(LocalDate.now());
@@ -267,10 +268,56 @@ public class ServiceOrderService {
 		dto.setCreatedAt(serviceOrder.getCreatedAt());
 		dto.setInternalMeasure(serviceOrder.getInternalMeasure());
 		dto.setMachineId(serviceOrder.getMachine() != null ? serviceOrder.getMachine().getId() : null);
+		dto.setTypeOfWave(serviceOrder.getTypeOfWave());
 		dto.setArrangement(serviceOrder.getArrangement());
 		dto.setServicesToBePerformed(serviceOrder.getServicesToBePerformed());
 		dto.setObs(serviceOrder.getObs());
 		dto.setBladeIds(serviceOrder.getBlades().stream().map(Blade::getId).toList());
 		return dto;
+	}
+
+	private String normalizeAndValidateWave(String selectedWave, Machine machine) {
+
+		if (selectedWave == null || selectedWave.isBlank()) {
+			throw new DomainRuleException("Tipo de onda e obrigatorio.");
+		}
+
+		String normalizedSelectedWave = selectedWave.trim().toUpperCase(Locale.ROOT);
+		List<String> machineWaves = parseMachineWaves(machine.getWave());
+
+		if (machineWaves.isEmpty()) {
+			throw new DomainRuleException("A maquina selecionada nao possui tipos de onda configurados.");
+		}
+
+		if (!machineWaves.contains(normalizedSelectedWave)) {
+			throw new DomainRuleException("Tipo de onda invalido para a maquina selecionada. Opcoes: " + String.join(", ", machineWaves));
+		}
+
+		return normalizedSelectedWave;
+	}
+
+	private List<String> parseMachineWaves(String rawWave) {
+
+		if (rawWave == null || rawWave.isBlank()) {
+			return new ArrayList<>();
+		}
+
+		LinkedHashSet<String> waves = new LinkedHashSet<>();
+		String[] tokens = rawWave.toUpperCase(Locale.ROOT).split("[,;/|\\s-]+");
+		for (String token : tokens) {
+			String normalizedToken = token.trim();
+			if (!normalizedToken.isBlank()) {
+				waves.add(normalizedToken);
+			}
+		}
+
+		if (waves.isEmpty()) {
+			String fallback = rawWave.trim().toUpperCase(Locale.ROOT);
+			if (!fallback.isBlank()) {
+				waves.add(fallback);
+			}
+		}
+
+		return new ArrayList<>(waves);
 	}
 }

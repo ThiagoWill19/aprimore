@@ -28,6 +28,9 @@ public class NewServiceOrderDto {
 	@NotNull(message = "Maquina e obrigatoria")
 	private UUID machineId;
 
+	@NotBlank(message = "Tipo de onda e obrigatorio")
+	private String typeOfWave;
+
 	private String arrangement;
 
 	private String servicesToBePerformed;

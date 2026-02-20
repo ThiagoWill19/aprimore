@@ -71,14 +71,23 @@
 
 					<div class="mb-3">
 						<label class="form-label fw-bold">Máquina</label>
-						<select class="form-select os-editable" th:field="*{machineId}" required disabled>
+						<select id="machineSelect" class="form-select os-editable" th:field="*{machineId}" required disabled>
 							<option value="">Selecione uma máquina</option>
 							<option th:each="machine : ${machines}"
 							        th:value="${machine.id}"
+							        th:attr="data-waves=${machine.wave}"
 							        th:text="${machine.name + ' | Onda: ' + machine.wave + (machine.active ? '' : ' (inativa)')}">
 							</option>
 						</select>
 						<div class="text-danger" th:if="${#fields.hasErrors('machineId')}" th:errors="*{machineId}"></div>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">Tipo de Onda (OS)</label>
+						<select id="typeOfWaveSelect" class="form-select os-editable" th:field="*{typeOfWave}" th:attr="data-current=${serviceOrder.typeOfWave}" required disabled>
+							<option value="">Selecione o tipo de onda</option>
+						</select>
+						<div class="text-danger" th:if="${#fields.hasErrors('typeOfWave')}" th:errors="*{typeOfWave}"></div>
 					</div>
 
 					<div class="mb-3">
@@ -248,6 +257,58 @@
 		}
 	</script>
 	<script>
+		function initWaveSelector() {
+			const machineSelect = document.getElementById('machineSelect');
+			const typeOfWaveSelect = document.getElementById('typeOfWaveSelect');
+
+			if (!machineSelect || !typeOfWaveSelect) {
+				return;
+			}
+
+			const parseWaves = (raw) => {
+				if (!raw || !raw.trim()) {
+					return [];
+				}
+				const unique = new Set();
+				raw.toUpperCase().split(/[,;/|\s-]+/).forEach(token => {
+					const wave = token.trim();
+					if (wave) {
+						unique.add(wave);
+					}
+				});
+				return Array.from(unique);
+			};
+
+			const rebuildWaveOptions = () => {
+				const selectedMachine = machineSelect.options[machineSelect.selectedIndex];
+				const rawWaves = selectedMachine ? selectedMachine.dataset.waves : '';
+				const machineWaves = parseWaves(rawWaves);
+				const currentWave = (typeOfWaveSelect.dataset.current || typeOfWaveSelect.value || '').toUpperCase();
+
+				typeOfWaveSelect.innerHTML = '';
+
+				const placeholder = document.createElement('option');
+				placeholder.value = '';
+				placeholder.textContent = 'Selecione o tipo de onda';
+				typeOfWaveSelect.appendChild(placeholder);
+
+				machineWaves.forEach(wave => {
+					const option = document.createElement('option');
+					option.value = wave;
+					option.textContent = wave;
+					if (wave === currentWave) {
+						option.selected = true;
+					}
+					typeOfWaveSelect.appendChild(option);
+				});
+
+				typeOfWaveSelect.dataset.current = '';
+			};
+
+			machineSelect.addEventListener('change', rebuildWaveOptions);
+			rebuildWaveOptions();
+		}
+
 		function initBladeUi() {
 			const searchInput = document.getElementById('bladeSearch');
 			const options = Array.from(document.querySelectorAll('.blade-option'));
@@ -292,7 +353,10 @@
 			updateSelectedPanel();
 		}
 
-		document.addEventListener('DOMContentLoaded', initBladeUi);
+		document.addEventListener('DOMContentLoaded', () => {
+			initWaveSelector();
+			initBladeUi();
+		});
 	</script>
 </body>
 
