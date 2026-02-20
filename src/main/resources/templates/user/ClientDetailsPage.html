@@ -233,18 +233,51 @@
 							<label class="form-label">Descrição</label>
 							<input type="text" name="description" class="form-control">
 						</div>
-						
-						<div class="mb-3">
-							<label class="form-label">Onda</label>
-							<input list="waves" type="text" name="wave" class="form-control" required>
-							<datalist id="waves">
-								<option value="E">
-								<option value="B">
-								<option value="C">
-								<option value="BC">
-								<option value="B/C"></option>
-							</datalist>
-					
+						<p>Selecione as ondas</p>
+						<div class="mb-3 d-flex gap-5">
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="wave" value="F" id="checkF">
+								<label class="form-check-label" for="checkF">
+									F
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="wave" value="E" id="checkE">
+								<label class="form-check-label" for="checkE">
+									E
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="wave" value="C" id="checkC">
+								<label class="form-check-label" for="checkC">
+									C
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="wave" value="B" id="checkB">
+								<label class="form-check-label" for="checkB">
+									B
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="wave" value="A" id="checkA">
+								<label class="form-check-label" for="checkA">
+									A
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="wave" value="BC" id="checkBC">
+								<label class="form-check-label" for="checkBC">
+									BC
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="wave" value="AB" id="checkAB">
+								<label class="form-check-label" for="checkAB">
+									AB
+								</label>
+							</div>
+
 						</div>
 						
 
