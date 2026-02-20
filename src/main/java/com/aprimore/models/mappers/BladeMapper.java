@@ -13,12 +13,14 @@ public class BladeMapper {
     public Blade mapToBlade(NewBladeDto dto, Business business) {
 
         Blade blade = new Blade();
-        blade.setName(dto.getName().trim());
         blade.setDescription(dto.getDescription());
         blade.setManufacturer(dto.getManufacturer());
         blade.setSupplier(dto.getSupplier());
         blade.setBladeType(dto.getBladeType());
         blade.setBusiness(business);
+        blade.setEspessure(dto.getEspessure());
+        blade.setHeight(dto.getHeight());
+        blade.setCutType(dto.getCutType());
 
         return blade;
     }

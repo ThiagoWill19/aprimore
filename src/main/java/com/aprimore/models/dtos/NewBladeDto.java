@@ -11,14 +11,17 @@ import lombok.Setter;
 @Setter
 public class NewBladeDto {
 
-    @NotBlank(message = "O nome da lâmina é obrigatório")
-    private String name;
-
     private String description;
 
     private String manufacturer;
 
     private String supplier;
+
+    private int espessure;
+
+    private double height;
+
+    private String cutType; //Serrilhado / Liso
 
     @NotNull(message = "O tipo da lâmina é obrigatório")
     private BladeType bladeType;

@@ -32,22 +32,47 @@
 		<div th:if="${erro}" class="alert alert-danger mt-3" th:text="${erro}"></div>
 
 		<form th:action="@{/user/blades}" method="post" th:object="${newBlade}" class="row g-3 mt-1">
-			<div class="col-md-4">
-				<label class="form-label" for="name">Nome</label>
-				<input id="name" type="text" class="form-control" th:field="*{name}" required>
-			</div>
 
 			<div class="col-md-4">
 				<label class="form-label" for="bladeType">Tipo</label>
 				<select id="bladeType" class="form-select" th:field="*{bladeType}" required>
-					<option value="">Selecione...</option>
-					<option value="STRAIGHT_CUT">Corte reto</option>
-					<option value="CURVED_CUT">Corte curvo</option>
-					<option value="STRAIGHT_CREASE">Vinco reto</option>
-					<option value="CURVED_CREASE">Vinco curvo</option>
-					<option value="STRAIGHT_PERFORATION">Picote reto</option>
-					<option value="CUVED_PERFORATION">Picote curvo</option>
+				<option th:each="type : ${T(com.aprimore.models.enuns.BladeType).values()}"
+        			th:value="${type}"
+            		th:text="${type.description}">
+    			</option>
 				</select>
+			</div>
+
+						<div class="col-md-4">
+				<label class="form-label" for="cutType">Tipo de Aço</label>
+				<select id="cutType" class="form-select" th:field="*{cutType}" required>
+					<option value="">Selecione...</option>
+					<option value="LISO">Liso</option>
+					<option value="SERRILHADO">Serrilhado</option>
+					<option value="ONDULADO">Ondulado</option>
+					<option value="OUTRO">Outro</option>
+				</select>
+			</div>
+
+			<div class="col-md-4">
+				<label class="form-label" for="espessure">Espessura (PTs)</label>
+				<input id="espessure"  list="pts" type="number" class="form-control" th:field="*{espessure}">
+				<datalist id="pts">
+					<option value="1">
+					<option value="2">
+					<option value="3">
+					<option value="4">
+				</datalist>
+			</div>
+
+			<div class="col-md-4">
+				<label class="form-label" for="height">Altura (mm)</label>
+				<input id="height" type="number" step="0.01" class="form-control" th:field="*{height}">
+			</div>
+
+			<div class="col-md-8">
+				<label class="form-label" for="description">Descrição (opcional)</label>
+				<input id="description" type="text" class="form-control" th:field="*{description}" placeholder="Ex: 12 dentes ou 5X5 ou outra descrição que ajude a identificar a lâmina">
 			</div>
 
 			<div class="col-md-4">
@@ -58,11 +83,6 @@
 			<div class="col-md-4">
 				<label class="form-label" for="supplier">Fornecedor</label>
 				<input id="supplier" type="text" class="form-control" th:field="*{supplier}">
-			</div>
-
-			<div class="col-md-8">
-				<label class="form-label" for="description">Descrição</label>
-				<input id="description" type="text" class="form-control" th:field="*{description}">
 			</div>
 
 			<div class="col-12">

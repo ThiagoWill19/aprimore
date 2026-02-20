@@ -52,13 +52,20 @@ public class BladeService {
             throw new AccessDeniedException("Empresa inativa. Operacoes nao permitidas.");
         }
 
-        String normalizedName = newBladeDto.getName().trim();
+        String normalizedName = (newBladeDto.getBladeType().getDescription() +
+               " - " + newBladeDto.getCutType().trim().toUpperCase() +
+               " - " + newBladeDto.getEspessure() + " PTs" +
+                " - " + newBladeDto.getHeight() + " Alt" + 
+                " - " + newBladeDto.getDescription().trim().toUpperCase() +
+                " - " + newBladeDto.getManufacturer().trim().toUpperCase()).toUpperCase();
 
         if (itemRepository.existsBladeByBusinessIdAndName(businessId, normalizedName)) {
             throw new DomainRuleException("Já existe uma lâmina com esse nome.");
         }
 
         Blade blade = bladeMapper.mapToBlade(newBladeDto, business);
+
+        blade.setName(normalizedName);
 
         return bladeMapper.mapToBladeListDto((Blade) itemRepository.save(blade));
     }

@@ -22,4 +22,10 @@ public class BladeListDto {
     private String supplier;
 
     private BladeType bladeType;
+
+    private int espessure;
+
+    private double height;
+
+    private String cutType; //Serrilhado / Liso
 }
