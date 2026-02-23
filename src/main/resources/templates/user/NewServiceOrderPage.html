@@ -142,9 +142,9 @@
 													       th:field="*{bladeIds}"
 													       th:value="${blade.id}"
 													       th:id="${'blade_' + blade.id}"
-													       th:attr="data-display=${blade.name + ' - ' + typeLabel},data-manufacturer=${(blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado'},data-supplier=${(blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado'}">
+													       th:attr="data-display=${blade.name},data-manufacturer=${(blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado'},data-supplier=${(blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado'}">
 													<label class="form-check-label" th:for="${'blade_' + blade.id}"
-													       th:text="${blade.name + ' - ' + typeLabel}"
+													       th:text="${blade.name}"
 													       th:title="${'Fabricante: ' + ((blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado') + ' | Fornecedor: ' + ((blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado')}">
 													</label>
 												</div>
@@ -169,9 +169,9 @@
 													       th:field="*{bladeIds}"
 													       th:value="${blade.id}"
 													       th:id="${'blade_' + blade.id}"
-													       th:attr="data-display=${blade.name + ' - ' + typeLabel},data-manufacturer=${(blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado'},data-supplier=${(blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado'}">
+													       th:attr="data-display=${blade.name},data-manufacturer=${(blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado'},data-supplier=${(blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado'}">
 													<label class="form-check-label" th:for="${'blade_' + blade.id}"
-													       th:text="${blade.name + ' - ' + typeLabel}"
+													       th:text="${blade.name}"
 													       th:title="${'Fabricante: ' + ((blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado') + ' | Fornecedor: ' + ((blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado')}">
 													</label>
 												</div>
@@ -196,9 +196,9 @@
 													       th:field="*{bladeIds}"
 													       th:value="${blade.id}"
 													       th:id="${'blade_' + blade.id}"
-													       th:attr="data-display=${blade.name + ' - ' + typeLabel},data-manufacturer=${(blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado'},data-supplier=${(blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado'}">
+													       th:attr="data-display=${blade.name},data-manufacturer=${(blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado'},data-supplier=${(blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado'}">
 													<label class="form-check-label" th:for="${'blade_' + blade.id}"
-													       th:text="${blade.name + ' - ' + typeLabel}"
+													       th:text="${blade.name}"
 													       th:title="${'Fabricante: ' + ((blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado') + ' | Fornecedor: ' + ((blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado')}">
 													</label>
 												</div>
@@ -303,7 +303,7 @@
 				selectedList.innerHTML = '';
 				selected.forEach(item => {
 					const row = document.createElement('div');
-					row.textContent = `${item.display} | Fabricante: ${item.manufacturer} | Fornecedor: ${item.supplier}`;
+					row.textContent = `${item.display}`;
 					selectedList.appendChild(row);
 				});
 			}
