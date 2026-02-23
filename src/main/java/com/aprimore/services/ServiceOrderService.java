@@ -171,6 +171,9 @@ public class ServiceOrderService {
 		String normalizedWave = normalizeAndValidateWave(dto.getTypeOfWave(), machine);
 		serviceOrderMapper.updateEntityFromDetailsDto(dto, serviceOrder, machine, blades, normalizedWave);
 
+		String observations = buildServiceOrderObservations(dto.getObs(), client, machine);
+		serviceOrder.setObs(observations);
+
 		if (serviceOrder.getEntryDate() == null) {
 			serviceOrder.setEntryDate(LocalDate.now());
 		}
