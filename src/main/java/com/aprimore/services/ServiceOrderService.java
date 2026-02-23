@@ -1,7 +1,6 @@
 package com.aprimore.services;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -27,6 +26,7 @@ import com.aprimore.models.dtos.NewServiceOrderDto;
 import com.aprimore.models.dtos.ServiceOrderDetailsDto;
 import com.aprimore.models.dtos.ServiceOrderListDto;
 import com.aprimore.models.enuns.AccountStatus;
+import com.aprimore.models.mappers.ServiceOrderMapper;
 import com.aprimore.repositories.BladeRepository;
 import com.aprimore.repositories.ClientRepository;
 import com.aprimore.repositories.ItemRepository;
@@ -50,6 +50,9 @@ public class ServiceOrderService {
 
 	@Autowired
 	private ItemRepository itemRepository;
+
+	@Autowired
+	private ServiceOrderMapper serviceOrderMapper;
 
 	public List<Machine> findMachinesByClient(UUID clientId, User user) {
 
@@ -79,14 +82,14 @@ public class ServiceOrderService {
 		Pageable pageable = PageRequest.of(page, size);
 
 		return serviceOrderRepository.findByClientIdOrderByCreatedAtDesc(client.getId(), pageable)
-				.map(this::mapToListDto);
+				.map(serviceOrderMapper::mapToListDto);
 	}
 
 	public ServiceOrderDetailsDto findById(UUID clientId, Long serviceOrderId, User user) {
 
 		Client client = findClientWithAccessValidation(clientId, user);
 		ServiceOrder serviceOrder = findServiceOrderWithOwnershipValidation(serviceOrderId, client.getId());
-		return mapToDetailsDto(serviceOrder);
+		return serviceOrderMapper.mapToDetailsDto(serviceOrder);
 	}
 
 	@Transactional
@@ -94,34 +97,28 @@ public class ServiceOrderService {
 
 		Client client = findClientWithAccessValidation(clientId, user);
 		Machine machine = machineRepository.findById(dto.getMachineId())
-				.orElseThrow(() -> new ResourceNotFoundException("Maquina nao encontrada"));
+				.orElseThrow(() -> new ResourceNotFoundException("Máquina não encontrada"));
 
 		if (!machine.getClient().getId().equals(client.getId())) {
-			throw new DomainRuleException("A maquina selecionada nao pertence ao cliente informado.");
+			throw new DomainRuleException("A máquina selecionada não pertence ao cliente informado.");
 		}
 
 		if (dto.getDeliveryDate() != null && dto.getEntryDate() != null
 				&& dto.getDeliveryDate().isBefore(dto.getEntryDate())) {
-			throw new DomainRuleException("A data de entrega nao pode ser anterior a data de entrada.");
+			throw new DomainRuleException("A data de entrega não pode ser anterior a data de entrada.");
 		}
 
 		List<Blade> blades = resolveAndValidateBlades(dto.getBladeIds(), user);
+		String normalizedWave = normalizeAndValidateWave(dto.getTypeOfWave(), machine);
+		String observations = buildServiceOrderObservations(dto.getObs(), client, machine);
 
-		ServiceOrder serviceOrder = new ServiceOrder();
-		serviceOrder.setWorkName(dto.getWorkName());
-		serviceOrder.setReference(dto.getReference());
-		serviceOrder.setEntryDate(dto.getEntryDate());
-		serviceOrder.setDeliveryDate(dto.getDeliveryDate());
-		serviceOrder.setCreatedAt(LocalDateTime.now());
-		serviceOrder.setType(machine.getClass().getSimpleName().replace("Machine", "").toUpperCase());
-		serviceOrder.setInternalMeasure(dto.getInternalMeasure());
-		serviceOrder.setMachine(machine);
-		serviceOrder.setClient(client);
-		serviceOrder.setArrangement(dto.getArrangement());
-		serviceOrder.setTypeOfWave(normalizeAndValidateWave(dto.getTypeOfWave(), machine));
-		serviceOrder.setServicesToBePerformed(dto.getServicesToBePerformed());
-		serviceOrder.setObs(buildServiceOrderObservations(dto.getObs(), client, machine));
-		serviceOrder.setBlades(blades);
+		ServiceOrder serviceOrder = serviceOrderMapper.mapToNewEntity(
+				dto,
+				client,
+				machine,
+				blades,
+				normalizedWave,
+				observations);
 
 		if (serviceOrder.getEntryDate() == null) {
 			serviceOrder.setEntryDate(LocalDate.now());
@@ -139,11 +136,11 @@ public class ServiceOrderService {
 		}
 
 		if (client.getStandardOrderInstructions() != null && !client.getStandardOrderInstructions().isBlank()) {
-			sections.add("Padroes do cliente:\n" + client.getStandardOrderInstructions().trim());
+			sections.add("Padrões do cliente:\n" + client.getStandardOrderInstructions().trim());
 		}
 
 		if (machine.getObservations() != null && !machine.getObservations().isBlank()) {
-			sections.add("Observacoes da maquina:\n" + machine.getObservations().trim());
+			sections.add("Observações da máquina:\n" + machine.getObservations().trim());
 		}
 
 		if (sections.isEmpty()) {
@@ -159,31 +156,20 @@ public class ServiceOrderService {
 		Client client = findClientWithAccessValidation(clientId, user);
 		ServiceOrder serviceOrder = findServiceOrderWithOwnershipValidation(serviceOrderId, client.getId());
 		Machine machine = machineRepository.findById(dto.getMachineId())
-				.orElseThrow(() -> new ResourceNotFoundException("Maquina nao encontrada"));
+				.orElseThrow(() -> new ResourceNotFoundException("Máquina não encontrada"));
 
 		if (!machine.getClient().getId().equals(client.getId())) {
-			throw new DomainRuleException("A maquina selecionada nao pertence ao cliente informado.");
+			throw new DomainRuleException("A máquina selecionada não pertence ao cliente informado.");
 		}
 
 		if (dto.getDeliveryDate() != null && dto.getEntryDate() != null
 				&& dto.getDeliveryDate().isBefore(dto.getEntryDate())) {
-			throw new DomainRuleException("A data de entrega nao pode ser anterior a data de entrada.");
+			throw new DomainRuleException("A data de entrega não pode ser anterior a data de entrada.");
 		}
 
 		List<Blade> blades = resolveAndValidateBlades(dto.getBladeIds(), user);
-
-		serviceOrder.setWorkName(dto.getWorkName());
-		serviceOrder.setReference(dto.getReference());
-		serviceOrder.setEntryDate(dto.getEntryDate());
-		serviceOrder.setDeliveryDate(dto.getDeliveryDate());
-		serviceOrder.setInternalMeasure(dto.getInternalMeasure());
-		serviceOrder.setMachine(machine);
-		serviceOrder.setArrangement(dto.getArrangement());
-		serviceOrder.setServicesToBePerformed(dto.getServicesToBePerformed());
-		serviceOrder.setObs(dto.getObs());
-		serviceOrder.setBlades(blades);
-		serviceOrder.setType(machine.getClass().getSimpleName().replace("Machine", "").toUpperCase());
-		serviceOrder.setTypeOfWave(normalizeAndValidateWave(dto.getTypeOfWave(), machine));
+		String normalizedWave = normalizeAndValidateWave(dto.getTypeOfWave(), machine);
+		serviceOrderMapper.updateEntityFromDetailsDto(dto, serviceOrder, machine, blades, normalizedWave);
 
 		if (serviceOrder.getEntryDate() == null) {
 			serviceOrder.setEntryDate(LocalDate.now());
@@ -195,7 +181,7 @@ public class ServiceOrderService {
 	private Client findClientWithAccessValidation(UUID clientId, User user) {
 
 		Client client = clientRepository.findById(clientId)
-				.orElseThrow(() -> new ResourceNotFoundException("Cliente nao encontrado"));
+				.orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
 
 		if (!client.getBusiness().getId().equals(user.getBusiness().getId())) {
 			throw new AccessDeniedException("Acesso negado");
@@ -208,14 +194,14 @@ public class ServiceOrderService {
 
 	private void validateBusinessIsActive(User user) {
 		if (user.getBusiness().getAccountStatus() != AccountStatus.ACTIVE) {
-			throw new AccessDeniedException("Empresa inativa. Operacoes nao permitidas.");
+			throw new AccessDeniedException("Empresa inativa. Operações não permitidas.");
 		}
 	}
 
 	private ServiceOrder findServiceOrderWithOwnershipValidation(Long serviceOrderId, UUID clientId) {
 
 		ServiceOrder serviceOrder = serviceOrderRepository.findById(serviceOrderId)
-				.orElseThrow(() -> new ResourceNotFoundException("Ordem de servico nao encontrada"));
+				.orElseThrow(() -> new ResourceNotFoundException("Ordem de serviço não encontrada"));
 
 		if (!serviceOrder.getClient().getId().equals(clientId)) {
 			throw new AccessDeniedException("Acesso negado");
@@ -234,59 +220,29 @@ public class ServiceOrderService {
 		List<Blade> blades = bladeRepository.findAllById(uniqueIds);
 
 		if (blades.size() != uniqueIds.size()) {
-			throw new ResourceNotFoundException("Uma ou mais laminas informadas nao foram encontradas.");
+			throw new ResourceNotFoundException("Uma ou mais lâminas informadas não foram encontradas.");
 		}
 
 		for (Blade blade : blades) {
 			if (!blade.getBusiness().getId().equals(user.getBusiness().getId())) {
-				throw new AccessDeniedException("Acesso negado para uma ou mais laminas selecionadas.");
+				throw new AccessDeniedException("Acesso negado para uma ou mais lâminas selecionadas.");
 			}
 		}
 
 		return blades;
 	}
 
-	private ServiceOrderListDto mapToListDto(ServiceOrder serviceOrder) {
-		ServiceOrderListDto dto = new ServiceOrderListDto();
-		dto.setId(serviceOrder.getId());
-		dto.setWorkName(serviceOrder.getWorkName());
-		dto.setReference(serviceOrder.getReference());
-		dto.setMachineName(serviceOrder.getMachine() != null ? serviceOrder.getMachine().getName() : null);
-		dto.setDeliveryDate(serviceOrder.getDeliveryDate());
-		dto.setCreatedAt(serviceOrder.getCreatedAt());
-		return dto;
-	}
-
-	private ServiceOrderDetailsDto mapToDetailsDto(ServiceOrder serviceOrder) {
-		ServiceOrderDetailsDto dto = new ServiceOrderDetailsDto();
-		dto.setId(serviceOrder.getId());
-		dto.setClientId(serviceOrder.getClient().getId());
-		dto.setWorkName(serviceOrder.getWorkName());
-		dto.setReference(serviceOrder.getReference());
-		dto.setEntryDate(serviceOrder.getEntryDate());
-		dto.setDeliveryDate(serviceOrder.getDeliveryDate());
-		dto.setCreatedAt(serviceOrder.getCreatedAt());
-		dto.setInternalMeasure(serviceOrder.getInternalMeasure());
-		dto.setMachineId(serviceOrder.getMachine() != null ? serviceOrder.getMachine().getId() : null);
-		dto.setTypeOfWave(serviceOrder.getTypeOfWave());
-		dto.setArrangement(serviceOrder.getArrangement());
-		dto.setServicesToBePerformed(serviceOrder.getServicesToBePerformed());
-		dto.setObs(serviceOrder.getObs());
-		dto.setBladeIds(serviceOrder.getBlades().stream().map(Blade::getId).toList());
-		return dto;
-	}
-
 	private String normalizeAndValidateWave(String selectedWave, Machine machine) {
 
 		if (selectedWave == null || selectedWave.isBlank()) {
-			throw new DomainRuleException("Tipo de onda e obrigatorio.");
+			throw new DomainRuleException("Tipo de onda é obrigatório.");
 		}
 
 		String normalizedSelectedWave = selectedWave.trim().toUpperCase(Locale.ROOT);
 		List<String> machineWaves = parseMachineWaves(machine.getWave());
 
 		if (machineWaves.isEmpty()) {
-			throw new DomainRuleException("A maquina selecionada nao possui tipos de onda configurados.");
+			throw new DomainRuleException("A máquina selecionada não possui tipos de onda configurados.");
 		}
 
 		if (!machineWaves.contains(normalizedSelectedWave)) {
