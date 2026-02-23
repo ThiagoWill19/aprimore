@@ -44,7 +44,16 @@
 			<span th:text="${success}"></span>
 		</div>
 
-		<h3 class="mt-3">Máquinas do Cliente</h3>
+		<div class="d-flex justify-content-between align-items-center">
+			<div>
+				<h3 class="">Máquinas do Cliente</h3>
+			</div>
+			<div>
+				<button class="btn btn-success fw-bold" data-bs-toggle="modal" data-bs-target="#newMachineModal">
+					Cadastrar Nova Máquina
+				</button>
+			</div>
+		</div>
 
 		<table class="table table-hover mt-3">
 			<thead>
@@ -86,12 +95,183 @@
 		</table>
 	</div>
 
+	<!--Modal cadastro de máquina-->
+	<div class="modal fade" id="newMachineModal" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+
+				<form th:action="@{/user/client/{id}/machines(id=${clientId})}" method="post">
+
+					<div class="modal-header">
+						<h5 class="modal-title">Cadastrar Máquina</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+
+					<div class="modal-body">
+
+						<div class="mb-3">
+							<label class="form-label">Nome / Modelo</label>
+							<input type="text" name="name" class="form-control" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Descrição</label>
+							<input type="text" name="description" class="form-control">
+						</div>
+						<p>Selecione as ondas</p>
+						<div class="mb-3 d-flex gap-5">
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="wave" value="F" id="checkF">
+								<label class="form-check-label" for="checkF">
+									F
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="wave" value="E" id="checkE">
+								<label class="form-check-label" for="checkE">
+									E
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="wave" value="C" id="checkC">
+								<label class="form-check-label" for="checkC">
+									C
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="wave" value="B" id="checkB">
+								<label class="form-check-label" for="checkB">
+									B
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="wave" value="A" id="checkA">
+								<label class="form-check-label" for="checkA">
+									A
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="wave" value="BC" id="checkBC">
+								<label class="form-check-label" for="checkBC">
+									BC
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="wave" value="AB" id="checkAB">
+								<label class="form-check-label" for="checkAB">
+									AB
+								</label>
+							</div>
+
+						</div>
+
+
+						<div class="mb-3">
+							<label class="form-label">Tipo</label>
+							<select name="type" class="form-select" id="machineType" required>
+								<option value="">Selecione</option>
+								<option value="ROTARY">Rotativa</option>
+								<option value="FLAT">Plana</option>
+							</select>
+						</div>
+
+						<!-- ROTARY -->
+						<div id="rotaryFields" class="d-none">
+							<div class="row">
+								<div class="col">
+									<label for="diameter" class="form-label">Diâmetro (mm)</label>
+									<input type="number" min="0" name="diameter" class="form-control"
+										placeholder="Diâmetro">
+								</div>
+								<div class="col">
+									<label class="form-label">Linha de centro</label>
+									<select name="centerLine" class="form-select">
+										<option value="">Selecione a linha de centro</option>
+										<option value="Com Furo">Com furo</option>
+										<option value="Furação deslocada">Furação deslocada</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="row mt-3">
+								<div class="col">
+									<input type="number" min="0" name="totalLengthCylinder" class="form-control"
+										placeholder="Comprimento do cilindro (mm)">
+								</div>
+								<div class="col">
+									<input type="number" min="0" name="reduction" class="form-control"
+										placeholder="Redução">
+								</div>
+							</div>
+							<div class="row mt-3">
+								<div class="col">
+									<input type="number" min="0" name="distanceBetweenHolesInStraightLine"
+										class="form-control" placeholder="Distância entre furos retos">
+								</div>
+								<div class="col">
+									<input type="number" min="0" name="distanceBetweenHolesInCurvedDirection"
+										class="form-control" placeholder="Distância entre furos curvos">
+								</div>
+								<div class="col">
+									<input type="checkbox" name="hasMeshPattern" class="form-check-input"
+										id="hasMeshPattern">
+									<label for="hasMeshPattern" class="form-check-label">Possui malha?</label>
+								</div>
+							</div>
+						</div>
+
+						<!-- FLAT -->
+						<div id="flatFields" class="d-none mt-3">
+							<div>
+								<input name="maxSheetDimension" class="form-control"
+									placeholder="Dimensão máxima da chapa. Ex: 1400 x 1600">
+							</div>
+
+						</div>
+
+						<div class="mt-3">
+							<label class="form-label">Observações</label>
+							<textarea maxlength="300" type="text" name="observations" class="form-control"
+								placeholder="Observações sobre essa máquina que podem ser importantes para o desenvolvimento"></textarea>
+						</div>
+
+					</div>
+
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+						<button type="submit" class="btn btn-success">Salvar</button>
+					</div>
+
+				</form>
+
+			</div>
+		</div>
+	</div>
+
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
 		integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
 		crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
 		integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
 		crossorigin="anonymous"></script>
+
+	<script>
+		const typeSelect = document.getElementById('machineType');
+		const rotary = document.getElementById('rotaryFields');
+		const flat = document.getElementById('flatFields');
+
+		typeSelect.addEventListener('change', () => {
+			rotary.classList.add('d-none');
+			flat.classList.add('d-none');
+
+			if (typeSelect.value === 'ROTARY') {
+				rotary.classList.remove('d-none');
+			}
+
+			if (typeSelect.value === 'FLAT') {
+				flat.classList.remove('d-none');
+			}
+		});
+	</script>
 </body>
 
 </html>
