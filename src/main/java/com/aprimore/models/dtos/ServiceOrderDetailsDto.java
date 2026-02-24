@@ -8,6 +8,8 @@ import java.util.UUID;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.aprimore.models.enuns.ServiceOrderStatus;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -45,4 +47,6 @@ public class ServiceOrderDetailsDto {
 	private String servicesToBePerformed;
 	private String obs;
 	private List<UUID> bladeIds = new ArrayList<>();
+
+	private ServiceOrderStatus status;
 }

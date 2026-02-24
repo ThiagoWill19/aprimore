@@ -52,9 +52,9 @@
 								<th>ID</th>
 								<th>Trabalho</th>
 								<th>Referência</th>
-								<th>Máquina</th>
 								<th>Entrega</th>
 								<th>Criada em</th>
+								<th>Status</th>
 								<th></th>
 							</tr>
 						</thead>
@@ -63,9 +63,9 @@
 								<td th:text="${serviceOrder.id}"></td>
 								<td th:text="${serviceOrder.workName}"></td>
 								<td th:text="${serviceOrder.reference}"></td>
-								<td th:text="${serviceOrder.machineName}"></td>
 								<td th:text="${serviceOrder.deliveryDate != null ? #temporals.format(serviceOrder.deliveryDate, 'dd/MM/yyyy') : '-'}"></td>
 								<td th:text="${serviceOrder.createdAt != null ? #temporals.format(serviceOrder.createdAt, 'dd/MM/yyyy HH:mm') : '-'}"></td>
+								<td th:class="${serviceOrder.status.description == 'ABERTA' ? 'text-success' : serviceOrder.status.description == 'FECHADA' ? 'text-muted' : 'text-danger'}"th:text="${serviceOrder.status.description}"></td>
 								<td>
 									<a class="btn btn-outline-primary btn-sm fw-bold"
 									   th:href="@{/user/client/{clientId}/service-orders/{serviceOrderId}(clientId=${clientId},serviceOrderId=${serviceOrder.id})}">

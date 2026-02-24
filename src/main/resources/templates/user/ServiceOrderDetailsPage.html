@@ -22,7 +22,8 @@
 				<li class="breadcrumb-item"><a th:href="@{/user}">Home</a></li>
 				<li class="breadcrumb-item"><a th:href="@{/user/client}">Clientes</a></li>
 				<li class="breadcrumb-item"><a th:href="@{/user/client/{id}(id=${clientId})}">Cliente</a></li>
-				<li class="breadcrumb-item"><a th:href="@{/user/client/{id}/service-orders(id=${clientId})}">Ordens de Serviço</a></li>
+				<li class="breadcrumb-item"><a th:href="@{/user/client/{id}/service-orders(id=${clientId})}">Ordens de
+						Serviço</a></li>
 				<li class="breadcrumb-item active" aria-current="page">OS</li>
 			</ol>
 		</nav>
@@ -35,14 +36,18 @@
 			<span th:text="${success}"></span>
 		</div>
 
-		<h2 class="mt-3">Ordem de Serviço #<span th:text="${serviceOrder.id}"></span></h2>
+		<div class="d-flex gap-5 align-items-center">
+			<h2>Ordem de Serviço #<span th:text="${serviceOrder.id}"></span></h2>
+			<h2
+				th:class="${serviceOrder.status.description == 'ABERTA' ? 'text-success' : serviceOrder.status.description == 'FECHADA' ? 'text-muted' : 'text-danger'}">
+				<span th:text="${serviceOrder.status.description}"></span></h2>
+		</div>
 
 		<div class="row">
 			<div class="col-12 col-md-9 card p-3 mb-5">
-				<form method="post"
-					  id="serviceOrderForm"
-					  th:action="@{/user/client/{clientId}/service-orders/{serviceOrderId}/update(clientId=${clientId},serviceOrderId=${serviceOrder.id})}"
-					  th:object="${serviceOrder}">
+				<form method="post" id="serviceOrderForm"
+					th:action="@{/user/client/{clientId}/service-orders/{serviceOrderId}/update(clientId=${clientId},serviceOrderId=${serviceOrder.id})}"
+					th:object="${serviceOrder}">
 
 					<input type="hidden" th:field="*{id}">
 					<input type="hidden" th:field="*{clientId}">
@@ -71,23 +76,26 @@
 
 					<div class="mb-3">
 						<label class="form-label fw-bold">Máquina</label>
-						<select id="machineSelect" class="form-select os-editable" th:field="*{machineId}" required disabled>
+						<select id="machineSelect" class="form-select os-editable" th:field="*{machineId}" required
+							disabled>
 							<option value="">Selecione uma máquina</option>
-							<option th:each="machine : ${machines}"
-							        th:value="${machine.id}"
-							        th:attr="data-waves=${machine.wave}"
-							        th:text="${machine.name + ' | Onda: ' + machine.wave + (machine.active ? '' : ' (inativa)')}">
+							<option th:each="machine : ${machines}" th:value="${machine.id}"
+								th:attr="data-waves=${machine.wave}"
+								th:text="${machine.name + ' | Onda: ' + machine.wave + (machine.active ? '' : ' (inativa)')}">
 							</option>
 						</select>
-						<div class="text-danger" th:if="${#fields.hasErrors('machineId')}" th:errors="*{machineId}"></div>
+						<div class="text-danger" th:if="${#fields.hasErrors('machineId')}" th:errors="*{machineId}">
+						</div>
 					</div>
 
 					<div class="mb-3">
 						<label class="form-label fw-bold">Tipo de Onda (OS)</label>
-						<select id="typeOfWaveSelect" class="form-select os-editable" th:field="*{typeOfWave}" th:attr="data-current=${serviceOrder.typeOfWave}" required disabled>
+						<select id="typeOfWaveSelect" class="form-select os-editable" th:field="*{typeOfWave}"
+							th:attr="data-current=${serviceOrder.typeOfWave}" required disabled>
 							<option value="">Selecione o tipo de onda</option>
 						</select>
-						<div class="text-danger" th:if="${#fields.hasErrors('typeOfWave')}" th:errors="*{typeOfWave}"></div>
+						<div class="text-danger" th:if="${#fields.hasErrors('typeOfWave')}" th:errors="*{typeOfWave}">
+						</div>
 					</div>
 
 					<div class="mb-3">
@@ -102,12 +110,14 @@
 
 					<div class="mb-3">
 						<label class="form-label fw-bold">Serviços a serem executados</label>
-						<textarea class="form-control os-editable" th:field="*{servicesToBePerformed}" style="height: 100px;" disabled></textarea>
+						<textarea class="form-control os-editable" th:field="*{servicesToBePerformed}"
+							style="height: 100px;" disabled></textarea>
 					</div>
 
 					<div class="mb-3">
 						<label class="form-label fw-bold">Observações</label>
-						<textarea class="form-control os-editable" th:field="*{obs}" style="height: 100px;" disabled></textarea>
+						<textarea class="form-control os-editable" th:field="*{obs}" style="height: 100px;"
+							disabled></textarea>
 					</div>
 
 					<div class="mb-4">
@@ -120,38 +130,40 @@
 							<div th:if="${!#lists.isEmpty(blades)}">
 								<div class="mb-3">
 									<label for="bladeSearch" class="form-label fw-bold">Buscar lâmina</label>
-									<input id="bladeSearch" type="text" class="form-control" placeholder="Digite nome, tipo, fabricante ou fornecedor">
+									<input id="bladeSearch" type="text" class="form-control"
+										placeholder="Digite nome, tipo, fabricante ou fornecedor">
 								</div>
 
 								<div class="bg-light rounded p-2 mb-3">
 									<span class="fw-bold">Selecionadas: </span>
 									<span id="selectedBladesCount" class="badge text-bg-primary">0</span>
-									<div id="selectedBladesList" class="small mt-2 text-muted">Nenhuma lâmina selecionada.</div>
+									<div id="selectedBladesList" class="small mt-2 text-muted">Nenhuma lâmina
+										selecionada.</div>
 								</div>
 
 								<div class="accordion" id="bladesAccordion">
 									<div class="accordion-item">
 										<h2 class="accordion-header">
-											<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#cutBlades">
+											<button class="accordion-button" type="button" data-bs-toggle="collapse"
+												data-bs-target="#cutBlades">
 												Corte
 											</button>
 										</h2>
-										<div id="cutBlades" class="accordion-collapse collapse show" data-bs-parent="#bladesAccordion">
+										<div id="cutBlades" class="accordion-collapse collapse show"
+											data-bs-parent="#bladesAccordion">
 											<div class="accordion-body" style="max-height: 220px; overflow-y: auto;">
 												<div class="form-check mb-2 blade-option" th:each="blade : ${blades}"
-													 th:with="typeLabel=${blade.bladeType.name() == 'STRAIGHT_CUT' ? 'Corte Reto' : blade.bladeType.name() == 'CURVED_CUT' ? 'Corte Curvo' : blade.bladeType.name()}"
-													 th:if="${blade.bladeType.name() == 'STRAIGHT_CUT' || blade.bladeType.name() == 'CURVED_CUT'}"
-													 th:attr="data-search=${#strings.toLowerCase(blade.name + ' ' + typeLabel + ' ' + (blade.manufacturer == null ? '' : blade.manufacturer) + ' ' + (blade.supplier == null ? '' : blade.supplier))}">
+													th:with="typeLabel=${blade.bladeType.name() == 'STRAIGHT_CUT' ? 'Corte Reto' : blade.bladeType.name() == 'CURVED_CUT' ? 'Corte Curvo' : blade.bladeType.name()}"
+													th:if="${blade.bladeType.name() == 'STRAIGHT_CUT' || blade.bladeType.name() == 'CURVED_CUT'}"
+													th:attr="data-search=${#strings.toLowerCase(blade.name + ' ' + typeLabel + ' ' + (blade.manufacturer == null ? '' : blade.manufacturer) + ' ' + (blade.supplier == null ? '' : blade.supplier))}">
 													<input class="form-check-input blade-checkbox os-editable"
-													       type="checkbox"
-													       th:field="*{bladeIds}"
-													       th:value="${blade.id}"
-													       th:id="${'blade_' + blade.id}"
-													       th:attr="data-display=${blade.name},data-manufacturer=${(blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado'},data-supplier=${(blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado'}"
-													       disabled>
+														type="checkbox" th:field="*{bladeIds}" th:value="${blade.id}"
+														th:id="${'blade_' + blade.id}"
+														th:attr="data-display=${blade.name},data-manufacturer=${(blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado'},data-supplier=${(blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado'}"
+														disabled>
 													<label class="form-check-label" th:for="${'blade_' + blade.id}"
-													       th:text="${blade.name}"
-													       th:title="${'Fabricante: ' + ((blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado') + ' | Fornecedor: ' + ((blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado')}">
+														th:text="${blade.name}"
+														th:title="${'Fabricante: ' + ((blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado') + ' | Fornecedor: ' + ((blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado')}">
 													</label>
 												</div>
 											</div>
@@ -160,26 +172,26 @@
 
 									<div class="accordion-item">
 										<h2 class="accordion-header">
-											<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#creaseBlades">
+											<button class="accordion-button collapsed" type="button"
+												data-bs-toggle="collapse" data-bs-target="#creaseBlades">
 												Vinco
 											</button>
 										</h2>
-										<div id="creaseBlades" class="accordion-collapse collapse" data-bs-parent="#bladesAccordion">
+										<div id="creaseBlades" class="accordion-collapse collapse"
+											data-bs-parent="#bladesAccordion">
 											<div class="accordion-body" style="max-height: 220px; overflow-y: auto;">
 												<div class="form-check mb-2 blade-option" th:each="blade : ${blades}"
-													 th:with="typeLabel=${blade.bladeType.name() == 'STRAIGHT_CREASE' ? 'Vinco Reto' : blade.bladeType.name() == 'CURVED_CREASE' ? 'Vinco Curvo' : blade.bladeType.name()}"
-													 th:if="${blade.bladeType.name() == 'STRAIGHT_CREASE' || blade.bladeType.name() == 'CURVED_CREASE'}"
-													 th:attr="data-search=${#strings.toLowerCase(blade.name + ' ' + typeLabel + ' ' + (blade.manufacturer == null ? '' : blade.manufacturer) + ' ' + (blade.supplier == null ? '' : blade.supplier))}">
+													th:with="typeLabel=${blade.bladeType.name() == 'STRAIGHT_CREASE' ? 'Vinco Reto' : blade.bladeType.name() == 'CURVED_CREASE' ? 'Vinco Curvo' : blade.bladeType.name()}"
+													th:if="${blade.bladeType.name() == 'STRAIGHT_CREASE' || blade.bladeType.name() == 'CURVED_CREASE'}"
+													th:attr="data-search=${#strings.toLowerCase(blade.name + ' ' + typeLabel + ' ' + (blade.manufacturer == null ? '' : blade.manufacturer) + ' ' + (blade.supplier == null ? '' : blade.supplier))}">
 													<input class="form-check-input blade-checkbox os-editable"
-													       type="checkbox"
-													       th:field="*{bladeIds}"
-													       th:value="${blade.id}"
-													       th:id="${'blade_' + blade.id}"
-													       th:attr="data-display=${blade.name},data-manufacturer=${(blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado'},data-supplier=${(blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado'}"
-													       disabled>
+														type="checkbox" th:field="*{bladeIds}" th:value="${blade.id}"
+														th:id="${'blade_' + blade.id}"
+														th:attr="data-display=${blade.name},data-manufacturer=${(blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado'},data-supplier=${(blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado'}"
+														disabled>
 													<label class="form-check-label" th:for="${'blade_' + blade.id}"
-													       th:text="${blade.name}"
-													       th:title="${'Fabricante: ' + ((blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado') + ' | Fornecedor: ' + ((blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado')}">
+														th:text="${blade.name}"
+														th:title="${'Fabricante: ' + ((blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado') + ' | Fornecedor: ' + ((blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado')}">
 													</label>
 												</div>
 											</div>
@@ -188,26 +200,26 @@
 
 									<div class="accordion-item">
 										<h2 class="accordion-header">
-											<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#perforationBlades">
+											<button class="accordion-button collapsed" type="button"
+												data-bs-toggle="collapse" data-bs-target="#perforationBlades">
 												Picote
 											</button>
 										</h2>
-										<div id="perforationBlades" class="accordion-collapse collapse" data-bs-parent="#bladesAccordion">
+										<div id="perforationBlades" class="accordion-collapse collapse"
+											data-bs-parent="#bladesAccordion">
 											<div class="accordion-body" style="max-height: 220px; overflow-y: auto;">
 												<div class="form-check mb-2 blade-option" th:each="blade : ${blades}"
-													 th:with="typeLabel=${blade.bladeType.name() == 'STRAIGHT_PERFORATION' ? 'Picote Reto' : blade.bladeType.name() == 'CUVED_PERFORATION' ? 'Picote Curvo' : blade.bladeType.name()}"
-													 th:if="${blade.bladeType.name() == 'STRAIGHT_PERFORATION' || blade.bladeType.name() == 'CUVED_PERFORATION'}"
-													 th:attr="data-search=${#strings.toLowerCase(blade.name + ' ' + typeLabel + ' ' + (blade.manufacturer == null ? '' : blade.manufacturer) + ' ' + (blade.supplier == null ? '' : blade.supplier))}">
+													th:with="typeLabel=${blade.bladeType.name() == 'STRAIGHT_PERFORATION' ? 'Picote Reto' : blade.bladeType.name() == 'CUVED_PERFORATION' ? 'Picote Curvo' : blade.bladeType.name()}"
+													th:if="${blade.bladeType.name() == 'STRAIGHT_PERFORATION' || blade.bladeType.name() == 'CUVED_PERFORATION'}"
+													th:attr="data-search=${#strings.toLowerCase(blade.name + ' ' + typeLabel + ' ' + (blade.manufacturer == null ? '' : blade.manufacturer) + ' ' + (blade.supplier == null ? '' : blade.supplier))}">
 													<input class="form-check-input blade-checkbox os-editable"
-													       type="checkbox"
-													       th:field="*{bladeIds}"
-													       th:value="${blade.id}"
-													       th:id="${'blade_' + blade.id}"
-													       th:attr="data-display=${blade.name},data-manufacturer=${(blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado'},data-supplier=${(blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado'}"
-													       disabled>
+														type="checkbox" th:field="*{bladeIds}" th:value="${blade.id}"
+														th:id="${'blade_' + blade.id}"
+														th:attr="data-display=${blade.name},data-manufacturer=${(blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado'},data-supplier=${(blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado'}"
+														disabled>
 													<label class="form-check-label" th:for="${'blade_' + blade.id}"
-													       th:text="${blade.name}"
-													       th:title="${'Fabricante: ' + ((blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado') + ' | Fornecedor: ' + ((blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado')}">
+														th:text="${blade.name}"
+														th:title="${'Fabricante: ' + ((blade.manufacturer != null && !#strings.isEmpty(blade.manufacturer)) ? blade.manufacturer : 'Nao informado') + ' | Fornecedor: ' + ((blade.supplier != null && !#strings.isEmpty(blade.supplier)) ? blade.supplier : 'Nao informado')}">
 													</label>
 												</div>
 											</div>
@@ -218,10 +230,28 @@
 						</div>
 					</div>
 
+					<div class="mb-3">
+						<label class="form-label fw-bold">Status</label>
+						<select id="statusSelect" class="form-select os-editable" th:field="*{status}"
+							th:attr="data-current=${serviceOrder.status}" required disabled>
+
+							<option th:value="OPEN" th:selected="${serviceOrder.status == 'OPEN'}">ABERTA</option>
+							<option th:value="CLOSED" th:selected="${serviceOrder.status == 'CLOSED'}">FECHADA</option>
+							<option th:value="CANCELED" th:selected="${serviceOrder.status == 'CANCELLED'}">CANCELADA</option>
+						</select>
+						<div class="text-danger" th:if="${#fields.hasErrors('status')}" th:errors="*{status}">
+						</div>
+					</div>
+
+
+
 					<div class="d-flex gap-3">
-						<button id="btnEditar" type="button" class="btn btn-primary" onclick="toggleEdicao()">Editar</button>
-						<button id="btnSalvar" type="submit" class="btn btn-warning fw-bold" disabled>Salvar alteracoes</button>
-						<a class="btn btn-outline-secondary" th:href="@{/user/client/{id}/service-orders(id=${clientId})}">Voltar</a>
+						<button id="btnEditar" type="button" class="btn btn-primary"
+							onclick="toggleEdicao()">Editar</button>
+						<button id="btnSalvar" type="submit" class="btn btn-warning fw-bold" disabled>Salvar
+							alteracoes</button>
+						<a class="btn btn-outline-secondary"
+							th:href="@{/user/client/{id}/service-orders(id=${clientId})}">Voltar</a>
 					</div>
 				</form>
 			</div>

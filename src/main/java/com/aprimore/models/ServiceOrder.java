@@ -5,7 +5,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.aprimore.models.enuns.ServiceOrderStatus;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -56,6 +60,9 @@ public class ServiceOrder {
 	private String servicesToBePerformed;
 	
 	private String obs;
+
+	@Enumerated(EnumType.STRING)
+	private ServiceOrderStatus status;
 	
 	@ManyToMany
 	@JoinTable(

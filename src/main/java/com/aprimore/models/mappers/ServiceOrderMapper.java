@@ -21,9 +21,9 @@ public class ServiceOrderMapper {
 		dto.setId(serviceOrder.getId());
 		dto.setWorkName(serviceOrder.getWorkName());
 		dto.setReference(serviceOrder.getReference());
-		dto.setMachineName(serviceOrder.getMachine() != null ? serviceOrder.getMachine().getName() : null);
 		dto.setDeliveryDate(serviceOrder.getDeliveryDate());
 		dto.setCreatedAt(serviceOrder.getCreatedAt());
+		dto.setStatus(serviceOrder.getStatus());
 		return dto;
 	}
 
@@ -43,6 +43,7 @@ public class ServiceOrderMapper {
 		dto.setServicesToBePerformed(serviceOrder.getServicesToBePerformed());
 		dto.setObs(serviceOrder.getObs());
 		dto.setBladeIds(serviceOrder.getBlades().stream().map(Blade::getId).toList());
+		dto.setStatus(serviceOrder.getStatus());
 		return dto;
 	}
 
@@ -91,5 +92,6 @@ public class ServiceOrderMapper {
 		serviceOrder.setBlades(blades);
 		serviceOrder.setType(machine.getClass().getSimpleName().replace("Machine", "").toUpperCase());
 		serviceOrder.setTypeOfWave(normalizedWave);
+		serviceOrder.setStatus(dto.getStatus());
 	}
 }

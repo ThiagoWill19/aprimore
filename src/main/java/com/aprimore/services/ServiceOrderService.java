@@ -26,6 +26,7 @@ import com.aprimore.models.dtos.NewServiceOrderDto;
 import com.aprimore.models.dtos.ServiceOrderDetailsDto;
 import com.aprimore.models.dtos.ServiceOrderListDto;
 import com.aprimore.models.enuns.AccountStatus;
+import com.aprimore.models.enuns.ServiceOrderStatus;
 import com.aprimore.models.mappers.ServiceOrderMapper;
 import com.aprimore.repositories.BladeRepository;
 import com.aprimore.repositories.ClientRepository;
@@ -123,6 +124,8 @@ public class ServiceOrderService {
 		if (serviceOrder.getEntryDate() == null) {
 			serviceOrder.setEntryDate(LocalDate.now());
 		}
+
+		serviceOrder.setStatus(ServiceOrderStatus.OPEN);
 
 		return serviceOrderRepository.save(serviceOrder);
 	}
