@@ -100,6 +100,10 @@ public class ServiceOrderService {
 		Machine machine = machineRepository.findById(dto.getMachineId())
 				.orElseThrow(() -> new ResourceNotFoundException("Máquina não encontrada"));
 
+		if(machine.isActive() == false) {
+			throw new DomainRuleException("A máquina selecionada está inativa. Não é possível criar ordem de serviço para máquinas inativas.");
+		}
+
 		if (!machine.getClient().getId().equals(client.getId())) {
 			throw new DomainRuleException("A máquina selecionada não pertence ao cliente informado.");
 		}

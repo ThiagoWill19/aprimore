@@ -71,8 +71,10 @@
 							<option th:each="machine : ${machines}"
 							        th:value="${machine.id}"
 							        th:attr="data-waves=${machine.wave}"
-							        th:text="${machine.name + ' | Onda: ' + machine.wave + (machine.active ? '' : ' (inativa)')}">
-							</option>
+							        th:text="${machine.name + ' | Onda: ' + machine.wave + (machine.active ? '' : ' (inativa)')}"
+									th:disabled="${!machine.active}">
+									
+								</option>
 						</select>
 						<div class="text-danger" th:if="${#fields.hasErrors('machineId')}" th:errors="*{machineId}"></div>
 					</div>
