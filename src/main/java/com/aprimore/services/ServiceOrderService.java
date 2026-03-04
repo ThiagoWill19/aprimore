@@ -65,7 +65,7 @@ public class ServiceOrderService {
 	public List<Client> findClientsByBusiness(User user) {
 
 		validateBusinessIsActive(user);
-		return clientRepository.findByBusinessIdOrderByClientName(user.getBusiness().getId());
+		return clientRepository.findByBusinessIdAndActiveTrueOrderByClientName(user.getBusiness().getId());
 	}
 
 	public List<Blade> findBladesByBusiness(User user) {

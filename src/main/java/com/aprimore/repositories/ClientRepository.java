@@ -14,6 +14,8 @@ public interface ClientRepository extends JpaRepository<Client, UUID>{
 	Page<Client> findByBusinessIdOrderByClientName(UUID businessId, Pageable pageable);
 
 	List<Client> findByBusinessIdOrderByClientName(UUID businessId);
+
+	List<Client> findByBusinessIdAndActiveTrueOrderByClientName(UUID businessId);
 	
 	Page<Client> findByBusinessIdAndClientNameContainingIgnoreCaseOrderByClientName(
 			UUID businessId,
