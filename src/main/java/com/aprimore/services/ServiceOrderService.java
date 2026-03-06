@@ -74,6 +74,18 @@ public class ServiceOrderService {
 		return itemRepository.findBladesByBusinessId(user.getBusiness().getId());
 	}
 
+	public Page<ServiceOrderListDto> listAllByBusiness(int page, int size, User user) {
+
+		validateBusinessIsActive(user);
+
+		page = Math.max(page, 0);
+		size = Math.min(Math.max(size, 1), 50);
+		Pageable pageable = PageRequest.of(page, size);
+
+		return serviceOrderRepository.findAllByClientBusinessIdOrderByStatusDescEntryDateDesc(pageable, user.getBusiness().getId())
+				.map(serviceOrderMapper::mapToListDto);
+	}
+
 	public Page<ServiceOrderListDto> listByClient(UUID clientId, int page, int size, User user) {
 
 		Client client = findClientWithAccessValidation(clientId, user);

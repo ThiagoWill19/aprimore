@@ -21,9 +21,11 @@ import com.aprimore.models.Client;
 import com.aprimore.models.dtos.ClientDetailsDto;
 import com.aprimore.models.dtos.ClientListDto;
 import com.aprimore.models.dtos.NewClientDto;
+import com.aprimore.models.dtos.ServiceOrderListDto;
 import com.aprimore.models.dtos.UpdateAddressDto;
 import com.aprimore.services.AddressService;
 import com.aprimore.services.ClientService;
+import com.aprimore.services.ServiceOrderService;
 
 import jakarta.validation.Valid;
 
@@ -36,6 +38,9 @@ public class UserController {
 	
 	@Autowired
 	private AddressService addressService;
+
+	@Autowired
+	private ServiceOrderService serviceOrderService;
 
 	@GetMapping
 	public String inicialPage(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -146,6 +151,24 @@ public class UserController {
 	) {
 	    addressService.updateAddress(addressDto, userDetails.getUser());
 	    return "redirect:/user/client/" + addressDto.getClientId();
+	}
+
+
+		@GetMapping("/service-orders")
+	public String findAllByBusiness(
+			@RequestParam(defaultValue = "0") int page,
+			Model model,
+			RedirectAttributes redirectAttributes,
+			@AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+		try {
+			Page<ServiceOrderListDto> serviceOrders = serviceOrderService.listAllByBusiness(page, 10, userDetails.getUser());
+			model.addAttribute("serviceOrders", serviceOrders);
+			return "/user/AllServiceOrderListPage";
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("erro", e.getMessage());
+			return "redirect:/user/dashboard";
+		}
 	}
 
 

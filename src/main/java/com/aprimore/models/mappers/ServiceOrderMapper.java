@@ -19,6 +19,8 @@ public class ServiceOrderMapper {
 	public ServiceOrderListDto mapToListDto(ServiceOrder serviceOrder) {
 		ServiceOrderListDto dto = new ServiceOrderListDto();
 		dto.setId(serviceOrder.getId());
+		dto.setClientId(serviceOrder.getClient().getId());
+		dto.setClientName(serviceOrder.getClient().getClientName());
 		dto.setWorkName(serviceOrder.getWorkName());
 		dto.setReference(serviceOrder.getReference());
 		dto.setDeliveryDate(serviceOrder.getDeliveryDate());

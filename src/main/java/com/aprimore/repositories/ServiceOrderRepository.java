@@ -12,4 +12,6 @@ public interface ServiceOrderRepository extends JpaRepository<ServiceOrder, Long
 
 	Page<ServiceOrder> findByClientIdOrderByCreatedAtDesc(UUID clientId, Pageable pageable);
 
+	Page<ServiceOrder> findAllByClientBusinessIdOrderByStatusDescEntryDateDesc(Pageable pageable, UUID businessId);
+
 }
