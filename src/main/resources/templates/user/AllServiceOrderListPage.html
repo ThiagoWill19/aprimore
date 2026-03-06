@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<meta charset="utf-8">
@@ -34,14 +34,45 @@
 		</div>
 
 		<div class="d-flex justify-content-between align-items-center mt-3 mb-3">
-			<h2 class="m-0">Ordens de Serviço</h2>
+			<h2 class="m-0">Ordens de Servico</h2>
 			<a class="btn btn-success fw-bold" th:href="@{/user/service-orders/new}">Nova OS</a>
+		</div>
+
+		<div class="card mb-3">
+			<div class="card-body">
+				<form class="row g-3 align-items-end" th:action="@{/user/service-orders}" method="get">
+					<div class="col-12 col-md-6">
+						<label class="form-label mb-1" for="search">Buscar</label>
+						<input class="form-control"
+							id="search"
+							type="search"
+							name="search"
+							th:value="${search}"
+							placeholder="Numero da OS ou nome da empresa">
+					</div>
+					<div class="col-12 col-md-3">
+						<label class="form-label mb-1" for="monthYear">Mes/Ano</label>
+						<input class="form-control"
+							id="monthYear"
+							type="month"
+							name="monthYear"
+							th:value="${monthYear}">
+					</div>
+					<div class="col-12 col-md-3 d-flex gap-2">
+						<button class="btn btn-outline-primary w-100" type="submit">Buscar</button>
+						<a class="btn btn-outline-secondary w-100" th:href="@{/user/service-orders}">Limpar</a>
+					</div>
+				</form>
+				<small class="text-muted mt-2 d-block" th:if="${defaultLast30Days}">
+					Exibindo OS dos ultimos 30 dias por padrao.
+				</small>
+			</div>
 		</div>
 
 		<div class="card">
 			<div class="card-body">
 				<div th:if="${serviceOrders.isEmpty()}" class="text-muted">
-					Nenhuma ordem de serviço cadastrada.
+					Nenhuma ordem de servico encontrada para os filtros informados.
 				</div>
 
 				<div class="table-responsive" th:if="${!serviceOrders.isEmpty()}">
@@ -51,7 +82,7 @@
 								<th>ID</th>
 								<th>Cliente</th>
 								<th>Trabalho</th>
-								<th>Referência</th>
+								<th>Referencia</th>
 								<th>Entrega</th>
 								<th>Criada em</th>
 								<th>Status</th>
@@ -84,21 +115,21 @@
 
 					<nav class="mt-3">
 						<small th:if="${serviceOrders.totalPages > 0}"
-							th:text="'Página ' + ${serviceOrders.number + 1} + ' de ' + ${serviceOrders.totalPages}">
+							th:text="'Pagina ' + ${serviceOrders.number + 1} + ' de ' + ${serviceOrders.totalPages}">
 						</small>
 
 						<ul class="pagination mt-2">
 							<li class="page-item" th:classappend="${serviceOrders.first} ? 'disabled'">
 								<a class="page-link"
-									th:href="@{/user/client(page=${serviceOrders.number - 1}, search=${search})}">
+									th:href="@{/user/service-orders(page=${serviceOrders.number - 1}, search=${search}, monthYear=${monthYear})}">
 									Anterior
 								</a>
 							</li>
 
 							<li class="page-item" th:classappend="${serviceOrders.last} ? 'disabled'">
 								<a class="page-link"
-									th:href="@{/user/client(page=${serviceOrders.number + 1}, search=${search})}">
-									Próxima
+									th:href="@{/user/service-orders(page=${serviceOrders.number + 1}, search=${search}, monthYear=${monthYear})}">
+									Proxima
 								</a>
 							</li>
 						</ul>

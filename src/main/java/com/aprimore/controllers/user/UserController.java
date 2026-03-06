@@ -1,5 +1,8 @@
 package com.aprimore.controllers.user;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,17 +157,42 @@ public class UserController {
 	}
 
 
-		@GetMapping("/service-orders")
+	@GetMapping("/service-orders")
 	public String findAllByBusiness(
 			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(required = false) String search,
+			@RequestParam(required = false) String monthYear,
 			Model model,
 			RedirectAttributes redirectAttributes,
 			@AuthenticationPrincipal UserDetailsImpl userDetails) {
 
 		try {
-			Page<ServiceOrderListDto> serviceOrders = serviceOrderService.listAllByBusiness(page, 10, userDetails.getUser());
+			LocalDate endDate = LocalDate.now();
+			LocalDate startDate = endDate.minusDays(30);
+			String normalizedMonthYear = monthYear == null ? null : monthYear.trim();
+
+			if (normalizedMonthYear != null && !normalizedMonthYear.isBlank()) {
+				YearMonth selectedMonth = YearMonth.parse(normalizedMonthYear);
+				startDate = selectedMonth.atDay(1);
+				endDate = selectedMonth.atEndOfMonth();
+			}
+
+			Page<ServiceOrderListDto> serviceOrders = serviceOrderService.listAllByBusiness(
+					page,
+					10,
+					search,
+					startDate,
+					endDate,
+					userDetails.getUser());
 			model.addAttribute("serviceOrders", serviceOrders);
+			model.addAttribute("search", search);
+			model.addAttribute("monthYear", normalizedMonthYear);
+			model.addAttribute("defaultLast30Days",
+					normalizedMonthYear == null || normalizedMonthYear.isBlank());
 			return "/user/AllServiceOrderListPage";
+		} catch (DateTimeParseException e) {
+			redirectAttributes.addFlashAttribute("erro", "Periodo invalido. Use o formato mes/ano.");
+			return "redirect:/user/service-orders";
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("erro", e.getMessage());
 			return "redirect:/user/dashboard";

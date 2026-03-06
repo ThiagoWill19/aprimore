@@ -75,15 +75,49 @@ public class ServiceOrderService {
 	}
 
 	public Page<ServiceOrderListDto> listAllByBusiness(int page, int size, User user) {
+		return listAllByBusiness(page, size, null, null, null, user);
+	}
+
+	public Page<ServiceOrderListDto> listAllByBusiness(
+			int page,
+			int size,
+			String search,
+			LocalDate startDate,
+			LocalDate endDate,
+			User user) {
 
 		validateBusinessIsActive(user);
 
 		page = Math.max(page, 0);
 		size = Math.min(Math.max(size, 1), 50);
 		Pageable pageable = PageRequest.of(page, size);
+		String term = search == null ? null : search.trim();
+		if (term != null && term.isBlank()) {
+			term = null;
+		}
+		Long serviceOrderId = parseSearchAsServiceOrderId(term);
 
-		return serviceOrderRepository.findAllByClientBusinessIdOrderByStatusDescEntryDateDesc(pageable, user.getBusiness().getId())
+		return serviceOrderRepository.findAllByBusinessWithFilters(
+						user.getBusiness().getId(),
+						term,
+						serviceOrderId,
+						startDate,
+						endDate,
+						pageable)
 				.map(serviceOrderMapper::mapToListDto);
+	}
+
+	private Long parseSearchAsServiceOrderId(String search) {
+
+		if (search == null || search.isBlank()) {
+			return null;
+		}
+
+		try {
+			return Long.parseLong(search);
+		} catch (NumberFormatException e) {
+			return null;
+		}
 	}
 
 	public Page<ServiceOrderListDto> listByClient(UUID clientId, int page, int size, User user) {
