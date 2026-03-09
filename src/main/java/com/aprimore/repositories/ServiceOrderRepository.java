@@ -1,6 +1,7 @@
 package com.aprimore.repositories;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.aprimore.models.ServiceOrder;
+import com.aprimore.models.enuns.ServiceOrderStatus;
 
 public interface ServiceOrderRepository extends JpaRepository<ServiceOrder, Long>{
 
@@ -38,5 +40,53 @@ public interface ServiceOrderRepository extends JpaRepository<ServiceOrder, Long
 			@Param("startDate") LocalDate startDate,
 			@Param("endDate") LocalDate endDate,
 			Pageable pageable);
+
+	long countByClientBusinessIdAndStatus(UUID businessId, ServiceOrderStatus status);
+
+	long countByClientBusinessIdAndStatusAndDeliveryDateBefore(
+			UUID businessId,
+			ServiceOrderStatus status,
+			LocalDate date);
+
+	@Query("""
+			SELECT COALESCE(MAX(so.pcpSequence), 0)
+			FROM ServiceOrder so
+			JOIN so.client c
+			WHERE c.business.id = :businessId
+			  AND so.status = :status
+			""")
+	Integer findMaxPcpSequenceByBusinessAndStatus(
+			@Param("businessId") UUID businessId,
+			@Param("status") ServiceOrderStatus status);
+
+	@Query("""
+			SELECT so
+			FROM ServiceOrder so
+			JOIN so.client c
+			WHERE c.business.id = :businessId
+			  AND so.status = :status
+			ORDER BY
+			  CASE WHEN so.pcpSequence IS NULL THEN 1 ELSE 0 END,
+			  so.pcpSequence ASC,
+			  CASE WHEN so.deliveryDate IS NULL THEN 1 ELSE 0 END,
+			  so.deliveryDate ASC,
+			  so.createdAt ASC
+			""")
+	List<ServiceOrder> findPriorityByBusinessAndStatus(
+			@Param("businessId") UUID businessId,
+			@Param("status") ServiceOrderStatus status);
+
+	@Query("""
+			SELECT so
+			FROM ServiceOrder so
+			JOIN so.client c
+			WHERE c.business.id = :businessId
+			  AND so.status = :status
+			  AND so.id IN :serviceOrderIds
+			""")
+	List<ServiceOrder> findByBusinessAndStatusAndIdIn(
+			@Param("businessId") UUID businessId,
+			@Param("status") ServiceOrderStatus status,
+			@Param("serviceOrderIds") List<Long> serviceOrderIds);
 
 }

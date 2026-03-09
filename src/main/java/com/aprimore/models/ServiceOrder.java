@@ -61,6 +61,8 @@ public class ServiceOrder {
 	
 	private String obs;
 
+	private Integer pcpSequence;
+
 	@Enumerated(EnumType.STRING)
 	private ServiceOrderStatus status;
 	

@@ -3,6 +3,7 @@ package com.aprimore.controllers.user;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +24,13 @@ import com.aprimore.exceptions.DomainRuleException;
 import com.aprimore.models.Client;
 import com.aprimore.models.dtos.ClientDetailsDto;
 import com.aprimore.models.dtos.ClientListDto;
+import com.aprimore.models.dtos.DashboardDto;
 import com.aprimore.models.dtos.NewClientDto;
 import com.aprimore.models.dtos.ServiceOrderListDto;
 import com.aprimore.models.dtos.UpdateAddressDto;
 import com.aprimore.services.AddressService;
 import com.aprimore.services.ClientService;
+import com.aprimore.services.DashboardService;
 import com.aprimore.services.ServiceOrderService;
 
 import jakarta.validation.Valid;
@@ -45,13 +48,18 @@ public class UserController {
 	@Autowired
 	private ServiceOrderService serviceOrderService;
 
+	@Autowired
+	private DashboardService dashboardService;
+
 	@GetMapping
 	public String inicialPage(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 		
 		model.addAttribute("username", userDetails.getUser().getName());
 		model.addAttribute("businessName", userDetails.getUser().getBusiness().getTradeName());
+		DashboardDto dashboard = dashboardService.loadDashboard(userDetails.getUser());
+		model.addAttribute("dashboard", dashboard);
 		
-		return "/user/UserInitialPage";
+		return "/user/userInitialPage";
 	}
 	
 	@PostMapping("/new-client")
@@ -75,6 +83,22 @@ public class UserController {
 			
 		} catch (DomainRuleException e) {
 			redirectAttributes.addFlashAttribute("erro",e.getMessage());
+			return "redirect:/user";
+		}
+	}
+
+	@PostMapping("/dashboard/pcp")
+	public String updateDashboardPcp(
+			@RequestParam(name = "orderedIds", required = false) List<Long> orderedIds,
+			RedirectAttributes redirectAttributes,
+			@AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+		try {
+			dashboardService.updatePcpSequence(orderedIds, userDetails.getUser());
+			redirectAttributes.addFlashAttribute("success", "Sequencia PCP atualizada com sucesso.");
+			return "redirect:/user";
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("erro", e.getMessage());
 			return "redirect:/user";
 		}
 	}

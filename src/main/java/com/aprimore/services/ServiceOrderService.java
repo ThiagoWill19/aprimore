@@ -176,6 +176,7 @@ public class ServiceOrderService {
 		}
 
 		serviceOrder.setStatus(ServiceOrderStatus.OPEN);
+		serviceOrder.setPcpSequence(nextPcpSequence(user.getBusiness().getId()));
 
 		return serviceOrderRepository.save(serviceOrder);
 	}
@@ -222,13 +223,26 @@ public class ServiceOrderService {
 
 		List<Blade> blades = resolveAndValidateBlades(dto.getBladeIds(), user);
 		String normalizedWave = normalizeAndValidateWave(dto.getTypeOfWave(), machine);
+		ServiceOrderStatus currentStatus = serviceOrder.getStatus();
 		serviceOrderMapper.updateEntityFromDetailsDto(dto, serviceOrder, machine, blades, normalizedWave);
 
 		if (serviceOrder.getEntryDate() == null) {
 			serviceOrder.setEntryDate(LocalDate.now());
 		}
 
+		if (currentStatus != ServiceOrderStatus.OPEN
+				&& serviceOrder.getStatus() == ServiceOrderStatus.OPEN) {
+			serviceOrder.setPcpSequence(nextPcpSequence(user.getBusiness().getId()));
+		}
+
 		serviceOrderRepository.save(serviceOrder);
+	}
+
+	private Integer nextPcpSequence(UUID businessId) {
+		Integer currentMax = serviceOrderRepository.findMaxPcpSequenceByBusinessAndStatus(
+				businessId,
+				ServiceOrderStatus.OPEN);
+		return (currentMax == null ? 0 : currentMax) + 1;
 	}
 
 	private Client findClientWithAccessValidation(UUID clientId, User user) {
