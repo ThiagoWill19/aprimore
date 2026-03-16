@@ -21,7 +21,7 @@
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item"><a th:href="@{/user}">Home</a></li>
 				<li class="breadcrumb-item"><a th:href="@{/user/client}">Clientes</a></li>
-				<li class="breadcrumb-item active" aria-current="page">Ordens de Servico</li>
+				<li class="breadcrumb-item active" aria-current="page">Ordens de Serviço</li>
 			</ol>
 		</nav>
 
@@ -34,7 +34,7 @@
 		</div>
 
 		<div class="d-flex justify-content-between align-items-center mt-3 mb-3">
-			<h2 class="m-0">Ordens de Servico</h2>
+			<h2 class="m-0">Ordens de Serviço</h2>
 			<a class="btn btn-success fw-bold" th:href="@{/user/service-orders/new}">Nova OS</a>
 		</div>
 
@@ -48,10 +48,10 @@
 							type="search"
 							name="search"
 							th:value="${search}"
-							placeholder="Numero da OS ou nome da empresa">
+							placeholder="Número da OS ou nome da empresa">
 					</div>
 					<div class="col-12 col-md-3">
-						<label class="form-label mb-1" for="monthYear">Mes/Ano</label>
+						<label class="form-label mb-1" for="monthYear">Mês/Ano</label>
 						<input class="form-control"
 							id="monthYear"
 							type="month"
@@ -64,7 +64,7 @@
 					</div>
 				</form>
 				<small class="text-muted mt-2 d-block" th:if="${defaultLast30Days}">
-					Exibindo OS dos ultimos 30 dias por padrao.
+					Exibindo OS dos ultimos 30 dias por padrão.
 				</small>
 			</div>
 		</div>
@@ -72,7 +72,7 @@
 		<div class="card">
 			<div class="card-body">
 				<div th:if="${serviceOrders.isEmpty()}" class="text-muted">
-					Nenhuma ordem de servico encontrada para os filtros informados.
+					Nenhuma ordem de serviço encontrada para os filtros informados.
 				</div>
 
 				<div class="table-responsive" th:if="${!serviceOrders.isEmpty()}">
@@ -82,7 +82,7 @@
 								<th>ID</th>
 								<th>Cliente</th>
 								<th>Trabalho</th>
-								<th>Referencia</th>
+								<th>Referência</th>
 								<th>Entrega</th>
 								<th>Criada em</th>
 								<th>Status</th>
@@ -129,7 +129,7 @@
 							<li class="page-item" th:classappend="${serviceOrders.last} ? 'disabled'">
 								<a class="page-link"
 									th:href="@{/user/service-orders(page=${serviceOrders.number + 1}, search=${search}, monthYear=${monthYear})}">
-									Proxima
+									Próxima
 								</a>
 							</li>
 						</ul>
