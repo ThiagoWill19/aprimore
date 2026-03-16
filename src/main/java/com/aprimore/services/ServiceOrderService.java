@@ -34,6 +34,17 @@ import com.aprimore.repositories.ItemRepository;
 import com.aprimore.repositories.MachineRepository;
 import com.aprimore.repositories.ServiceOrderRepository;
 
+/*
+ * Service responsável por gerenciar toda a regra de negócio
+ * relacionada às Ordens de Serviço (ServiceOrder).
+ *
+ * Aqui ficam regras como:
+ * - criação de OS
+ * - atualização
+ * - listagem
+ * - validação de acesso
+ * - validações de domínio
+ */
 @Service
 public class ServiceOrderService {
 
@@ -55,6 +66,10 @@ public class ServiceOrderService {
 	@Autowired
 	private ServiceOrderMapper serviceOrderMapper;
 
+	/*
+	 * Retorna as máquinas de um cliente específico.
+	 * Apenas máquinas pertencentes ao cliente são retornadas.
+	 */
 	public List<Machine> findMachinesByClient(UUID clientId, User user) {
 
 		Client client = findClientWithAccessValidation(clientId, user);
@@ -62,22 +77,36 @@ public class ServiceOrderService {
 		return machineRepository.findByClientIdOrderByActiveDescNameAsc(client.getId());
 	}
 
+	/*
+	 * Retorna todos os clientes ativos da empresa do usuário logado.
+	 */
 	public List<Client> findClientsByBusiness(User user) {
 
 		validateBusinessIsActive(user);
 		return clientRepository.findByBusinessIdAndActiveTrueOrderByClientName(user.getBusiness().getId());
 	}
 
+	/*
+	 * Retorna todas as lâminas cadastradas para a empresa.
+	 */
 	public List<Blade> findBladesByBusiness(User user) {
 
 		validateBusinessIsActive(user);
 		return itemRepository.findBladesByBusinessId(user.getBusiness().getId());
 	}
 
+	/*
+	 * Listagem simples de OS sem filtros.
+	 */
 	public Page<ServiceOrderListDto> listAllByBusiness(int page, int size, User user) {
 		return listAllByBusiness(page, size, null, null, null, user);
 	}
 
+	/*
+	 * Listagem de OS com filtros opcionais:
+	 * - busca textual
+	 * - intervalo de datas
+	 */
 	public Page<ServiceOrderListDto> listAllByBusiness(
 			int page,
 			int size,
@@ -88,13 +117,19 @@ public class ServiceOrderService {
 
 		validateBusinessIsActive(user);
 
+		// Proteção contra paginação inválida
 		page = Math.max(page, 0);
 		size = Math.min(Math.max(size, 1), 50);
+
 		Pageable pageable = PageRequest.of(page, size);
+
+		// Normalização do termo de busca
 		String term = search == null ? null : search.trim();
 		if (term != null && term.isBlank()) {
 			term = null;
 		}
+
+		// Caso o termo seja um número tentamos buscar por ID da OS
 		Long serviceOrderId = parseSearchAsServiceOrderId(term);
 
 		return serviceOrderRepository.findAllByBusinessWithFilters(
@@ -107,6 +142,10 @@ public class ServiceOrderService {
 				.map(serviceOrderMapper::mapToListDto);
 	}
 
+	/*
+	 * Caso o usuário digite um número no campo de busca,
+	 * tentamos interpretar como ID da OS.
+	 */
 	private Long parseSearchAsServiceOrderId(String search) {
 
 		if (search == null || search.isBlank()) {
@@ -120,6 +159,9 @@ public class ServiceOrderService {
 		}
 	}
 
+	/*
+	 * Lista todas as OS de um cliente específico.
+	 */
 	public Page<ServiceOrderListDto> listByClient(UUID clientId, int page, int size, User user) {
 
 		Client client = findClientWithAccessValidation(clientId, user);
@@ -132,6 +174,9 @@ public class ServiceOrderService {
 				.map(serviceOrderMapper::mapToListDto);
 	}
 
+	/*
+	 * Busca detalhes completos de uma OS específica.
+	 */
 	public ServiceOrderDetailsDto findById(UUID clientId, Long serviceOrderId, User user) {
 
 		Client client = findClientWithAccessValidation(clientId, user);
@@ -139,10 +184,15 @@ public class ServiceOrderService {
 		return serviceOrderMapper.mapToDetailsDto(serviceOrder);
 	}
 
+	/*
+	 * Criação de uma nova ordem de serviço.
+	 */
 	@Transactional
 	public ServiceOrder createServiceOrder(UUID clientId, NewServiceOrderDto dto, User user) {
 
 		Client client = findClientWithAccessValidation(clientId, user);
+
+		// Busca máquina
 		Machine machine = machineRepository.findById(dto.getMachineId())
 				.orElseThrow(() -> new ResourceNotFoundException("Máquina não encontrada"));
 
@@ -154,15 +204,19 @@ public class ServiceOrderService {
 			throw new DomainRuleException("A máquina selecionada não pertence ao cliente informado.");
 		}
 
+		// Validação de datas
 		if (dto.getDeliveryDate() != null && dto.getEntryDate() != null
 				&& dto.getDeliveryDate().isBefore(dto.getEntryDate())) {
 			throw new DomainRuleException("A data de entrega não pode ser anterior a data de entrada.");
 		}
 
 		List<Blade> blades = resolveAndValidateBlades(dto.getBladeIds(), user);
+
 		String normalizedWave = normalizeAndValidateWave(dto.getTypeOfWave(), machine);
+
 		String observations = buildServiceOrderObservations(dto.getObs(), client, machine);
 
+		// Criação da entidade
 		ServiceOrder serviceOrder = serviceOrderMapper.mapToNewEntity(
 				dto,
 				client,
@@ -176,11 +230,19 @@ public class ServiceOrderService {
 		}
 
 		serviceOrder.setStatus(ServiceOrderStatus.OPEN);
+
+		// Define sequência no PCP
 		serviceOrder.setPcpSequence(nextPcpSequence(user.getBusiness().getId()));
 
 		return serviceOrderRepository.save(serviceOrder);
 	}
 
+	/*
+	 * Monta o campo de observações da OS combinando:
+	 * - observação do usuário
+	 * - instruções padrão do cliente
+	 * - observações da máquina
+	 */
 	private String buildServiceOrderObservations(String userObs, Client client, Machine machine) {
 
 		List<String> sections = new ArrayList<>();
@@ -230,6 +292,10 @@ public class ServiceOrderService {
 			serviceOrder.setEntryDate(LocalDate.now());
 		}
 
+		/*
+		 * Caso a OS volte para status OPEN,
+		 * ela precisa entrar novamente no PCP.
+		 */
 		if (currentStatus != ServiceOrderStatus.OPEN
 				&& serviceOrder.getStatus() == ServiceOrderStatus.OPEN) {
 			serviceOrder.setPcpSequence(nextPcpSequence(user.getBusiness().getId()));
@@ -238,6 +304,9 @@ public class ServiceOrderService {
 		serviceOrderRepository.save(serviceOrder);
 	}
 
+	/*
+	 * Calcula a próxima posição do PCP.
+	 */
 	private Integer nextPcpSequence(UUID businessId) {
 		Integer currentMax = serviceOrderRepository.findMaxPcpSequenceByBusinessAndStatus(
 				businessId,
@@ -245,6 +314,9 @@ public class ServiceOrderService {
 		return (currentMax == null ? 0 : currentMax) + 1;
 	}
 
+	/*
+	 * Busca cliente e valida acesso da empresa.
+	 */
 	private Client findClientWithAccessValidation(UUID clientId, User user) {
 
 		Client client = clientRepository.findById(clientId)
@@ -259,12 +331,18 @@ public class ServiceOrderService {
 		return client;
 	}
 
+	/*
+	 * Regra de segurança: empresa precisa estar ativa.
+	 */
 	private void validateBusinessIsActive(User user) {
 		if (user.getBusiness().getAccountStatus() != AccountStatus.ACTIVE) {
 			throw new AccessDeniedException("Empresa inativa. Operações não permitidas.");
 		}
 	}
 
+	/*
+	 * Busca OS e valida se pertence ao cliente correto.
+	 */
 	private ServiceOrder findServiceOrderWithOwnershipValidation(Long serviceOrderId, UUID clientId) {
 
 		ServiceOrder serviceOrder = serviceOrderRepository.findById(serviceOrderId)
@@ -277,6 +355,9 @@ public class ServiceOrderService {
 		return serviceOrder;
 	}
 
+	/*
+	 * Resolve e valida as lâminas enviadas pelo usuário.
+	 */
 	private List<Blade> resolveAndValidateBlades(List<UUID> bladeIds, User user) {
 
 		if (bladeIds == null || bladeIds.isEmpty()) {
@@ -299,6 +380,9 @@ public class ServiceOrderService {
 		return blades;
 	}
 
+	/*
+	 * Normaliza e valida o tipo de onda selecionado para a máquina.
+	 */
 	private String normalizeAndValidateWave(String selectedWave, Machine machine) {
 
 		if (selectedWave == null || selectedWave.isBlank()) {
@@ -319,6 +403,10 @@ public class ServiceOrderService {
 		return normalizedSelectedWave;
 	}
 
+	/*
+	 * Faz o parsing do campo de ondas da máquina, que pode conter múltiplas opções
+	 * separadas por vírgula, barra, ponto e vírgula, espaço ou hífen.
+	 */
 	private List<String> parseMachineWaves(String rawWave) {
 
 		if (rawWave == null || rawWave.isBlank()) {
