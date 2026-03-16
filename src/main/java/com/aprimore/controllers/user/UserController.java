@@ -95,7 +95,7 @@ public class UserController {
 
 		try {
 			dashboardService.updatePcpSequence(orderedIds, userDetails.getUser());
-			redirectAttributes.addFlashAttribute("success", "Sequencia PCP atualizada com sucesso.");
+			redirectAttributes.addFlashAttribute("success", "Sequência PCP atualizada com sucesso.");
 			return "redirect:/user";
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("erro", e.getMessage());
@@ -215,7 +215,7 @@ public class UserController {
 					normalizedMonthYear == null || normalizedMonthYear.isBlank());
 			return "/user/AllServiceOrderListPage";
 		} catch (DateTimeParseException e) {
-			redirectAttributes.addFlashAttribute("erro", "Periodo invalido. Use o formato mes/ano.");
+			redirectAttributes.addFlashAttribute("erro", "Período inválido. Use o formato mês/ano.");
 			return "redirect:/user/service-orders";
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("erro", e.getMessage());
