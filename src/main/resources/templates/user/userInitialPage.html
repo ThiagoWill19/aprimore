@@ -26,10 +26,10 @@
 						<a class="nav-link active" aria-current="page" href="/user">Home</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="#">Configuracoes</a>
+						<a class="nav-link" href="#">Configurações</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="/user/blades">Laminas</a>
+						<a class="nav-link" href="/user/blades">Lâminas</a>
 					</li>
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -45,15 +45,15 @@
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
 							aria-expanded="false">
-							Servicos
+							Serviços
 						</a>
 						<ul class="dropdown-menu">
-							<li><a class="dropdown-item" href="/user/service-orders/new">Nova Ordem de Servico</a></li>
-							<li><a class="dropdown-item" href="/user/service-orders">Ver Servicos</a></li>
+							<li><a class="dropdown-item" href="/user/service-orders/new">Nova Ordem de Serviço</a></li>
+							<li><a class="dropdown-item" href="/user/service-orders">Ver Serviços</a></li>
 							<li>
 								<hr class="dropdown-divider">
 							</li>
-							<li><a class="dropdown-item" href="#">Relatorio detalhado</a></li>
+							<li><a class="dropdown-item" href="#">Relatório detalhado</a></li>
 						</ul>
 					</li>
 				</ul>
@@ -62,7 +62,7 @@
 	</nav>
 
 	<main class="container">
-		<p class="mt-2">Ola, <span class="fw-bold" th:text="${username}"></span></p>
+		<p class="mt-2">Olá, <span class="fw-bold" th:text="${username}"></span></p>
 
 		<div th:if="${erro}" class="alert alert-danger">
 			<span th:text="${erro}"></span>
@@ -99,7 +99,7 @@
 			<div class="row g-3 mt-1">
 				<div class="col-12 col-xl-4">
 					<div class="card h-100">
-						<div class="card-header fw-semibold">Alertas</div>
+						<div class="card-header bg-warning fw-semibold ">Alertas</div>
 						<div class="card-body">
 							<ul class="mb-0 ps-3" th:if="${!dashboard.alerts.isEmpty()}">
 								<li th:each="alert : ${dashboard.alerts}" th:text="${alert}"></li>
@@ -163,11 +163,11 @@
 									</table>
 								</div>
 								<div class="mt-3 d-flex justify-content-end">
-									<button type="submit" class="btn btn-success fw-bold">Salvar sequencia PCP</button>
+									<button type="submit" class="btn btn-success fw-bold">Salvar sequência PCP</button>
 								</div>
 							</form>
 							<p class="text-muted mb-0" th:if="${dashboard.priorityServiceOrders.isEmpty()}">
-								Nao ha OS abertas para priorizacao.
+								Nao há OS abertas para priorizacao.
 							</p>
 						</div>
 					</div>
