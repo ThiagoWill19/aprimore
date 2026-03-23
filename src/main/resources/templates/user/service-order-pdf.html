@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+
+        body { font-family: Arial; }
+        h1 { color: #333; }
+
+        main { max-width: 800px;
+             margin: 0 auto;
+             padding: 20px;
+             display: flex;
+             flex-direction: column;
+             justify-content: center;
+             }
+
+        .first-info { display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 20px; }
+                    
+
+        .first-info p {
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+        .first-info span {
+            font-weight: normal;
+            font-size: 22px;
+        }
+
+        .os-num{
+            padding: 5px;
+            background-color: #e0e0e0;
+            border-radius: 7px;
+        }
+
+        .text-info { 
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+            gap: 20px;}
+
+        .text-info p {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        .text-info span {
+            font-weight: bold;
+        }
+
+        .tecnical-info {
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .third-info {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .dates {
+            margin-bottom: 15px;
+       
+        }
+
+        h2 {
+            font-size: 20px;
+        }
+
+        span{
+            color: rgb(44, 44, 44);
+        }
+
+    </style>
+</head>
+<body>
+
+    <main>
+        <h1 style="text-align: center;">Ordem de Serviço de Faca</h1>
+
+        <div class="first-info">
+            <p class="os-num">OS: <span th:text="${os.id}"></span></p>
+        </div>
+        <div class="second-info text-info">
+            
+            <div class="dates">
+                <p>Entrada: <span th:text="${#temporals.format(os.entryDate, 'dd/MM/yyyy')}"></span></p>
+                <p>Entrega: <span th:text="${#temporals.format(os.deliveryDate, 'dd/MM/yyyy')}"></span></p>
+            </div>
+         
+            <p>Cliente: <span th:text="${os.clientName}"></span></p>
+            <p>Trabalho: <span th:text="${os.workName}"></span></p>
+            <p>Referência: <span th:text="${os.reference}"></span></p>
+        </div>
+        
+        <div class="tecnical-info">
+            <h2 style="text-align: center;">Ficha Técnica</h2>
+
+            <div class="third-info text-info">
+                <p>Tipo de faca: <span th:text="${os.type} == 'ROTARY' ? 'Rotativa' : 'Plana'"></span></p>
+                <p>Arranjo: <span th:text="${os.arrangement}"></span></p>
+                <p>Onda: <span th:text="${os.typeOfWave}"></span></p>
+                <p>Máquina: <span th:text="${os.machine.name}"></span></p>
+            </div>
+
+            <div style="border-top: 1px solid #ccc;"></div>
+
+            <div th:if="${os.machine.isRotary}" class="third-info text-info">
+                <h2>Cilindro porta faca</h2>
+                <p>Linha de centro: <span th:text="${os.machine.centerLine}"></span></p>
+                <p>Diâmetro: <span th:text="${os.machine.diameter}"></span></p>
+                <p>Furo no sentido reto: <span th:text="${os.machine.distanceBetweenHolesInStraightLine}"></span></p>
+                <p>Furo no sentido curvo: <span th:text="${os.machine. distanceBetweenHolesInCurvedDirection}"></span></p>
+                <p>Redução: <span th:text="${os.machine.reduction}"></span></p>
+                <p>Comprimento total do cilindro: <span th:text="${os.machine.totalLengthCylinder}"></span></p>
+            </div>
+
+            <div th:if="${!os.machine.isRotary}" class="third-info text-info">
+                <p>Diâmetro máximo da chapa: <span th:text="${os.machine.maxSheetDimension}"></span></p>
+            </div>
+
+
+            <div class="third-info text-info">
+                <h2>Lâminas</h2>
+                <div th:each="blade : ${os.blades}">
+                    <p th:text="${#strings.toLowerCase(blade.name)}"></p>
+                </div>
+            </div>
+            <div class="third-info text-info">
+                <h2>Observações</h2>
+                <p style="color: red;"th:text="${os.obs} ? ${os.obs} : 'Sem observações adicionais.'"></p>
+            </div>
+            <div class="third-info text-info">
+                <h2>Serviços a serem executados</h2>
+                <p style="color: red;" th:text="${os.servicesToBePerformed} ? ${os.servicesToBePerformed} : 'Sem serviços detalhes.'"></p>
+            </div>
+
+
+        </div>
+
+    </main>
+
+</body>
+</html>

@@ -41,6 +41,14 @@
 			<h2
 				th:class="${serviceOrder.status.description == 'ABERTA' ? 'text-success' : serviceOrder.status.description == 'FECHADA' ? 'text-muted' : 'text-danger'}">
 				<span th:text="${serviceOrder.status.description}"></span></h2>
+				<a class="btn btn-outline-danger d-flex align-items-center gap-2"
+							th:href="@{/user/client/{clientId}/service-orders/{id}/pdf(
+									clientId=${clientId},
+									id=${serviceOrder.id}
+							)}"
+							target="_blank">
+								📄 Visualizar PDF
+							</a>
 		</div>
 
 		<div class="row">
@@ -245,7 +253,7 @@
 
 
 
-					<div class="d-flex gap-3">
+					<div class="d-flex gap-3 mt-5">
 						<button id="btnEditar" type="button" class="btn btn-primary"
 							onclick="toggleEdicao()">Editar</button>
 						<button id="btnSalvar" type="submit" class="btn btn-warning fw-bold" disabled>Salvar
@@ -253,6 +261,18 @@
 						<a class="btn btn-outline-secondary"
 							th:href="@{/user/client/{id}/service-orders(id=${clientId})}">Voltar</a>
 					</div>
+					
+					<div class="d-flex mt-3">
+						<a class="btn btn-outline-danger d-flex align-items-center gap-2"
+							th:href="@{/user/client/{clientId}/service-orders/{id}/pdf(
+									clientId=${clientId},
+									id=${serviceOrder.id}
+							)}"
+							target="_blank">
+								📄 Visualizar PDF
+							</a>
+					</div>
+					
 				</form>
 			</div>
 		</div>

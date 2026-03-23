@@ -4,6 +4,9 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +22,7 @@ import com.aprimore.configurations.security.UserDetailsImpl;
 import com.aprimore.models.dtos.NewServiceOrderDto;
 import com.aprimore.models.dtos.ServiceOrderDetailsDto;
 import com.aprimore.models.dtos.ServiceOrderListDto;
+import com.aprimore.services.ServiceOrderPdfService;
 import com.aprimore.services.ServiceOrderService;
 
 import jakarta.validation.Valid;
@@ -29,6 +33,9 @@ public class ServiceOrderController {
 
 	@Autowired
 	private ServiceOrderService serviceOrderService;
+
+	@Autowired
+	private ServiceOrderPdfService pdfService;
 
 	@GetMapping
 	public String listServiceOrders(
@@ -143,4 +150,20 @@ public class ServiceOrderController {
 			return "redirect:/user/client/" + clientId + "/service-orders/" + serviceOrderId;
 		}
 	}
+	
+	@GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> downloadPdf(
+            @PathVariable String clientId,
+            @PathVariable Long id) {
+
+        byte[] pdf = pdfService.gerarPdf(id);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=ordem-servico-" + id + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
+
 }

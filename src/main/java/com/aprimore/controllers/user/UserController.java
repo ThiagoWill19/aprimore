@@ -74,6 +74,8 @@ public class UserController {
 			redirectAttributes.addFlashAttribute("erro",result.getFieldError().getDefaultMessage());
 			return "redirect:/user";
 		}
+
+		
 		
 		try {
 			
