@@ -91,13 +91,16 @@ O Aprimore resolve isso através de:
 
 ## 🛠️ Tecnologias
 
-* Java
-* Spring Boot
-* Spring Data JPA
-* Spring Security
-* Hibernate
-* Thymeleaf
-* MySQL
+- Java 17
+- Spring Boot
+- Spring Data JPA
+- Spring Security
+- Thymeleaf
+- PostgreSQL / MySQL
+- ModelMapper (mapeamento entre DTOs e entidades)
+- OpenHTMLtoPDF (geração de PDFs)
+- Spring Mail (envio de e-mails)
+- Lombok
 
 ---
 
