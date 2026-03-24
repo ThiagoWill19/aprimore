@@ -311,7 +311,7 @@ public class ServiceOrderService {
 		Integer currentMax = serviceOrderRepository.findMaxPcpSequenceByBusinessAndStatus(
 				businessId,
 				ServiceOrderStatus.OPEN);
-		return (currentMax == null ? 0 : currentMax) + 1;
+		return currentMax + 1;
 	}
 
 	/*
