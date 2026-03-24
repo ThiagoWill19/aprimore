@@ -114,10 +114,10 @@
                 <h2>Cilindro porta faca</h2>
                 <p>Linha de centro: <span th:text="${os.machine.centerLine}"></span></p>
                 <p>Diâmetro: <span th:text="${os.machine.diameter}"></span></p>
-                <p>Furo no sentido reto: <span th:text="${os.machine.distanceBetweenHolesInStraightLine}"></span></p>
-                <p>Furo no sentido curvo: <span th:text="${os.machine. distanceBetweenHolesInCurvedDirection}"></span></p>
+                <p>Furo no sentido reto: <span th:text="${os.machine.distanceBetweenHolesInStraightLine} + ' mm'"></span></p>
+                <p>Furo no sentido curvo: <span th:text="${os.machine. distanceBetweenHolesInCurvedDirection} + ' mm'"></span></p>
                 <p>Redução: <span th:text="${os.machine.reduction}"></span></p>
-                <p>Comprimento total do cilindro: <span th:text="${os.machine.totalLengthCylinder}"></span></p>
+                <p>Comprimento total do cilindro: <span th:text="${os.machine.totalLengthCylinder} + ' mm'"></span></p>
             </div>
 
             <div th:if="${!os.machine.isRotary}" class="third-info text-info">
@@ -126,7 +126,7 @@
 
 
             <div class="third-info text-info">
-                <h2>Lâminas</h2>
+                <h2>Lâminas para montagem</h2>
                 <div th:each="blade : ${os.blades}">
                     <p th:text="${#strings.toLowerCase(blade.name)}"></p>
                 </div>
