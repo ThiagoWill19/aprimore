@@ -97,7 +97,7 @@ O Aprimore resolve isso através de:
 * Spring Security
 * Hibernate
 * Thymeleaf
-* PostgreSQL
+* MySQL
 
 ---
 
@@ -107,7 +107,7 @@ O Aprimore resolve isso através de:
 
 * Java 17+
 * Maven ou Gradle
-* PostgreSQL
+* MySQL
 
 ---
 
@@ -118,7 +118,7 @@ Você pode configurar via variáveis de ambiente ou diretamente no `application.
 ### ✔ Variáveis de ambiente
 
 ```bash
-DB_URL=jdbc:postgresql://localhost:5432/aprimore
+DB_URL=jdbc:mysql://localhost:5432/aprimore
 DB_USERNAME=postgres
 DB_PASSWORD=senha
 ```
