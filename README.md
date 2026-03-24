@@ -1,147 +1,237 @@
-# Aprimore — Gerador de Ordem de Serviço para Clicherias e facarias
+# 🚀 Aprimore
 
-Aplicação web para criação e gerenciamento de **ordens de serviço** voltada para empresas de **clicheria e matrizes de corte e vinco**.
+Sistema de gestão de ordens de serviço com foco em **facarias e clicherias**, integrando controle operacional e **Planejamento e Controle da Produção (PCP)**.
 
-O projeto nasce da vivência prática no setor e da necessidade de uma solução **simples, específica e alinhada à realidade da fábrica**, evitando erros de informação, retrabalho e perda de histórico técnico.
-
----
-
-## 📌 Contexto
-
-Empresas desse nicho normalmente utilizam papel, planilhas ou sistemas genéricos para controlar ordens de serviço.  
-Isso costuma gerar problemas como:
-
-- Informações incompletas ou inconsistentes  
-- Retrabalho por erro de comunicação  
-- Dificuldade em rastrear o status da OS  
-- Falta de histórico técnico por cliente  
-
-O **Aprimore** surge para atacar esse problema: a **ordem de serviço**, tratando-a como o coração do processo produtivo.
+O objetivo do Aprimore é padronizar processos, reduzir erros operacionais e centralizar informações técnicas em um único sistema.
 
 ---
 
-## 🎯 Objetivo do Projeto
+## 🎯 Problema que resolve
 
-- Padronizar a criação de ordens de serviço  
-- Centralizar informações técnicas em um único lugar  
-- Reduzir erros operacionais e retrabalho  
-- Servir como base para futuras funcionalidades, como controle de produção  
+Empresas do setor frequentemente enfrentam:
 
-O desenvolvimento é incremental, validado com usuários reais do setor.
+* Informações descentralizadas
+* Ordens de serviço inconsistentes
+* Falta de controle de prioridade na produção
+* Retrabalho por erros de comunicação
 
----
+O Aprimore resolve isso através de:
 
-## ⚙️ Funcionalidades em Desenvolvimento
-
-- Cadastro de clientes, máquinas e acesso de usuários
-- Criação de ordens de serviço  
-- Visualização e listagem de ordens de serviço  
-- Estrutura inicial para evolução de status da OS  
-
-> ⚠️ O projeto está em desenvolvimento ativo (MVP). Novas funcionalidades serão adicionadas gradualmente.
+✔ Padronização de ordens de serviço
+✔ Controle de produção (PCP)
+✔ Regras de negócio que evitam erros
+✔ Visibilidade operacional via dashboard
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## ⚙️ Funcionalidades
 
-- Java 17  
-- Spring Boot  
-- Spring MVC  
-- Spring Data JPA  
-- Thymeleaf  
-- Bean Validation (Jakarta Validation)  
-- Spring Security  
-- Lombok  
-- ModelMapper  
-- Spring Mail  
-- Maven  
-- MySQL  
+### 🧾 Gestão de Ordens de Serviço
+
+* Criação de ordens de serviço com validações de domínio
+* Associação com cliente, máquina e lâminas
+* Validação de consistência de datas
+* Normalização de dados técnicos (ex: tipo de onda)
+* Geração automática de observações
+* Controle de status (OPEN / CLOSED)
 
 ---
 
-## 🧱 Arquitetura
+### 🏭 Planejamento e Controle da Produção (PCP)
 
-A aplicação utiliza uma arquitetura **monolítica MVC**, organizada por módulos de negócio.
-
-### Principais camadas
-
-- **Controller** — Entrada HTTP e validação inicial  
-- **Service** — Regras de negócio  
-- **Domain** — Entidades e regras do domínio  
-- **Repository** — Acesso a dados  
-
-A escolha do monólito visa simplicidade, facilidade de manutenção e validação rápida do domínio antes de evoluções mais complexas.
+* Entrada automática de ordens abertas na fila de produção
+* Geração de sequência (`pcpSequence`)
+* Ordenação das ordens por prioridade
+* Reordenação manual da fila (drag-and-drop)
+* Reorganização automática das demais ordens
+* Reentrada automática no PCP ao reabrir uma OS
 
 ---
 
-## ▶️ Como Executar o Projeto
+### 📊 Dashboard Operacional
 
-### Pré-requisitos
-
-- Java 17 ou superior  
-- Maven  
-- MySQL  
-
----
-
-### 🔧 Configuração de Variáveis de Ambiente
-
-O projeto utiliza variáveis de ambiente para configurar acesso ao banco de dados e envio de e-mails.
-
-Configure as seguintes variáveis antes de executar a aplicação:
-
-#### Banco de Dados
-
-- `DB_NAME` → Nome do banco de dados  
-- `DB_USER` → Usuário do banco  
-- `DB_PASS` → Senha do banco  
-
-#### E-mail (SMTP)
-
-- `SMTP_HOST` → Servidor SMTP  
-- `SMTP_PORT` → Porta do servidor SMTP  
-- `EMAIL` → E-mail remetente  
-- `SMTP_PASS` → Senha do e-mail  
-
-Essas variáveis são utilizadas no arquivo `application.properties`.
+* Total de ordens abertas e finalizadas
+* Identificação de ordens atrasadas
+* Visualização da fila de produção (PCP)
+* Destaque de prioridades
+* Alertas operacionais
 
 ---
 
-### 🚀 Executando a Aplicação
+### 🔐 Segurança e Multi-tenant
+
+* Isolamento de dados por empresa
+* Validação de acesso em todas as operações
+* Bloqueio de ações para empresas inativas
+
+---
+
+## 🧠 Regras de Negócio Implementadas
+
+* Não permite OS para máquinas inativas
+* Máquina deve pertencer ao cliente informado
+* Validação de datas (entrada vs entrega)
+* Controle de sequência única no PCP por empresa
+* Proteção contra manipulação indevida de prioridades
+
+---
+
+## 🏗️ Arquitetura
+
+* Arquitetura monolítica (MVC)
+* Separação de responsabilidades:
+
+  * Controller
+  * Service (regras de negócio)
+  * Repository
+* Uso de DTOs para transporte de dados
+* Validação centralizada no domínio
+
+---
+
+## 🛠️ Tecnologias
+
+* Java
+* Spring Boot
+* Spring Data JPA
+* Spring Security
+* Hibernate
+* Thymeleaf
+* PostgreSQL
+
+---
+
+# ⚙️ Setup e Execução
+
+## 📋 Pré-requisitos
+
+* Java 17+
+* Maven ou Gradle
+* PostgreSQL
+
+---
+
+## 🔧 Configuração do ambiente
+
+Você pode configurar via variáveis de ambiente ou diretamente no `application.properties`.
+
+### ✔ Variáveis de ambiente
 
 ```bash
-git clone https://github.com/ThiagoWill19/aprimore.git
-cd aprimore
-mvn spring-boot:run
+DB_URL=jdbc:postgresql://localhost:5432/aprimore
+DB_USERNAME=postgres
+DB_PASSWORD=senha
 ```
 
-A aplicação está disponível em **http://localhost:8080**
+---
+
+### ✔ application.properties
+
+```properties
+spring.datasource.url=${DB_URL}
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+```
 
 ---
 
-## 🚧 Status do Projeto
+## 🧪 Banco de dados
 
-🚀 **Em desenvolvimento (MVP)**
+1. Crie o banco:
 
-### Próximos passos planejados
+```sql
+CREATE DATABASE aprimore;
+```
 
-- Evolução do modelo de Ordem de Serviço  
-- Implementação de status e fluxo de produção  
-- Ajustes baseados em feedback de usuários reais  
-- Controle básico de produção  
+2. O Hibernate criará as tabelas automaticamente (se habilitado)
 
 ---
 
-## 📐 Decisões Técnicas
+## ▶️ Executando a aplicação
 
-- Arquitetura monolítica MVC para facilitar evolução e validação do domínio  
-- Uso de Bean Validation para garantir consistência dos dados  
-- Lombok para redução de boilerplate  
-- ModelMapper para conversão entre entidades e DTOs  
-- Spring Security preparado para controle de acesso futuro  git s
+### Com Maven
 
-## 📬 Contato
+```bash
+./mvnw spring-boot:run
+```
 
-Projeto desenvolvido por **Thiago**.  
-Sugestões, feedbacks e ideias são bem-vindos.
+### Com Gradle
 
+```bash
+./gradlew bootRun
+```
+
+---
+
+A aplicação estará disponível em:
+
+```
+http://localhost:8080
+```
+
+---
+
+## 🔄 Profiles (opcional)
+
+Você pode usar profiles para diferentes ambientes:
+
+```properties
+spring.profiles.active=dev
+```
+
+Sugestão:
+
+* `dev` → ambiente local
+* `prod` → produção
+
+---
+
+## 📌 Status do Projeto
+
+🚧 Em desenvolvimento (MVP funcional)
+
+Foco atual:
+
+* Evolução do PCP
+* Melhorias no dashboard
+* Experiência do usuário
+* Validação com usuários reais
+
+---
+
+## 💡 Diferenciais
+
+* Modelagem baseada em problemas reais do setor
+* Implementação de fila de produção (PCP)
+* Reordenação dinâmica de prioridade
+* Regras de domínio para evitar erros operacionais
+* Base preparada para evolução para SaaS
+
+---
+
+## 🎯 Próximos Passos
+
+* Autenticação multi-empresa completa
+* Interface com drag-and-drop para PCP
+* Relatórios operacionais
+* Deploy em ambiente produtivo
+* Validação com clientes reais
+
+---
+
+## 🤝 Objetivo do Projeto
+
+Além de resolver um problema real, o Aprimore também é:
+
+* Um projeto de portfólio profissional
+* Um experimento de produto SaaS
+* Uma vitrine de boas práticas com Java + Spring
+
+---
+
+## ⭐ Contribuição
+
+Este projeto ainda está em evolução, mas sugestões, ideias e feedbacks são muito bem-vindos.
