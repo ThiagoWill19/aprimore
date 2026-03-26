@@ -8,6 +8,9 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +34,7 @@ import com.aprimore.models.dtos.UpdateAddressDto;
 import com.aprimore.services.AddressService;
 import com.aprimore.services.ClientService;
 import com.aprimore.services.DashboardService;
+import com.aprimore.services.PcpPdfService;
 import com.aprimore.services.ServiceOrderService;
 
 import jakarta.validation.Valid;
@@ -50,6 +54,9 @@ public class UserController {
 
 	@Autowired
 	private DashboardService dashboardService;
+
+	@Autowired
+	private PcpPdfService pcpPdfService;
 
 	@GetMapping
 	public String inicialPage(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -224,6 +231,19 @@ public class UserController {
 			return "redirect:/user/dashboard";
 		}
 	}
+
+	@GetMapping("/pcp-pdf")
+    public ResponseEntity<byte[]> downloadPcpPdf(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        byte[] pdf = pcpPdfService.gerarPdf(userDetails.getUser().getBusiness().getId());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=pcp-" + userDetails.getUser().getBusiness().getName() + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
 
 
 

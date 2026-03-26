@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <main style="display: flex; flex-direction: column; align-items: center; padding: 20px;">
+        <h1 style="text-align: center;">PCP Prioridade do dia</h1>
+
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #000; padding: 8px; text-align: left;">Sequência</th>
+                    <th style="border: 1px solid #000; padding: 8px; text-align: left;">Número da OS</th>
+                    <th style="border: 1px solid #000; padding: 8px; text-align: left;">Empresa</th>
+                    <th style="border: 1px solid #000; padding: 8px; text-align: left;">Trabalho</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${pcp}">
+                    <td style="border: 1px solid #000; padding: 8px;" th:text="${item.sequencia}"></td>
+                    <td style="border: 1px solid #000; padding: 8px;" th:text="${item.numeroOS}"></td>
+                    <td style="border: 1px solid #000; padding: 8px;" th:text="${item.empresa}"></td>
+                    <td style="border: 1px solid #000; padding: 8px;" th:text="${item.trabalho}"></td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </main>
+
+</body>
+</html>
