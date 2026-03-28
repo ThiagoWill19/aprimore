@@ -24,10 +24,10 @@ public class TemplateService {
         return templateEngine.process("user/service-order-pdf", context);
     }
 
-        public String renderPcpPrioridadeDoDia( List<PcpPdfDto> pcp) {
-            Context context = new Context();
-            context.setVariable("pcp", pcp); // mantém "pcp" por causa do template
-            return templateEngine.process("user/pcp-pdf", context);
-        }
+    public String renderPcpPrioridadeDoDia( List<PcpPdfDto> pcp) {
+        Context context = new Context();
+        context.setVariable("pcp", pcp); // mantém "pcp" por causa do template
+        return templateEngine.process("user/pcp-pdf", context);
+    }
 
 }

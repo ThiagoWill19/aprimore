@@ -14,7 +14,7 @@ public class PdfService {
 
             PdfRendererBuilder builder = new PdfRendererBuilder();
 
-            builder.withHtmlContent(html, null);
+            builder.withHtmlContent(html, "file:/templates/"); // base URI para resolver recursos  
             builder.toStream(os);
             builder.run();
 
