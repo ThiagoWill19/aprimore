@@ -4,7 +4,9 @@
     <style>
 
         body { font-family: Arial; }
-        h1 { color: #333; }
+
+        h1 { color: #333;
+             font-size: 28px; }
 
         main { max-width: 800px;
              margin: 0 auto;
@@ -16,17 +18,17 @@
 
         .first-info { display: flex;
                     justify-content: space-between;
-                    margin-bottom: 20px; }
+                     }
                     
 
         .first-info p {
             font-weight: bold;
-            font-size: 22px;
+            font-size: 20px;
         }
 
         .first-info span {
             font-weight: normal;
-            font-size: 22px;
+            font-size: 20px;
         }
 
         .os-num{
@@ -52,7 +54,7 @@
 
         .tecnical-info {
             border: 1px solid #ccc;
-            padding: 15px;
+            padding: 10px;
             border-radius: 5px;
         }
 
@@ -69,7 +71,7 @@
         }
 
         h2 {
-            font-size: 20px;
+            font-size: 18px;
         }
 
         span{
@@ -97,10 +99,9 @@
             <p>Trabalho: <span th:text="${os.workName}"></span></p>
             <p>Referência: <span th:text="${os.reference}"></span></p>
         </div>
-        
-        <div class="tecnical-info">
-            <h2 style="text-align: center;">Ficha Técnica</h2>
 
+        <h2 style="text-align: center;">Ficha Técnica</h2>
+        <div class="tecnical-info">
             <div class="third-info text-info">
                 <p>Tipo de faca: <span th:text="${os.type} == 'ROTARY' ? 'Rotativa' : 'Plana'"></span></p>
                 <p>Arranjo: <span th:text="${os.arrangement}"></span></p>
