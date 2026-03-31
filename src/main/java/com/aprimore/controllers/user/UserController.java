@@ -1,5 +1,6 @@
 package com.aprimore.controllers.user;
 
+import com.aprimore.services.UserService;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
@@ -25,12 +26,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.aprimore.configurations.security.UserDetailsImpl;
 import com.aprimore.exceptions.DomainRuleException;
 import com.aprimore.models.Client;
+import com.aprimore.models.User;
 import com.aprimore.models.dtos.ClientDetailsDto;
 import com.aprimore.models.dtos.ClientListDto;
 import com.aprimore.models.dtos.DashboardDto;
 import com.aprimore.models.dtos.NewClientDto;
 import com.aprimore.models.dtos.ServiceOrderListDto;
 import com.aprimore.models.dtos.UpdateAddressDto;
+import com.aprimore.models.dtos.UserDto;
 import com.aprimore.services.AddressService;
 import com.aprimore.services.ClientService;
 import com.aprimore.services.DashboardService;
@@ -43,7 +46,9 @@ import jakarta.validation.Valid;
 @RequestMapping("/user")
 public class UserController {
 	
-	@Autowired
+	private final UserService userService;
+
+    @Autowired
 	private ClientService clientService;
 	
 	@Autowired
@@ -57,6 +62,10 @@ public class UserController {
 
 	@Autowired
 	private PcpPdfService pcpPdfService;
+
+    UserController(UserService userService) {
+        this.userService = userService;
+    }
 
 	@GetMapping
 	public String inicialPage(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -246,5 +255,33 @@ public class UserController {
     }
 
 
+
+	@GetMapping("/configurations")
+	public String getMethodName(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+		UserDto userDto = userService.findUserById(userDetails.getUser().getId());
+		model.addAttribute("user", userDto);	
+		return "/user/UserConfigurations";
+	}
+	
+
+
+    @PostMapping("/alter-password")
+	public String alterPassword(
+			@RequestParam String oldPassword,
+			@RequestParam String newPassword,
+			RedirectAttributes redirectAttributes,
+			@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		
+		try {
+			userService.alterPassword(userDetails.getUser().getId(), oldPassword, newPassword);
+			redirectAttributes.addFlashAttribute("success", "Senha alterada com sucesso.");
+			return "redirect:/user";
+		} catch (DomainRuleException e) {
+			redirectAttributes.addFlashAttribute("erro", e.getMessage());
+			return "redirect:/user/configurations";
+		}
+		
+	}
 
 }
