@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aprimore | Configurações</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/user">Aprimore</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <nav aria-label="breadcrumb" class="mt-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/user}">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Configurações</li>
+            </ol>
+        </nav>
+
+        <div th:if="${erro}" class="alert alert-danger">
+            <span th:text="${erro}"></span>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success">
+            <span th:text="${success}"></span>
+        </div>
+
+        <div>
+            <h1 class="mb-4">Configurações de usuário</h1>
+            <p>Bem-vindo, <span th:text="${user.name}"></span>! Aqui você pode alterar suas configurações pessoais.</p>
+        </div>
+
+        <div>
+            <h2 class="card-title mt-5 mb-3">Informações pessoais</h2>
+            <ul class="list-group mb-4">
+                <li class="list-group-item"><strong>Nome:</strong> <span th:text="${user.name}"></span></li>
+                <li class="list-group-item"><strong>Email:</strong> <span th:text="${user.email}"></span></li>
+                <li class="list-group-item"><strong>Empresa:</strong> <span
+                        th:text="${user.business.tradeName }"></span></li>
+                <li class="list-group-item"><strong>Tipo de acesso:</strong> <span th:text="${user.role}"></span></li>
+                <li class="list-group-item"><strong>Status da conta:</strong> <span
+                        th:text="${user.AccountStatus}"></span></li>
+            </ul>
+        </div>
+
+        <div class="mt-3">
+            <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse"
+                data-bs-target="#alterarSenha">
+                Alterar senha de acesso
+            </button>
+
+            <div class="collapse mt-3" id="alterarSenha">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Alterar senha de acesso</h3>
+
+                        <form th:action="@{/user/alter-password}" method="post" class="mt-4" id="passwordForm">
+
+                            <div class="mb-3">
+                                <label for="oldPassword" class="form-label">Senha atual</label>
+                                <input type="password" class="form-control" id="oldPassword" name="oldPassword"
+                                    required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="newPassword" class="form-label">Nova senha</label>
+                                <input type="password" class="form-control" id="newPassword" name="newPassword" required
+                                    pattern="^(?=.*[!@#$%^&*]).{8,}$"
+                                    title="Mínimo 8 caracteres e pelo menos 1 caractere especial"
+                                    placeholder="A senha deve ter pelo menos 8 caracteres e 1 caractere especial.">
+                                <div class="invalid-feedback">
+                                    A senha deve ter pelo menos 8 caracteres e 1 caractere especial.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirmar nova senha</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
+                                    required>
+                                <div class="invalid-feedback">
+                                    As senhas não coincidem.
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Salvar nova senha</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <h2 class="card-title mt-5 mb-3">Informações da empresa</h2>
+            <ul class="list-group mb-4">
+                <li class="list-group-item"><strong>Nome:</strong> <span th:text="${user.business.name}"></span></li>
+                <li class="list-group-item"><strong>Nome fantasia:</strong> <span th:text="${user.business.tradeName}"></span></li>
+                <li class="list-group-item"><strong>CNPJ:</strong> <span th:text="${user.business.cnpj}"></span></li>
+                <li class="list-group-item"><strong>Email:</strong> <span
+                        th:text="${user.business.businessEmail}"></span></li>
+                <li class="list-group-item"><strong>Telefone:</strong> <span th:text="${user.business.phone}"></span>
+                </li>
+                <li class="list-group-item"><strong>Status da conta da empresa:</strong> <span
+                        th:text="${user.business.accountStatus}"></span></li>
+            </ul>
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.getElementById("passwordForm").addEventListener("submit", function (e) {
+
+            const newPassword = document.getElementById("newPassword");
+            const confirmPassword = document.getElementById("confirmPassword");
+
+            const passwordRegex = /^(?=.*[!@#$%^&*]).{8,}$/;
+
+            let isValid = true;
+
+            // Reset estado
+            newPassword.classList.remove("is-invalid");
+            confirmPassword.classList.remove("is-invalid");
+
+            // Validação da senha
+            if (!passwordRegex.test(newPassword.value)) {
+                newPassword.classList.add("is-invalid");
+                isValid = false;
+            }
+
+            // Validação de confirmação
+            if (newPassword.value !== confirmPassword.value) {
+                confirmPassword.classList.add("is-invalid");
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    </script>
+
+</body>
+
+</html>
