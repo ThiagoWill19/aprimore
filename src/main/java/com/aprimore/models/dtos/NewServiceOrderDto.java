@@ -16,7 +16,7 @@ import lombok.Setter;
 @Setter
 public class NewServiceOrderDto {
 
-	@NotBlank(message = "Nome do trabalho e obrigatorio")
+	@NotBlank(message = "Nome do trabalho e obrigatório")
 	private String workName;
 
 	private String reference;
@@ -29,10 +29,10 @@ public class NewServiceOrderDto {
 
 	private String internalMeasure;
 
-	@NotNull(message = "Maquina e obrigatoria")
+	@NotNull(message = "Máquina e obrigatória")
 	private UUID machineId;
 
-	@NotBlank(message = "Tipo de onda e obrigatorio")
+	@NotBlank(message = "Tipo de onda e obrigatório")
 	private String typeOfWave;
 
 	private String arrangement;
