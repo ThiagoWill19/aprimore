@@ -8,7 +8,7 @@ public class PcpPdfMapper {
     public static PcpPdfDto toPcpPdfDto(ServiceOrder serviceOrder) {
         return new PcpPdfDto(
             serviceOrder.getPcpSequence(), // ou outro campo que represente a sequência
-            serviceOrder.getId(),
+            serviceOrder.getOrderNumber(),
             serviceOrder.getClient().getClientName(),
             serviceOrder.getWorkName()
         );

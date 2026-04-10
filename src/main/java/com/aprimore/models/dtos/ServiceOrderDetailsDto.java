@@ -22,6 +22,8 @@ public class ServiceOrderDetailsDto {
 	private Long id;
 	private UUID clientId;
 
+	private int orderNumber;
+
 	@NotBlank(message = "Nome do trabalho e obrigatorio")
 	private String workName;
 

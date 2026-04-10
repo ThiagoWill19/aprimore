@@ -10,7 +10,7 @@ import com.aprimore.models.Blade;
 @Data
 public class ServiceOrderPdfDto {
 
-    private Long id;
+    private int id;
 
     private String clientName;
     private String workName;

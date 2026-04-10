@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.aprimore.models.enuns.ServiceOrderStatus;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -32,6 +33,9 @@ public class ServiceOrder {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
+
+	@Column(unique = false)
+	private Integer orderNumber;
 	
 	private String workName;
 	

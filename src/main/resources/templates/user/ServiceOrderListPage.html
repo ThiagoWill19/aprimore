@@ -61,7 +61,7 @@
 						</thead>
 						<tbody>
 							<tr th:each="serviceOrder : ${serviceOrders.content}">
-								<td th:text="${serviceOrder.id}"></td>
+								<td th:text="${serviceOrder.orderNumber}"></td>
 								<td th:text="${serviceOrder.workName}"></td>
 								<td th:text="${serviceOrder.reference}"></td>
 								<td

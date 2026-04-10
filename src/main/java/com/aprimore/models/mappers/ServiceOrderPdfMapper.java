@@ -12,7 +12,7 @@ public class ServiceOrderPdfMapper {
     public static ServiceOrderPdfDto toDto(ServiceOrder os) {
         ServiceOrderPdfDto dto = new ServiceOrderPdfDto();
 
-        dto.setId(os.getId());
+        dto.setId(os.getOrderNumber());
         dto.setWorkName(os.getWorkName());
         dto.setReference(os.getReference());
         dto.setEntryDate(os.getEntryDate());

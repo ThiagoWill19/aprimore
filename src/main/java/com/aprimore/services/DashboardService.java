@@ -87,6 +87,7 @@ public class DashboardService {
 		for (ServiceOrder serviceOrder : priorityOrders) {
 			DashboardPriorityServiceOrderDto item = new DashboardPriorityServiceOrderDto();
 			item.setId(serviceOrder.getId());
+			item.setServiceOrderNumber(serviceOrder.getOrderNumber());
 			item.setClientId(serviceOrder.getClient().getId());
 			item.setClientName(serviceOrder.getClient().getClientName());
 			item.setWorkName(serviceOrder.getWorkName());

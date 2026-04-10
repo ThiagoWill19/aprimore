@@ -12,6 +12,7 @@ public class DashboardPriorityServiceOrderDto {
 
 	private Long id;
 	private UUID clientId;
+	private int serviceOrderNumber;
 	private String clientName;
 	private String workName;
 	private LocalDate entryDate;

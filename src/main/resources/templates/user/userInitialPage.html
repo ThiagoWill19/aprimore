@@ -144,7 +144,7 @@
 												th:attr="data-service-order-id=${item.id}"
 												th:classappend="${item.overdue} ? 'table-danger' : ''">
 												<td class="pcp-position" th:text="${iter.count}"></td>
-												<td th:text="${item.id}"></td>
+												<td th:text="${item.serviceOrderNumber}"></td>
 												<td
 													th:text="${item.clientName + ' - ' + item.workName}"></td>
 												<td

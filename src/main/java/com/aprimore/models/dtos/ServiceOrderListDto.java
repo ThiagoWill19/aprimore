@@ -15,6 +15,7 @@ public class ServiceOrderListDto {
 
 	private Long id;
 	private UUID clientId;
+	private int orderNumber;
 	private String clientName;
 	private String workName;
 	private String reference;

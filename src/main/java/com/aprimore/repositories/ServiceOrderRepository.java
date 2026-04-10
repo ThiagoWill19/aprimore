@@ -27,7 +27,7 @@ public interface ServiceOrderRepository extends JpaRepository<ServiceOrder, Long
 			  AND (
 			  	:search IS NULL
 			  	OR lower(c.clientName) LIKE lower(concat('%', :search, '%'))
-			  	OR (:serviceOrderId IS NOT NULL AND so.id = :serviceOrderId)
+			  	OR (:serviceOrderId IS NOT NULL AND so.orderNumber = :serviceOrderId)
 			  )
 			  AND (:startDate IS NULL OR so.entryDate >= :startDate)
 			  AND (:endDate IS NULL OR so.entryDate <= :endDate)
@@ -36,7 +36,7 @@ public interface ServiceOrderRepository extends JpaRepository<ServiceOrder, Long
 	Page<ServiceOrder> findAllByBusinessWithFilters(
 			@Param("businessId") UUID businessId,
 			@Param("search") String search,
-			@Param("serviceOrderId") Long serviceOrderId,
+			@Param("serviceOrderId") Integer serviceOrderId,
 			@Param("startDate") LocalDate startDate,
 			@Param("endDate") LocalDate endDate,
 			Pageable pageable);
@@ -58,6 +58,14 @@ public interface ServiceOrderRepository extends JpaRepository<ServiceOrder, Long
 	Integer findMaxPcpSequenceByBusinessAndStatus(
 			@Param("businessId") UUID businessId,
 			@Param("status") ServiceOrderStatus status);
+
+	@Query("""
+			SELECT COALESCE(MAX(so.orderNumber), 0)
+			FROM ServiceOrder so
+			JOIN so.client c
+			WHERE c.business.id = :businessId
+			""")
+	Integer findMaxOrderNumberByBusiness(@Param("businessId") UUID businessId);
 
 	@Query("""
 			SELECT so

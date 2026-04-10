@@ -130,7 +130,7 @@ public class ServiceOrderService {
 		}
 
 		// Caso o termo seja um número tentamos buscar por ID da OS
-		Long serviceOrderId = parseSearchAsServiceOrderId(term);
+		Integer serviceOrderId = parseSearchAsServiceOrderId(term);
 
 		return serviceOrderRepository.findAllByBusinessWithFilters(
 						user.getBusiness().getId(),
@@ -146,14 +146,14 @@ public class ServiceOrderService {
 	 * Caso o usuário digite um número no campo de busca,
 	 * tentamos interpretar como ID da OS.
 	 */
-	private Long parseSearchAsServiceOrderId(String search) {
+	private Integer parseSearchAsServiceOrderId(String search) {
 
 		if (search == null || search.isBlank()) {
 			return null;
 		}
 
 		try {
-			return Long.parseLong(search);
+			return Integer.parseInt(search);
 		} catch (NumberFormatException e) {
 			return null;
 		}
@@ -233,6 +233,11 @@ public class ServiceOrderService {
 
 		// Define sequência no PCP
 		serviceOrder.setPcpSequence(nextPcpSequence(user.getBusiness().getId()));
+
+		serviceOrder.setOrderNumber(serviceOrderRepository
+			.findMaxOrderNumberByBusiness(client.getBusiness().getId()) + 1);
+
+			System.out.println("Order number: " + serviceOrder.getOrderNumber());
 
 		return serviceOrderRepository.save(serviceOrder);
 	}
