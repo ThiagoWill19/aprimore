@@ -77,33 +77,6 @@ public class UserController {
 		
 		return "/user/userInitialPage";
 	}
-	
-	@PostMapping("/new-client")
-	public String createNewClient(
-			@Valid NewClientDto newClientDto,
-			BindingResult result,
-			RedirectAttributes redirectAttributes,
-			@AuthenticationPrincipal UserDetailsImpl userDetails
-			 ) {
-		
-		if(result.hasErrors()) {
-			redirectAttributes.addFlashAttribute("erro",result.getFieldError().getDefaultMessage());
-			return "redirect:/user";
-		}
-
-		
-		
-		try {
-			
-			Client client = clientService.newClient(newClientDto, userDetails.getUser().getBusiness().getId());
-			
-			return "redirect:/user/client/" + client.getId();
-			
-		} catch (DomainRuleException e) {
-			redirectAttributes.addFlashAttribute("erro",e.getMessage());
-			return "redirect:/user";
-		}
-	}
 
 	@PostMapping("/dashboard/pcp")
 	public String updateDashboardPcp(
@@ -119,83 +92,6 @@ public class UserController {
 			redirectAttributes.addFlashAttribute("erro", e.getMessage());
 			return "redirect:/user";
 		}
-	}
-	
-	@GetMapping("/client/{id}")
-	public String findClientById(Model model,
-			@PathVariable UUID id,
-			RedirectAttributes redirectAttributes,
-			@AuthenticationPrincipal UserDetailsImpl userDetails) {
-		
-		try {
-			
-			ClientDetailsDto clientDatailsDto = clientService.findById(id, userDetails.getUser());
-			model.addAttribute("client",clientDatailsDto);
-			return "/user/ClientDetailsPage";
-			
-		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("erro", e.getMessage());
-			return "redirect:/user";
-		}
-		
-	}
-	
-	@PostMapping("/client/clientUpdate")
-	public String updateClient(
-			
-			@Valid ClientDetailsDto clientDetailsDto,
-			BindingResult result,
-			RedirectAttributes redirectAttributes,
-			@AuthenticationPrincipal UserDetailsImpl userDetails,
-			Model model) {
-		
-		if(result.hasErrors()) {
-			model.addAttribute("client", clientDetailsDto);
-			return "/user/ClientDetailsPage";
-		}
-		
-		try {
-			
-			clientService.updateClient(clientDetailsDto, userDetails.getUser());
-			return "redirect:/user/client/" + clientDetailsDto.getId();
-			
-		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("erro", e.getMessage());
-			return "redirect:/user/client/" + clientDetailsDto.getId();
-		}
-		
-	}
-	
-	@GetMapping("/client")
-	public String listClients(
-			Model model,
-			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size,
-			@RequestParam(required = false) String search,
-			@AuthenticationPrincipal UserDetailsImpl userDetails
-	) {
-
-		Page<ClientListDto> clients = clientService
-				.findAllClientsByBusiness(
-						page,
-						size,
-						search,
-						userDetails.getUser()
-				);
-
-		model.addAttribute("clients", clients);
-		model.addAttribute("search", search);
-
-		return "/user/ClientListPage";
-	}
-	
-	@PostMapping("/client/address/update")
-	public String updateAddress(
-	        UpdateAddressDto addressDto,
-	        @AuthenticationPrincipal UserDetailsImpl userDetails
-	) {
-	    addressService.updateAddress(addressDto, userDetails.getUser());
-	    return "redirect:/user/client/" + addressDto.getClientId();
 	}
 
 
