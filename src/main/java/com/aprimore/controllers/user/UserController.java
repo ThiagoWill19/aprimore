@@ -48,12 +48,6 @@ public class UserController {
 	
 	private final UserService userService;
 
-    @Autowired
-	private ClientService clientService;
-	
-	@Autowired
-	private AddressService addressService;
-
 	@Autowired
 	private ServiceOrderService serviceOrderService;
 
@@ -76,22 +70,6 @@ public class UserController {
 		model.addAttribute("dashboard", dashboard);
 		
 		return "/user/userInitialPage";
-	}
-
-	@PostMapping("/dashboard/pcp")
-	public String updateDashboardPcp(
-			@RequestParam(name = "orderedIds", required = false) List<Long> orderedIds,
-			RedirectAttributes redirectAttributes,
-			@AuthenticationPrincipal UserDetailsImpl userDetails) {
-
-		try {
-			dashboardService.updatePcpSequence(orderedIds, userDetails.getUser());
-			redirectAttributes.addFlashAttribute("success", "Sequência PCP atualizada com sucesso.");
-			return "redirect:/user";
-		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("erro", e.getMessage());
-			return "redirect:/user";
-		}
 	}
 
 
