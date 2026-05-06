@@ -54,8 +54,6 @@ public class UserController {
 	@Autowired
 	private DashboardService dashboardService;
 
-	@Autowired
-	private PcpPdfService pcpPdfService;
 
     UserController(UserService userService) {
         this.userService = userService;
@@ -114,21 +112,6 @@ public class UserController {
 			return "redirect:/user/dashboard";
 		}
 	}
-
-	@GetMapping("/pcp-pdf")
-    public ResponseEntity<byte[]> downloadPcpPdf(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-
-        byte[] pdf = pcpPdfService.gerarPdf(userDetails.getUser().getBusiness().getId());
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "inline; filename=pcp-" + userDetails.getUser().getBusiness().getName() + ".pdf")
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(pdf);
-    }
-
-
 
 	@GetMapping("/configurations")
 	public String getMethodName(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
