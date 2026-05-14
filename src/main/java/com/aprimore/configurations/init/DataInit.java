@@ -26,6 +26,7 @@ public class DataInit {
 				user.setAccountStatus(AccountStatus.ACTIVE);
 				userRepository.save(user);
 				System.out.println("✅ admin criado com sucesso.");
+				System.out.println("Email: " + user.getEmail());
 			}else {
 				System.out.println("ℹ️ Admin já existe.");
 			}

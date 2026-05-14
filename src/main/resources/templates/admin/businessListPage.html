@@ -121,8 +121,18 @@
 					<input type="text" class="form-control" id="inputTradeName" th:name="tradeName" required>
 				</div>
 				<div class="bm-3">
-					<label for="inputCnpj" class="form-label">CNPJ</label>
-					<input type="text" class="form-control" id="inputCnpj" th:name="cnpj" required>
+    				<label for="inputCNPJ" class="form-label">CNPJ</label>
+
+					<input type="text"
+						class="form-control"
+						id="inputCNPJ"
+						th:name="cnpj"
+						placeholder="Somente números"
+						maxlength="14"
+						minlength="14"
+						inputmode="numeric"
+						pattern="\d{14}"
+						required>
 				</div>
 				<div class="bm-3">
 					<label for="inputEmailBusiness" class="form-label">Email da empresa</label>
@@ -151,6 +161,13 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
 		crossorigin="anonymous"></script>
+	<script>
+		const cnpj = document.getElementById('inputCNPJ');
+
+		cnpj.addEventListener('input', function (e) {
+				e.target.value = e.target.value.replace(/\D/g, '');
+		});
+	</script>
 </body>
 
 </html>

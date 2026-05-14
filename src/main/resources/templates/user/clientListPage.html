@@ -137,13 +137,20 @@
 								<label for="inputClientName" class="form-label">Nome da empresa</label>
 								<input type="text" class="form-control" id="inputClientName" th:name="clientName" required>
 							</div>
-							<div class="bm-3 flex-grow-1">
-								<label for="inputCnpj" class="form-label">CNPJ</label>
-								<input type="text" class="form-control" id="inputCNPJ" th:name="cnpj"
-									placeholder="Somente Números"
-								    maxlength="14"
-									inputmode="numeric" pattern="[0-9]*" required>
-							</div>
+				<div class="bm-3">
+    				<label for="inputCNPJ" class="form-label">CNPJ</label>
+
+					<input type="text"
+						class="form-control"
+						id="inputCNPJ"
+						th:name="cnpj"
+						placeholder="Somente números"
+						maxlength="14"
+						minlength="14"
+						inputmode="numeric"
+						pattern="\d{14}"
+						required>
+				</div>
 						</div>
 						<div class="bm-3">
 							<label for="inputClientEmail" class="form-label">Email</label>
