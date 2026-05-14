@@ -96,7 +96,7 @@ O Aprimore resolve isso através de:
 - Spring Data JPA
 - Spring Security
 - Thymeleaf
-- PostgreSQL / MySQL
+- MySQL
 - ModelMapper (mapeamento entre DTOs e entidades)
 - OpenHTMLtoPDF (geração de PDFs)
 - Spring Mail (envio de e-mails)
@@ -109,7 +109,7 @@ O Aprimore resolve isso através de:
 ## 📋 Pré-requisitos
 
 * Java 17+
-* Maven ou Gradle
+* Maven
 * MySQL
 
 ---
@@ -118,25 +118,26 @@ O Aprimore resolve isso através de:
 
 Você pode configurar via variáveis de ambiente ou diretamente no `application.properties`.
 
-### ✔ Variáveis de ambiente
-
-```bash
-DB_URL=jdbc:mysql://localhost:5432/aprimore
-DB_USERNAME=postgres
-DB_PASSWORD=senha
-```
-
 ---
 
 ### ✔ application.properties
 
 ```properties
-spring.datasource.url=${DB_URL}
-spring.datasource.username=${DB_USERNAME}
-spring.datasource.password=${DB_PASSWORD}
+spring.application.name=aprimore
 
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
+spring.datasource.url=jdbc:mysql://localhost:3306/${DB_NAME}
+spring.datasource.username=${DB_USER}
+spring.datasource.password=${DB_PASS}
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.show-sql: true
+
+spring.mail.host=${SMTP_HOST}
+spring.mail.port=${SMTP_PORT}
+spring.mail.username=${EMAIL}
+spring.mail.password=${SMTP_PASS}
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
 ```
 
 ---
@@ -155,40 +156,24 @@ CREATE DATABASE aprimore;
 
 ## ▶️ Executando a aplicação
 
-### Com Maven
-
-```bash
-./mvnw spring-boot:run
-```
-
-### Com Gradle
-
-```bash
-./gradlew bootRun
-```
-
----
 
 A aplicação estará disponível em:
 
 ```
-http://localhost:8080
+http://localhost:8080/login
 ```
+### Para testar a aplicação
+**Login admin default -** Para testar a aplicaçao utilize essa conta de administrador:
 
----
+```bash
+email: admin@email.com
+password: admin123
+``` 
 
-## 🔄 Profiles (opcional)
+- 1 - Acesse a conta admin para cadastrar empresas e usuários e acompanhar os cadastros.
+- 2 - Assim que um usuário for cadastrado será enviado o acesso do mesmo por email (utilize um email real para o cadastro)
+- 3 - faça login como usuário para ter acesso ao sistema como usuário da plataforma.
 
-Você pode usar profiles para diferentes ambientes:
-
-```properties
-spring.profiles.active=dev
-```
-
-Sugestão:
-
-* `dev` → ambiente local
-* `prod` → produção
 
 ---
 
@@ -217,8 +202,6 @@ Foco atual:
 
 ## 🎯 Próximos Passos
 
-* Autenticação multi-empresa completa
-* Interface com drag-and-drop para PCP
 * Relatórios operacionais
 * Deploy em ambiente produtivo
 * Validação com clientes reais
