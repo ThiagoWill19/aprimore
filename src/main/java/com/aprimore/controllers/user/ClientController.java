@@ -1,15 +1,6 @@
 package com.aprimore.controllers.user;
 
-import com.aprimore.configurations.security.UserDetailsImpl;
-import com.aprimore.exceptions.DomainRuleException;
-import com.aprimore.models.Client;
-import com.aprimore.models.dtos.ClientDetailsDto;
-import com.aprimore.models.dtos.ClientListDto;
-import com.aprimore.models.dtos.NewClientDto;
-import com.aprimore.models.dtos.UpdateAddressDto;
-import com.aprimore.services.AddressService;
-import com.aprimore.services.ClientService;
-import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +12,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.aprimore.configurations.security.UserDetailsImpl;
+import com.aprimore.exceptions.DomainRuleException;
+import com.aprimore.models.Client;
+import com.aprimore.models.dtos.ClientDetailsDto;
+import com.aprimore.models.dtos.ClientListDto;
+import com.aprimore.models.dtos.NewClientDto;
+import com.aprimore.models.dtos.UpdateAddressDto;
+import com.aprimore.services.AddressService;
+import com.aprimore.services.ClientService;
+
+import jakarta.validation.Valid;
 
 import java.util.UUID;
 
