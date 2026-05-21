@@ -234,10 +234,9 @@ public class ServiceOrderService {
 		// Define sequência no PCP
 		serviceOrder.setPcpSequence(nextPcpSequence(user.getBusiness().getId()));
 
-		serviceOrder.setOrderNumber(serviceOrderRepository
-			.findMaxOrderNumberByBusiness(client.getBusiness().getId()) + 1);
+		int maxOrderNumber = serviceOrderRepository.findMaxOrderNumberByBusiness(client.getBusiness().getId()).orElse(0);
 
-			System.out.println("Order number: " + serviceOrder.getOrderNumber());
+		serviceOrder.setOrderNumber(maxOrderNumber + 1);
 
 		return serviceOrderRepository.save(serviceOrder);
 	}
@@ -361,7 +360,7 @@ public class ServiceOrderService {
 	}
 
 	/*
-	 * Resolve e valida as lâminas enviadas pelo usuário.
+	 * Resolve e valida as lâminas enviadas pelo usuário. Nossa mas cai muito 
 	 */
 	private List<Blade> resolveAndValidateBlades(List<UUID> bladeIds, User user) {
 
