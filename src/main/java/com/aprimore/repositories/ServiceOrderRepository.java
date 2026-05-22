@@ -2,6 +2,7 @@ package com.aprimore.repositories;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -65,7 +66,7 @@ public interface ServiceOrderRepository extends JpaRepository<ServiceOrder, Long
 			JOIN so.client c
 			WHERE c.business.id = :businessId
 			""")
-	Integer findMaxOrderNumberByBusiness(@Param("businessId") UUID businessId);
+	Optional<Integer> findMaxOrderNumberByBusiness(@Param("businessId") UUID businessId);
 
 	@Query("""
 			SELECT so
