@@ -116,7 +116,20 @@ O Aprimore resolve isso através de:
 
 ## 🔧 Configuração do ambiente
 
-Você pode configurar via variáveis de ambiente ou diretamente no `application.properties`.
+Todas as credenciais e configurações sensíveis são fornecidas via variáveis de ambiente. Configure-as antes de executar a aplicação.
+
+| Variável | Descrição |
+|---|---|
+| `DB_NAME` | Nome do banco de dados MySQL |
+| `DB_USER` | Usuário do banco de dados |
+| `DB_PASS` | Senha do banco de dados |
+| `SMTP_HOST` | Host do servidor de e-mail |
+| `SMTP_PORT` | Porta do servidor de e-mail |
+| `EMAIL` | E-mail usado para envio |
+| `SMTP_PASS` | Senha do e-mail |
+| `MAIN_NAME` | Nome do administrador principal |
+| `MAIN_EMAIL` | E-mail do administrador principal |
+| `MAIN_PASS` | Senha do administrador principal |
 
 ---
 
@@ -138,6 +151,10 @@ spring.mail.username=${EMAIL}
 spring.mail.password=${SMTP_PASS}
 spring.mail.properties.mail.smtp.auth=true
 spring.mail.properties.mail.smtp.starttls.enable=true
+
+main.name=${MAIN_NAME}
+main.email=${MAIN_EMAIL}
+main.pass=${MAIN_PASS}
 ```
 
 ---
@@ -156,24 +173,21 @@ CREATE DATABASE aprimore;
 
 ## ▶️ Executando a aplicação
 
-
 A aplicação estará disponível em:
 
 ```
 http://localhost:8080/login
 ```
-### Para testar a aplicação
-**Login admin default -** Para testar a aplicaçao utilize essa conta de administrador:
 
-```bash
-email: admin@email.com
-password: admin123
-``` 
+### Para testar a aplicação
+
+**Login admin —** As credenciais do administrador principal são definidas pelas variáveis de ambiente `MAIN_EMAIL` e `MAIN_PASS` configuradas antes da execução.
+
+> O usuário admin é criado automaticamente na primeira execução caso ainda não exista no banco.
 
 - 1 - Acesse a conta admin para cadastrar empresas e usuários e acompanhar os cadastros.
 - 2 - Assim que um usuário for cadastrado será enviado o acesso do mesmo por email (utilize um email real para o cadastro)
 - 3 - faça login como usuário para ter acesso ao sistema como usuário da plataforma.
-
 
 ---
 
