@@ -1,14 +1,16 @@
 package com.aprimore.services;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -42,261 +44,149 @@ public class AddressServiceTest {
     @InjectMocks
     private AddressService addressService;
 
+    private User user;
+    private Client client;
+    private Business business;
+    private Address address;
+    private UpdateAddressDto dto;
+    private UUID businessId;
+    private UUID clientId;
 
+    @BeforeEach
+    void setUp() {
+        businessId = UUID.randomUUID();
+        clientId = UUID.randomUUID();
 
-    @Test
-    void shouldCreateAddressSuccessfully() {
-
-        UUID clientId = UUID.randomUUID();
-        
-        Business business = new Business();
-        business.setId(UUID.randomUUID());
+        business = new Business();
+        business.setId(businessId);
         business.setAccountStatus(AccountStatus.ACTIVE);
-        
-        Client client = new Client();
+
+        user = new User();
+        user.setBusiness(business);
+
+        client = new Client();
         client.setId(clientId);
         client.setBusiness(business);
 
-        User user = new User();
-        user.setBusiness(business);
+        address = new Address();
+        client.setAddress(address);
 
-        Address address = new Address();
+        dto = new UpdateAddressDto();
+        dto.setClientId(clientId);
+    }
 
+    @Test
+    @DisplayName("Deve criar endereço com sucesso para um cliente válido")
+    void shouldCreateAddressSuccessfully() {
+        // Arrange
         when(clientRepository.findById(clientId)).thenReturn(Optional.of(client));
 
+        // Act
         addressService.createAddress(clientId, address, user);
 
+        // Assert
         verify(addressRepository).save(address);
     }
 
     @Test
+    @DisplayName("[Criação] Deve negar acesso se o usuário pertence a outra empresa")
     void shouldThrowAccessDeniedWhenUserBelongsToDifferentBusinessInCreateAddress() {
-
-        UUID clientId = UUID.randomUUID();
-        
-        Business business1 = new Business();
-        business1.setId(UUID.randomUUID());
-        business1.setAccountStatus(AccountStatus.ACTIVE);
-        
-        Business business2 = new Business();
-        business2.setId(UUID.randomUUID());
-        business2.setAccountStatus(AccountStatus.ACTIVE);
-        
-        Client client = new Client();
-        client.setId(clientId);
-        client.setBusiness(business1);
-
-        User user = new User();
-        user.setBusiness(business2);
-
-        Address address = new Address();
+        // Arrange
+        Business anotherBusiness = new Business();
+        anotherBusiness.setId(UUID.randomUUID());
+        user.setBusiness(anotherBusiness); // Usuário de outra empresa
 
         when(clientRepository.findById(clientId)).thenReturn(Optional.of(client));
 
-        assertThrows(AccessDeniedException.class, () -> {
-            addressService.createAddress(clientId, address, user);
-        });
-
+        // Act & Assert
+        assertThrows(AccessDeniedException.class, () -> addressService.createAddress(clientId, address, user));
         verify(addressRepository, never()).save(any());
     }
-    
+
     @Test
+    @DisplayName("[Criação] Deve negar acesso se a empresa estiver inativa")
     void shouldThrowAccessDeniedWhenBusinessIsInactiveInCreateAddress() {
-
-        UUID clientId = UUID.randomUUID();
-        
-        Business business = new Business();
-        business.setId(UUID.randomUUID());
+        // Arrange
         business.setAccountStatus(AccountStatus.INACTIVE);
-        
-        Client client = new Client();
-        client.setId(clientId);
-        client.setBusiness(business);
-
-        User user = new User();
-        user.setBusiness(business);
-
-        Address address = new Address();
-
         when(clientRepository.findById(clientId)).thenReturn(Optional.of(client));
 
-        assertThrows(AccessDeniedException.class, () -> {
-            addressService.createAddress(clientId, address, user);
-        });
-
+        // Act & Assert
+        assertThrows(AccessDeniedException.class, () -> addressService.createAddress(clientId, address, user));
         verify(addressRepository, never()).save(any());
     }
 
     @Test
+    @DisplayName("[Criação] Deve lançar exceção se o cliente não for encontrado")
     void shouldThrowResourceNotFoundWhenClientDoesNotExistInCreateAddress() {
-
-        UUID clientId = UUID.randomUUID();
-        
-        Business business = new Business();
-        business.setId(UUID.randomUUID());
-        business.setAccountStatus(AccountStatus.ACTIVE);
-        
-        User user = new User();
-        user.setBusiness(business);
-
-        Address address = new Address();
-
+        // Arrange
         when(clientRepository.findById(clientId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> {
-            addressService.createAddress(clientId, address, user);
-        });
-
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> addressService.createAddress(clientId, address, user));
         verify(addressRepository, never()).save(any());
     }
 
     @Test
+    @DisplayName("Deve atualizar o endereço com sucesso")
     void shouldUpdateAddressSuccessfully() {
-
-        UUID clientId = UUID.randomUUID();
-        
-        Business business = new Business();
-        business.setId(UUID.randomUUID());
-        business.setAccountStatus(AccountStatus.ACTIVE);
-        
-        Client client = new Client();
-        client.setId(clientId);
-        client.setBusiness(business);
-        
-        Address address = new Address();
-        client.setAddress(address);
-
-        User user = new User();
-        user.setBusiness(business);
-
-        UpdateAddressDto dto = new UpdateAddressDto();
-        dto.setClientId(clientId);
-
+        // Arrange
         when(clientRepository.findById(clientId)).thenReturn(Optional.of(client));
 
-        addressService.updateAddress(dto, user);
+        // Act & Assert
+        assertDoesNotThrow(() -> addressService.updateAddress(dto, user));
 
+        // Verify
+        verify(addressMapper).updateAddressFromDto(dto, address);
         verify(addressRepository).save(address);
     }
 
     @Test
+    @DisplayName("[Atualização] Deve negar acesso se o usuário pertence a outra empresa")
     void shouldThrowAccessDeniedWhenUserBelongsToDifferentBusinessInUpdateAddress() {
-        UUID clientId = UUID.randomUUID();
-        
-        Business business1 = new Business();
-        business1.setId(UUID.randomUUID());
-        business1.setAccountStatus(AccountStatus.ACTIVE);
-        
-        Business business2 = new Business();
-        business2.setId(UUID.randomUUID());
-        business2.setAccountStatus(AccountStatus.ACTIVE);
-        
-        Client client = new Client();
-        client.setId(clientId);
-        client.setBusiness(business1);
-        
-        Address address = new Address();
-        client.setAddress(address);
-
-        User user = new User();
-        user.setBusiness(business2);
-
-        UpdateAddressDto dto = new UpdateAddressDto();
-        dto.setClientId(clientId);
+        // Arrange
+        Business anotherBusiness = new Business();
+        anotherBusiness.setId(UUID.randomUUID());
+        user.setBusiness(anotherBusiness); // Usuário de outra empresa
 
         when(clientRepository.findById(clientId)).thenReturn(Optional.of(client));
 
-        assertThrows(AccessDeniedException.class, () -> {
-            addressService.updateAddress(dto, user);
-        });
-
+        // Act & Assert
+        assertThrows(AccessDeniedException.class, () -> addressService.updateAddress(dto, user));
         verify(addressRepository, never()).save(any());
-    }
-
-        @Test
-    void shouldThrowAccessDeniedWhenBusinessIsInactiveInUpdateAddress() {
-
-        UUID clientId = UUID.randomUUID();
-        
-        Business business = new Business();
-        business.setId(UUID.randomUUID());
-        business.setAccountStatus(AccountStatus.INACTIVE);
-        
-        Client client = new Client();
-        client.setId(clientId);
-        client.setBusiness(business);
-        
-        Address address = new Address();
-        client.setAddress(address);
-
-        User user = new User();
-        user.setBusiness(business);
-
-        UpdateAddressDto dto = new UpdateAddressDto();
-        dto.setClientId(clientId);
-
-        when(clientRepository.findById(clientId)).thenReturn(Optional.of(client));
-
-        assertThrows(AccessDeniedException.class, () -> {
-            addressService.updateAddress(dto, user);
-        });
-
-        verify(addressRepository, never()).save(any());
-    }
-
-        @Test
-    void shouldThrowResourceNotFoundWhenClientDoesNotExistInUpdateAddress() {
-
-        UUID clientId = UUID.randomUUID();
-        
-        Business business = new Business();
-        business.setId(UUID.randomUUID());
-        business.setAccountStatus(AccountStatus.ACTIVE);
-        
-        User user = new User();
-        user.setBusiness(business);
-
-        UpdateAddressDto dto = new UpdateAddressDto();
-        dto.setClientId(clientId);
-
-        when(clientRepository.findById(clientId)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> {
-            addressService.updateAddress(dto, user);
-        });
-
-        verify(addressRepository, never()).save(any());
-        
     }
 
     @Test
-    void shouldThrowResourceNotFoundWhenClientHasNoAddressInUpdateAddress() {
-
-        UUID clientId = UUID.randomUUID();
-        
-        Business business = new Business();
-        business.setId(UUID.randomUUID());
-        business.setAccountStatus(AccountStatus.ACTIVE);
-        
-        Client client = new Client();
-        client.setId(clientId);
-        client.setBusiness(business);
-        client.setAddress(null);
-
-        User user = new User();
-        user.setBusiness(business);
-
-        UpdateAddressDto dto = new UpdateAddressDto();
-        dto.setClientId(clientId);
-
+    @DisplayName("[Atualização] Deve negar acesso se a empresa estiver inativa")
+    void shouldThrowAccessDeniedWhenBusinessIsInactiveInUpdateAddress() {
+        // Arrange
+        business.setAccountStatus(AccountStatus.INACTIVE);
         when(clientRepository.findById(clientId)).thenReturn(Optional.of(client));
 
-        assertThrows(ResourceNotFoundException.class, () -> {
-            addressService.updateAddress(dto, user);
-        });
-
+        // Act & Assert
+        assertThrows(AccessDeniedException.class, () -> addressService.updateAddress(dto, user));
         verify(addressRepository, never()).save(any());
     }
 
-    
+    @Test
+    @DisplayName("[Atualização] Deve lançar exceção se o cliente não for encontrado")
+    void shouldThrowResourceNotFoundWhenClientDoesNotExistInUpdateAddress() {
+        // Arrange
+        when(clientRepository.findById(clientId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> addressService.updateAddress(dto, user));
+        verify(addressRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("[Atualização] Deve lançar exceção se o cliente não possuir endereço")
+    void shouldThrowResourceNotFoundWhenClientHasNoAddressInUpdateAddress() {
+        // Arrange
+        client.setAddress(null);
+        when(clientRepository.findById(clientId)).thenReturn(Optional.of(client));
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> addressService.updateAddress(dto, user));
+        verify(addressRepository, never()).save(any());
+    }
 }

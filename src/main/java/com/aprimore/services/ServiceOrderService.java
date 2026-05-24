@@ -360,7 +360,7 @@ public class ServiceOrderService {
 	}
 
 	/*
-	 * Resolve e valida as lâminas enviadas pelo usuário. Nossa mas cai muito 
+	 * Resolve e valida as lâminas enviadas pelo usuário.
 	 */
 	private List<Blade> resolveAndValidateBlades(List<UUID> bladeIds, User user) {
 
