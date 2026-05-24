@@ -52,12 +52,7 @@ public class BladeService {
             throw new AccessDeniedException("Empresa inativa. Operacoes nao permitidas.");
         }
 
-        String normalizedName = (newBladeDto.getBladeType().getDescription() +
-               " - " + newBladeDto.getCutType().trim().toUpperCase() +
-               " - " + newBladeDto.getEspessure() + " PTs" +
-                " - " + newBladeDto.getHeight() + " Alt" + 
-                " - " + newBladeDto.getDescription().trim().toUpperCase() +
-                " - " + newBladeDto.getManufacturer().trim().toUpperCase()).toUpperCase();
+        String normalizedName = buildNormalizedBladeName(newBladeDto);
 
         if (itemRepository.existsBladeByBusinessIdAndName(businessId, normalizedName)) {
             throw new DomainRuleException("Já existe uma lâmina com esse nome.");
@@ -87,5 +82,16 @@ public class BladeService {
         }
 
         itemRepository.delete(blade);
+    }
+
+    private String buildNormalizedBladeName(NewBladeDto dto) {
+        return String.format("%s - %s - %d PTs - %.1f Alt - %s - %s",
+                dto.getBladeType().getDescription(),
+                dto.getCutType().trim(),
+                dto.getEspessure(),
+                dto.getHeight(),
+                dto.getDescription() != null ? dto.getDescription().trim() : "",
+                dto.getManufacturer() != null ? dto.getManufacturer().trim() : ""
+        ).toUpperCase();
     }
 }

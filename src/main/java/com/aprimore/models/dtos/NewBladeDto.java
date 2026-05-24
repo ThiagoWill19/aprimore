@@ -2,7 +2,6 @@ package com.aprimore.models.dtos;
 
 import com.aprimore.models.enuns.BladeType;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
