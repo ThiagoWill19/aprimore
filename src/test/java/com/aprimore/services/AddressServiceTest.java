@@ -30,7 +30,7 @@ import com.aprimore.repositories.AddressRepository;
 import com.aprimore.repositories.ClientRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class AddressServiceTest {
+class AddressServiceTest {
 
     @Mock
     private ClientRepository clientRepository;

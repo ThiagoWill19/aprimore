@@ -412,27 +412,13 @@ public class ServiceOrderService {
 	 * separadas por vírgula, barra, ponto e vírgula, espaço ou hífen.
 	 */
 	private List<String> parseMachineWaves(String rawWave) {
-
 		if (rawWave == null || rawWave.isBlank()) {
 			return new ArrayList<>();
 		}
-
-		LinkedHashSet<String> waves = new LinkedHashSet<>();
-		String[] tokens = rawWave.toUpperCase(Locale.ROOT).split("[,;/|\\s-]+");
-		for (String token : tokens) {
-			String normalizedToken = token.trim();
-			if (!normalizedToken.isBlank()) {
-				waves.add(normalizedToken);
-			}
-		}
-
-		if (waves.isEmpty()) {
-			String fallback = rawWave.trim().toUpperCase(Locale.ROOT);
-			if (!fallback.isBlank()) {
-				waves.add(fallback);
-			}
-		}
-
-		return new ArrayList<>(waves);
+		return java.util.Arrays.stream(rawWave.toUpperCase(Locale.ROOT).split("[,;/|\\s-]+"))
+				.map(String::trim)
+				.filter(s -> !s.isBlank())
+				.distinct()
+				.collect(java.util.stream.Collectors.toList());
 	}
 }
