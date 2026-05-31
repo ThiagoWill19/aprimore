@@ -22,7 +22,7 @@ public class EmailService {
 	        message.setTo(to);
 	        message.setSubject(subject);
 	        message.setText(text);
-	        message.setFrom("seu-email@gmail.com");
+	        message.setFrom(emailFrom);
 
 	        mailSender.send(message);
 	    }
