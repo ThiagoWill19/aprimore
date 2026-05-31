@@ -81,28 +81,20 @@ public class DashboardService {
 		List<ServiceOrder> priorityOrders = serviceOrderRepository
 				.findPriorityByBusinessAndStatus(businessId, ServiceOrderStatus.OPEN);
 
-		List<DashboardPriorityServiceOrderDto> items = new ArrayList<>();
-
-		// Converte as entidades ServiceOrder em DTOs específicos para o dashboard
-		for (ServiceOrder serviceOrder : priorityOrders) {
-			DashboardPriorityServiceOrderDto item = new DashboardPriorityServiceOrderDto();
-			item.setId(serviceOrder.getId());
-			item.setServiceOrderNumber(serviceOrder.getOrderNumber());
-			item.setClientId(serviceOrder.getClient().getId());
-			item.setClientName(serviceOrder.getClient().getClientName());
-			item.setWorkName(serviceOrder.getWorkName());
-			item.setEntryDate(serviceOrder.getEntryDate());
-			item.setDeliveryDate(serviceOrder.getDeliveryDate());
-
-			// Verifica se a OS está atrasada
-			item.setOverdue(serviceOrder.getDeliveryDate() != null && serviceOrder.getDeliveryDate().isBefore(today));
-
-			// Sequência definida pelo PCP (planejamento e controle da produção)
-			item.setPcpSequence(serviceOrder.getPcpSequence());
-			items.add(item);
-		}
-
-		return items;
+		// Converte as entidades para DTOs usando a API de Streams
+		return priorityOrders.stream().map(serviceOrder -> {
+			DashboardPriorityServiceOrderDto dto = new DashboardPriorityServiceOrderDto();
+			dto.setId(serviceOrder.getId());
+			dto.setServiceOrderNumber(serviceOrder.getOrderNumber());
+			dto.setClientId(serviceOrder.getClient().getId());
+			dto.setClientName(serviceOrder.getClient().getClientName());
+			dto.setWorkName(serviceOrder.getWorkName());
+			dto.setEntryDate(serviceOrder.getEntryDate());
+			dto.setDeliveryDate(serviceOrder.getDeliveryDate());
+			dto.setOverdue(serviceOrder.getDeliveryDate() != null && serviceOrder.getDeliveryDate().isBefore(today));
+			dto.setPcpSequence(serviceOrder.getPcpSequence());
+			return dto;
+		}).collect(Collectors.toList());
 	}
 
 	/*
