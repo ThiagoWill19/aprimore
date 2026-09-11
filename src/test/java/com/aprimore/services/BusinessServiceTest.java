@@ -24,7 +24,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +46,7 @@ class BusinessServiceTest {
     private ApplicationEventPublisher eventPublisher;
 
     @Mock
-    private PasswordEncoder passwordEncoder;
+    private AccountActivationService accountActivationService;
 
     @InjectMocks
     private BusinessService businessService;
@@ -70,7 +69,8 @@ class BusinessServiceTest {
     @DisplayName("Deve criar uma nova empresa e usuário com sucesso e publicar evento")
     void newBusiness_Success() {
         // Arrange
-        when(passwordEncoder.encode(anyString())).thenReturn("senha_codificada");
+        when(accountActivationService.createActivationLink(any(User.class)))
+                .thenReturn("https://aprimore.com/activate-account?token=token-de-teste");
 
         // Act
         businessService.newBusiness(newBusinessDto);
@@ -89,19 +89,20 @@ class BusinessServiceTest {
         assertEquals("Usuário Teste", savedUser.getName());
         assertEquals("usuario@empresa.com", savedUser.getEmail());
         assertEquals(Role.USER, savedUser.getRole());
-        assertEquals("senha_codificada", savedUser.getPassword());
+        assertEquals(AccountStatus.INACTIVE, savedUser.getAccountStatus());
+        assertNull(savedUser.getPassword());
 
         ArgumentCaptor<BusinessCreatedEvent> eventCaptor = ArgumentCaptor.forClass(BusinessCreatedEvent.class);
         verify(eventPublisher).publishEvent(eventCaptor.capture());
-        assertEquals(savedUser, eventCaptor.getValue().getUser());
-        assertNotNull(eventCaptor.getValue().getRawPassword());
+        assertEquals(savedUser.getEmail(), eventCaptor.getValue().getEmail());
+        assertEquals("https://aprimore.com/activate-account?token=token-de-teste",
+                eventCaptor.getValue().getActivationLink());
     }
 
     @Test
     @DisplayName("[Criação] Deve lançar DomainRuleException em caso de violação de integridade")
     void newBusiness_ShouldThrowDomainRuleException_OnDataIntegrityViolation() {
         // Arrange
-        when(passwordEncoder.encode(anyString())).thenReturn("senha_codificada");
         when(businessRepository.saveAndFlush(any(Business.class))).thenThrow(DataIntegrityViolationException.class);
 
         // Act & Assert

@@ -25,6 +25,10 @@
 					Logout realizado com sucesso!
 				</div>
 
+				<div th:if="${param.activated}" class="alert alert-success">
+					Senha criada com sucesso. Agora voce pode entrar.
+				</div>
+
 				<!-- Formulário de login -->
 				<form th:action="@{/login}" method="post">
 					<div class="mb-3">

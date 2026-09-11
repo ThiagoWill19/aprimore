@@ -11,25 +11,24 @@ import com.aprimore.services.EmailService;
 @Component
 public class BusinessCreatedListener {
 
-	private final EmailService emailService;
-	
-	public BusinessCreatedListener(EmailService emailService) {
+    private final EmailService emailService;
+
+    public BusinessCreatedListener(EmailService emailService) {
         this.emailService = emailService;
     }
-	
-	@Async
-	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-	public void handleBusinessCreated(BusinessCreatedEvent event) {
-		
-		try {
-			emailService.sendMail(
-					event.getUser().getEmail(),
-					"Conta Aprimore criada com sucesso",
-					"Essa é sua senha para acessar a plataforma: "
-					+ event.getRawPassword()
-					+ "\nAltere sua senha em configurações.");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleBusinessCreated(BusinessCreatedEvent event) {
+        try {
+            emailService.sendMail(
+                    event.getEmail(),
+                    "Conta Aprimore criada com sucesso",
+                    "Sua conta foi criada. Para definir sua senha de acesso, acesse o link abaixo:\n"
+                            + event.getActivationLink()
+                            + "\n\nEste link e valido por 24 horas e pode ser usado uma unica vez.");
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
 }

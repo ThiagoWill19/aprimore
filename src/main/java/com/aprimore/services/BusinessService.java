@@ -8,7 +8,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +23,6 @@ import com.aprimore.models.enuns.AccountStatus;
 import com.aprimore.models.enuns.Role;
 import com.aprimore.models.mappers.BusinessMapper;
 import com.aprimore.repositories.BusinessRepository;
-import com.aprimore.utils.PasswordGenerator;
 
 
 @Service
@@ -40,7 +38,7 @@ public class BusinessService {
 	private ApplicationEventPublisher eventPublisher;
 	
 	@Autowired
-	private PasswordEncoder passwordEncoder;
+	private AccountActivationService accountActivationService;
 
 	@Transactional
 	public void newBusiness(NewBusinessDto newBusinessDto) {
@@ -48,14 +46,11 @@ public class BusinessService {
 		Business newBusiness;
 		User newUser;
 
-		String password = PasswordGenerator.gerarSenha();
-
 		newUser = new User();
 		newUser.setName(newBusinessDto.getUsername());
 		newUser.setEmail(newBusinessDto.getEmail());
 		newUser.setRole(Role.USER);
-		newUser.setAccountStatus(AccountStatus.ACTIVE);
-		newUser.setPassword(passwordEncoder.encode(password));
+		newUser.setAccountStatus(AccountStatus.INACTIVE);
 
 		newBusiness = new Business();
 		newBusiness.setName(newBusinessDto.getBusinessName());
@@ -76,9 +71,8 @@ public class BusinessService {
 		}
 
 		 
-	    eventPublisher.publishEvent(
-	        new BusinessCreatedEvent(newUser, password)
-	    );
+		String activationLink = accountActivationService.createActivationLink(newUser);
+	    eventPublisher.publishEvent(new BusinessCreatedEvent(newUser.getEmail(), activationLink));
 
 	}
 	
