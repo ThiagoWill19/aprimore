@@ -40,6 +40,10 @@ public class AdminController {
 	@GetMapping
 	public String inicialPage(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 		
+		System.out.println(">>> ENTROU NO ADMIN <<<");
+    	System.out.println(">>> userDetails = " + userDetails);
+
+
 		model.addAttribute("username", userDetails.getUser().getName());
 		
 		return "/admin/AdminInicialPage";
