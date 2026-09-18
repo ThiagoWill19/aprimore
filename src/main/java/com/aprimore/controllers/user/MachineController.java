@@ -42,7 +42,7 @@ public class MachineController {
 			Page<MachineListDto> machines = machineService.listByClient(clientId, page, 10, userDetails.getUser());
 			model.addAttribute("machines", machines);
 			model.addAttribute("clientId", clientId);
-			return "/user/machineListPage";
+			return "user/machineListPage";
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("erro", e.getMessage());
 			return "redirect:/user/client/" + clientId;
@@ -53,7 +53,7 @@ public class MachineController {
 	public String newMachineForm(@PathVariable UUID clientId, Model model) {
 		model.addAttribute("clientId", clientId);
 		model.addAttribute("machine", new NewMachineDto());
-		return "/user/NewMachinePage";
+		return "user/NewMachinePage";
 	}
 
 	@PostMapping
@@ -105,7 +105,7 @@ public class MachineController {
 			machineDetailsDto.setId(machineId);
 			model.addAttribute("machine", machineDetailsDto);
 			model.addAttribute("clientId", clientId);
-			return "/user/MachineDetailsPage";
+			return "user/MachineDetailsPage";
 		}
 
 		try {

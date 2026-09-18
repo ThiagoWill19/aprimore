@@ -35,7 +35,7 @@ public class BladeController {
 
         model.addAttribute("blades", bladeService.findAllByBusiness(userDetails.getUser()));
         model.addAttribute("newBlade", new NewBladeDto());
-        return "/user/bladeListPage";
+        return "user/bladeListPage";
     }
 
     @PostMapping
@@ -50,7 +50,7 @@ public class BladeController {
         if (result.hasErrors()) {
             model.addAttribute("blades", bladeService.findAllByBusiness(userDetails.getUser()));
             model.addAttribute("newBlade", newBladeDto);
-            return "/user/bladeListPage";
+            return "user/bladeListPage";
         }
 
         try {

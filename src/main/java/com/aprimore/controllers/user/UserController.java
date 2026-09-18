@@ -58,7 +58,7 @@ public class UserController {
 		DashboardDto dashboard = dashboardService.loadDashboard(userDetails.getUser());
 		model.addAttribute("dashboard", dashboard);
 		
-		return "/user/userInitialPage";
+		return "user/userInitialPage";
 	}
 
 
@@ -94,7 +94,7 @@ public class UserController {
 			model.addAttribute("monthYear", normalizedMonthYear);
 			model.addAttribute("defaultLast30Days",
 					normalizedMonthYear == null || normalizedMonthYear.isBlank());
-			return "/user/AllServiceOrderListPage";
+			return "user/AllServiceOrderListPage";
 		} catch (DateTimeParseException e) {
 			redirectAttributes.addFlashAttribute("erro", "Período inválido. Use o formato mês/ano.");
 			return "redirect:/user/service-orders";
@@ -109,7 +109,7 @@ public class UserController {
 
 		UserDto userDto = userService.findUserById(userDetails.getUser().getId());
 		model.addAttribute("user", userDto);	
-		return "/user/UserConfigurations";
+		return "user/UserConfigurations";
 	}
 	
 

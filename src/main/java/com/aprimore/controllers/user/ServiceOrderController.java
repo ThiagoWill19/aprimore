@@ -89,7 +89,7 @@ public class ServiceOrderController {
 			model.addAttribute("serviceOrder", newServiceOrderDto);
 			model.addAttribute("machines", serviceOrderService.findMachinesByClient(clientId, userDetails.getUser()));
 			model.addAttribute("blades", serviceOrderService.findBladesByBusiness(userDetails.getUser()));
-			return "/user/NewServiceOrderPage";
+			return "user/NewServiceOrderPage";
 		}
 
 		try {
@@ -138,7 +138,7 @@ public class ServiceOrderController {
 			model.addAttribute("serviceOrder", serviceOrderDetailsDto);
 			model.addAttribute("machines", serviceOrderService.findMachinesByClient(clientId, userDetails.getUser()));
 			model.addAttribute("blades", serviceOrderService.findBladesByBusiness(userDetails.getUser()));
-			return "/user/ServiceOrderDetailsPage";
+			return "user/ServiceOrderDetailsPage";
 		}
 
 		try {

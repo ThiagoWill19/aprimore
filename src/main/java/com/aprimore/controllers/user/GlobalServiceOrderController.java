@@ -52,7 +52,7 @@ public class GlobalServiceOrderController {
 		if (result.hasErrors()) {
 			model.addAttribute("selection", selection);
 			model.addAttribute("clients", serviceOrderService.findClientsByBusiness(userDetails.getUser()));
-			return "/user/NewServiceOrderStartPage";
+			return "user/NewServiceOrderStartPage";
 		}
 
 		UUID clientId = selection.getClientId();

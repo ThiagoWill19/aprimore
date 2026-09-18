@@ -46,7 +46,7 @@ public class AdminController {
 
 		model.addAttribute("username", userDetails.getUser().getName());
 		
-		return "/admin/AdminInicialPage";
+		return "admin/AdminInicialPage";
 	}
 	
 	
@@ -87,7 +87,7 @@ public class AdminController {
 		model.addAttribute("totalPages", businessPage.getTotalPages());
 		model.addAttribute("search",search);
 		 
-		return "/admin/businessListPage";
+		return "admin/businessListPage";
 	}
 	
 	
@@ -143,7 +143,7 @@ public class AdminController {
 			model.addAttribute("businessName", business.getName());
 			model.addAttribute("users", userService.findAllByBusiness(id));
 			
-			return "/admin/usersPage";
+			return "admin/usersPage";
 			
 		} catch (ResourceNotFoundException e) {
 			redirectAttributes.addFlashAttribute("erro",e.getMessage());

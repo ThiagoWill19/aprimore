@@ -72,7 +72,7 @@ public class ClientController {
 
             ClientDetailsDto clientDatailsDto = clientService.findById(id, userDetails.getUser());
             model.addAttribute("client",clientDatailsDto);
-            return "/user/ClientDetailsPage";
+            return "user/ClientDetailsPage";
 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", e.getMessage());
@@ -92,7 +92,7 @@ public class ClientController {
 
         if(result.hasErrors()) {
             model.addAttribute("client", clientDetailsDto);
-            return "/user/ClientDetailsPage";
+            return "user/ClientDetailsPage";
         }
 
         try {
@@ -127,7 +127,7 @@ public class ClientController {
         model.addAttribute("clients", clients);
         model.addAttribute("search", search);
 
-        return "/user/ClientListPage";
+        return "user/ClientListPage";
     }
 
     @PostMapping("/user/client/address/update")
