@@ -39,10 +39,6 @@ public class AdminController {
 
 	@GetMapping
 	public String inicialPage(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-		
-		System.out.println(">>> ENTROU NO ADMIN <<<");
-    	System.out.println(">>> userDetails = " + userDetails);
-
 
 		model.addAttribute("username", userDetails.getUser().getName());
 		
@@ -96,7 +92,7 @@ public class AdminController {
 		
 		try {
 			model.addAttribute("business", businessService.findById(id));
-			return "/admin/businessDetailsPage";
+			return "admin/businessDetailsPage";
 		} catch (ResourceNotFoundException e) {
 			redirectAttributes.addFlashAttribute("erro",e.getMessage());
 			return "redirect:/admin/business-list";

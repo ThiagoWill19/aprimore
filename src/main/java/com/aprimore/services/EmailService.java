@@ -24,7 +24,13 @@ public class EmailService {
 	        message.setText(text);
 	        message.setFrom(emailFrom);
 
-	        mailSender.send(message);
+	        try {
+				mailSender.send(message);
+				System.out.println(">>> EMAIL ENVIADO <<<");
+			} catch (Exception e) {
+				System.out.println(">>> ERRO AO ENVIAR EMAIL <<<");
+				e.printStackTrace();
+			}
 	    }
 
 }
