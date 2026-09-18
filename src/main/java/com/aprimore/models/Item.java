@@ -33,6 +33,8 @@ public class Item {
 	private String manufacturer;
 	
 	private String supplier;
+
+	private boolean active = true;
 	
 	@ManyToOne
 	private Business business;

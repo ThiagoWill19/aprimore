@@ -66,7 +66,7 @@ class BladeServiceTest {
     void findAllByBusiness_Success() {
         // Arrange
         Blade blade = new Blade();
-        when(itemRepository.findBladesByBusinessId(businessId)).thenReturn(List.of(blade));
+        when(itemRepository.findActiveBladesByBusinessId(businessId)).thenReturn(List.of(blade));
         when(bladeMapper.mapToBladeListDto(any(Blade.class))).thenReturn(new BladeListDto());
 
         // Act
@@ -75,7 +75,7 @@ class BladeServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        verify(itemRepository).findBladesByBusinessId(businessId);
+        verify(itemRepository).findActiveBladesByBusinessId(businessId);
         verify(bladeMapper).mapToBladeListDto(blade);
     }
 

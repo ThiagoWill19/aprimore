@@ -21,6 +21,15 @@ public interface ItemRepository extends JpaRepository<Item, UUID> {
     List<Blade> findBladesByBusinessId(@Param("businessId") UUID businessId);
 
     @Query("""
+            SELECT b
+            FROM Blade b
+            WHERE b.business.id = :businessId
+              AND b.active = true
+            ORDER BY b.name
+            """)
+    List<Blade> findActiveBladesByBusinessId(@Param("businessId") UUID businessId);
+
+    @Query("""
             SELECT CASE WHEN COUNT(b) > 0 THEN true ELSE false END
             FROM Blade b
             WHERE b.business.id = :businessId

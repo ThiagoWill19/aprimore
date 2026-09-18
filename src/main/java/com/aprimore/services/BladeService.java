@@ -34,7 +34,7 @@ public class BladeService {
 
     public List<BladeListDto> findAllByBusiness(User user) {
 
-        return itemRepository.findBladesByBusinessId(user.getBusiness().getId())
+        return itemRepository.findActiveBladesByBusinessId(user.getBusiness().getId())
                 .stream()
                 .map(bladeMapper::mapToBladeListDto)
                 .toList();
@@ -81,7 +81,8 @@ public class BladeService {
             throw new AccessDeniedException("Empresa inativa. Operacoes nao permitidas.");
         }
 
-        itemRepository.delete(blade);
+        blade.setActive(false);
+        itemRepository.save(blade);
     }
 
     private String buildNormalizedBladeName(NewBladeDto dto) {
