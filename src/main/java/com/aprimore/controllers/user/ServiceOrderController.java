@@ -49,7 +49,7 @@ public class ServiceOrderController {
 			Page<ServiceOrderListDto> serviceOrders = serviceOrderService.listByClient(clientId, page, 10, userDetails.getUser());
 			model.addAttribute("clientId", clientId);
 			model.addAttribute("serviceOrders", serviceOrders);
-			return "/user/ServiceOrderListPage";
+			return "user/ServiceOrderListPage";
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("erro", e.getMessage());
 			return "redirect:/user/client/" + clientId;
@@ -68,7 +68,7 @@ public class ServiceOrderController {
 			model.addAttribute("serviceOrder", new NewServiceOrderDto());
 			model.addAttribute("machines", serviceOrderService.findMachinesByClient(clientId, userDetails.getUser()));
 			model.addAttribute("blades", serviceOrderService.findBladesByBusiness(userDetails.getUser()));
-			return "/user/NewServiceOrderPage";
+			return "user/NewServiceOrderPage";
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("erro", e.getMessage());
 			return "redirect:/user/client/" + clientId;
