@@ -72,8 +72,8 @@ public class BusinessService {
 
 		 
 		String activationLink = accountActivationService.createActivationLink(newUser);
-	    eventPublisher.publishEvent(new BusinessCreatedEvent(newUser.getEmail(), activationLink));
-
+	    //eventPublisher.publishEvent(new BusinessCreatedEvent(newUser.getEmail(), activationLink));
+		System.out.println(">>> ActivationLink: " + activationLink);
 	}
 	
 
