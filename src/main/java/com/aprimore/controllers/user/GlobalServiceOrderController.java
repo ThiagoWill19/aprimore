@@ -34,7 +34,7 @@ public class GlobalServiceOrderController {
 		try {
 			model.addAttribute("selection", new SelectServiceOrderClientDto());
 			model.addAttribute("clients", serviceOrderService.findClientsByBusiness(userDetails.getUser()));
-			return "/user/NewServiceOrderStartPage";
+			return "user/NewServiceOrderStartPage";
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("erro", e.getMessage());
 			return "redirect:/user";

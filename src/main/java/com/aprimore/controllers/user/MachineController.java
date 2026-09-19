@@ -83,7 +83,7 @@ public class MachineController {
 			MachineDetailsDto machine = machineService.findById(clientId, machineId, userDetails.getUser());
 			model.addAttribute("machine", machine);
 			model.addAttribute("clientId", clientId);
-			return "/user/MachineDetailsPage";
+			return "user/MachineDetailsPage";
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("erro", e.getMessage());
 			return "redirect:/user/client/" + clientId + "/machines";

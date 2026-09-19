@@ -116,7 +116,7 @@ public class ServiceOrderController {
 			model.addAttribute("serviceOrder", serviceOrder);
 			model.addAttribute("machines", serviceOrderService.findMachinesByClient(clientId, userDetails.getUser()));
 			model.addAttribute("blades", serviceOrderService.findBladesByBusiness(userDetails.getUser()));
-			return "/user/ServiceOrderDetailsPage";
+			return "user/ServiceOrderDetailsPage";
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("erro", e.getMessage());
 			return "redirect:/user/client/" + clientId + "/service-orders";
